@@ -58,12 +58,12 @@ export default function LoginPage() {
                 />
                 <label
                   htmlFor="remember-me"
-                  className="ml-2 block text-sm text-slate-700"
+                  className="ml-2 block text-[13px] text-slate-700"
                 >
                   Remember me
                 </label>
               </div>
-              <div className="text-sm">
+              <div className="text-[13px]">
                 <a
                   href="#"
                   className="font-medium text-blue-600 hover:text-blue-500"
@@ -75,7 +75,7 @@ export default function LoginPage() {
 
             <button
               type="submit"
-              className="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150"
+              className="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl text-[13px] font-semibold text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-1 focus:ring-offset-1 focus:ring-blue-500 transition duration-150"
             >
               Sign in
             </button>
@@ -85,7 +85,7 @@ export default function LoginPage() {
               <div className="absolute inset-0 flex items-center">
                 <div className="w-full border-t border-slate-200"></div>
               </div>
-              <div className="relative flex justify-center text-sm">
+              <div className="relative flex justify-center text-[13px]">
                 <span className="px-2 bg-white text-slate-500">
                   Or continue with
                 </span>
@@ -95,14 +95,14 @@ export default function LoginPage() {
             {/* Google Login Button */}
             <button
               type="button"
-              className="w-full flex items-center justify-center gap-3 py-3 px-4 border border-slate-200 rounded-xl bg-white text-sm font-medium text-slate-700 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-200 transition duration-150"
+              className="w-full flex items-center justify-center gap-3 py-3 px-4 border border-slate-200 rounded-xl bg-white text-[12px] font-medium text-slate-700 hover:bg-slate-50 focus:outline-none focus:ring-1 focus:ring-offset-2 focus:ring-slate-200 transition duration-150"
             >
               <Google />
               Sign in with Google
             </button>
           </form>
 
-          <p className="text-center text-sm text-slate-600">
+          <p className="text-center text-[13px] text-slate-600">
             Dont have an account?{" "}
             <Link
               href="/auth/signup"

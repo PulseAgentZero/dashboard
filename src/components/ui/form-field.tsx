@@ -37,7 +37,7 @@ export default function FormField({
           name={name ?? id}
           required={required}
           placeholder={placeholder}
-          className={`h-10.5 w-full rounded-lg border border-slate-200 bg-slate-50 ${Icon ? "pl-9" : "pl-3"} pr-4 text-[13px] text-slate-700 placeholder:text-slate-500 focus:border-blue-400 focus:outline-none transition-colors`}
+          className={`h-10.5 w-full rounded-lg border border-slate-200 bg-slate-50 ${Icon ? "pl-9" : "pl-3"} pr-4 text-[13px] text-slate-700 placeholder:text-slate-500 placeholder:text-[13px] focus:border-blue-400 focus:outline-none transition-colors`}
         />
       </div>
     </div>

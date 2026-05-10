@@ -59,7 +59,7 @@ export default function Sidebar() {
         </div>
         {!collapsed && (
           <div className="min-w-0 overflow-hidden">
-            <p className="truncate text-sm font-semibold text-slate-800">Pulse</p>
+            <p className="truncate text-[13px] font-semibold text-slate-800">Pulse</p>
             <p className="truncate text-[11px] text-slate-500">Intelligence Platform</p>
           </div>
         )}
@@ -75,7 +75,7 @@ export default function Sidebar() {
                 <Link
                   href={href}
                   title={collapsed ? label : undefined}
-                  className={`flex items-center gap-4 rounded-lg px-3 py-2.5 text-sm transition-colors ${
+                  className={`flex items-center gap-4 rounded-lg px-3 py-2.5 text-[13px] transition-colors ${
                     active
                       ? "bg-blue-50 text-blue-600"
                       : "text-slate-600 hover:bg-slate-50 hover:text-slate-800"
