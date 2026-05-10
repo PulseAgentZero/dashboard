@@ -18,7 +18,7 @@ export default function SearchInput({
       <input
         type="text"
         placeholder={placeholder}
-        className="h-10 w-64 rounded-lg border border-slate-200 bg-slate-50 pl-9 pr-4 text-sm text-slate-700 placeholder:text-slate-500 focus:border-blue-400 focus:outline-none xl:w-80"
+        className="h-10.5 w-56 rounded-lg border border-slate-200 bg-slate-50 pl-9 pr-4 text-sm text-slate-700 placeholder:text-slate-500 focus:border-blue-400 focus:outline-none xl:w-80"
       />
     </div>
   );

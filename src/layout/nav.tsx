@@ -41,7 +41,7 @@ export default function Nav() {
 
       {/* Right controls */}
       <div className="flex items-center gap-2">
-        <SearchInput placeholder="Search entities, recommendations…" />
+        <SearchInput placeholder="Search recommendations…" />
 
         {/* Notification bell */}
         <button className="relative flex h-9 w-9 items-center justify-center rounded-lg text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-700">

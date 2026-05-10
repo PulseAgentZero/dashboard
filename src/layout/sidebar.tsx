@@ -7,7 +7,7 @@ import {
   FlameKindling,
   Angry,
   Antenna,
-  Drum,
+  Birdhouse,
   Earth,
   ChevronLeft,
   ChevronRight,
@@ -20,7 +20,7 @@ const navItems = [
   { label: "Entities", href: "/dashboard/entities", icon: FlameKindling },
   { label: "Recommendations", href: "/dashboard/recommendations", icon: Angry },
   { label: "Analytics", href: "/dashboard/analytics", icon: Antenna },
-  { label: "Agent", href: "/dashboard/agent", icon: Drum },
+  { label: "Agent", href: "/dashboard/agent", icon: Birdhouse },
   { label: "Settings", href: "/dashboard/settings", icon: Earth },
 ];
 
