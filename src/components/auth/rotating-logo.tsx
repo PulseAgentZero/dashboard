@@ -6,15 +6,16 @@ interface PulseFanRotateProps {
   iconSize?: number;
   text?: string;
   radius?: number;
+  color?: string; // Added color prop
 }
 
 const PulseFanRotate = ({ 
   size = 160, 
   iconSize = 72, 
   text = "PULSE", 
-  radius = 46 
+  radius = 46,
+  color = "#ffffff" // Default to white
 }: PulseFanRotateProps) => {
-  // Calculate dynamic values based on props
   const center = size / 2;
   const diameter = radius * 2;
 
@@ -25,7 +26,7 @@ const PulseFanRotate = ({
     >
       {/* Fan Icon */}
       <div className="absolute z-10">
-        <BladeFan size={iconSize} color="#ffffff" strokeWidth={1.5} />
+        <BladeFan size={iconSize} color={color} strokeWidth={1.5} />
       </div>
 
       {/* Circular Text */}
@@ -42,11 +43,11 @@ const PulseFanRotate = ({
         {[0, 90, 180, 270].map((deg) => (
           <text
             key={deg}
-            className="fill-white text-[10px] font-black uppercase tracking-widest"
+            fill={color} // Now uses the dynamic color prop
+            className="text-[10px] font-black uppercase tracking-widest"
           >
             <textPath
               href="#pulsePath"
-              /* Maintains your +10 offset logic */
               startOffset={`${((deg / 360) * 100 + 10) % 100}%`}
               textAnchor="middle"
               dominantBaseline="middle"
