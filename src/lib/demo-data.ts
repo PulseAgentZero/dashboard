@@ -42,6 +42,8 @@ export const entities = [
     signal: "Usage dropped 43% in 14 days",
     action: "Offer 7-day data bundle",
     lastSeen: "12 min ago",
+    completeness: 96,
+    owner: "Retention team",
   },
   {
     id: "WARD-12",
@@ -55,6 +57,8 @@ export const entities = [
     signal: "Capacity at 92%",
     action: "Reallocate 3 night-shift nurses",
     lastSeen: "19 min ago",
+    completeness: 88,
+    owner: "Hospital ops",
   },
   {
     id: "SKU-8821",
@@ -68,6 +72,8 @@ export const entities = [
     signal: "Stock cover below 4 days",
     action: "Trigger restock to Ikeja hub",
     lastSeen: "41 min ago",
+    completeness: 81,
+    owner: "Supply chain",
   },
   {
     id: "DRV-203",
@@ -81,6 +87,8 @@ export const entities = [
     signal: "Delay rate up 18%",
     action: "Move delivery window by 45 min",
     lastSeen: "1 hr ago",
+    completeness: 74,
+    owner: "Fleet ops",
   },
 ];
 
@@ -91,6 +99,8 @@ export const recommendations = [
     urgency: "Critical",
     owner: "Retention team",
     confidence: "96%",
+    status: "Unassigned",
+    impact: "High churn reduction",
     reason:
       "Recharge frequency and session length both declined below the configured retention threshold.",
   },
@@ -100,6 +110,8 @@ export const recommendations = [
     urgency: "High",
     owner: "Hospital ops",
     confidence: "89%",
+    status: "Escalated",
+    impact: "Capacity relief",
     reason:
       "Admissions trend is rising while available staff hours are falling for the evening period.",
   },
@@ -109,9 +121,25 @@ export const recommendations = [
     urgency: "Medium",
     owner: "Supply chain",
     confidence: "82%",
+    status: "In review",
+    impact: "Stockout prevention",
     reason:
       "Demand velocity is 1.7x the regional baseline and stock cover is projected to fail by Friday.",
   },
+];
+
+export const entitySummary = [
+  { label: "Total entities", value: "42,918", detail: "Across mapped tables" },
+  { label: "High risk", value: "1,284", detail: "312 need action today" },
+  { label: "Avg completeness", value: "87%", detail: "Mapped profile coverage" },
+  { label: "Active segments", value: "4", detail: "Industry-agnostic views" },
+];
+
+export const recommendationSummary = [
+  { label: "Open queue", value: "486", detail: "Ranked by urgency" },
+  { label: "Critical", value: "47", detail: "Needs immediate action" },
+  { label: "Actioned today", value: "128", detail: "Outcome tracking active" },
+  { label: "Avg confidence", value: "89%", detail: "Recommendation quality" },
 ];
 
 export const segments = [

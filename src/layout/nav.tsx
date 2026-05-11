@@ -10,6 +10,10 @@ const pageMeta: Record<string, { title: string; crumb: string }> = {
   "/dashboard/recommendations": { title: "Recommendations", crumb: "Recommendations" },
   "/dashboard/analytics": { title: "Analytics", crumb: "Analytics" },
   "/dashboard/agent": { title: "Agent", crumb: "Agent" },
+  "/dashboard/onboarding": { title: "Onboarding", crumb: "Onboarding" },
+  "/dashboard/connections": { title: "Connections", crumb: "Connections" },
+  "/dashboard/alerts": { title: "Alerts", crumb: "Alerts" },
+  "/dashboard/team": { title: "Team & Roles", crumb: "Team & Roles" },
   "/dashboard/settings": { title: "Settings", crumb: "Settings" },
 };
 
