@@ -7,7 +7,7 @@ export default function PhilosophyGrid() {
         {/* Top Header */}
         <div className="border-y border-zinc-900 p-8 lg:p-10">
           <h2 className="text-xl text-zinc-200 tracking-tight font-bold">
-            // stop guessing with generic AI.
+            / stop guessing with generic AI.
           </h2>
         </div>
 
@@ -23,7 +23,7 @@ export default function PhilosophyGrid() {
             </div>
             <div className="space-y-4">
               <p className="text-zinc-400 leading-relaxed max-w-sm">
-                <span className="text-white font-bold">// Generic. Static. Irrelevant.</span> Standard LLMs don't know your business logic. Pulse learns your specific operational context to provide reasoning that actually aligns with your KPIs.
+                <span className="text-white font-bold">/ Generic. Static. Irrelevant.</span> Standard LLMs don&apos;t know your business logic. Pulse learns your specific operational context to provide reasoning that actually aligns with your KPIs.
               </p>
             </div>
           </div>
@@ -37,7 +37,7 @@ export default function PhilosophyGrid() {
             </div>
             <div className="space-y-4">
               <p className="text-zinc-400 leading-relaxed max-w-sm">
-                <span className="text-white font-bold">// "AI can't handle complex DBs."</span> It can&apos;t, but our harness can. Pulse sits between the model and your data, ensuring every insight is grounded in live, validated SQL queries.
+                <span className="text-white font-bold">/ &quot;AI can&apos;t handle complex DBs.&quot;</span> It can&apos;t, but our harness can. Pulse sits between the model and your data, ensuring every insight is grounded in live, validated SQL queries.
               </p>
             </div>
           </div>

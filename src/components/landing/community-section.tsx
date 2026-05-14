@@ -50,7 +50,7 @@ export default function TeamSection() {
         <div className="border-y border-zinc-900 p-12 md:p-16 flex flex-col md:flex-row justify-between items-start md:items-end gap-8">
           <div className="space-y-4">
             <span className="text-[10px] text-zinc-500 font-mono tracking-[0.2em] uppercase">
-              // The Team
+              / The Team
             </span>
             <h2 className="text-5xl md:text-6xl font-bold tracking-tight leading-none">
               Built by engineers.<br />

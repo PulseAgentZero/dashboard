@@ -51,7 +51,7 @@ export default function FeatureExplorer() {
         <div className="grid grid-cols-1 md:grid-cols-2 border-y border-zinc-900">
           <div className="p-12 border-r border-zinc-900">
             <h2 className="text-xl text-zinc-400">
-              // the enterprise intelligence layer.
+              / the enterprise intelligence layer.
             </h2>
           </div>
           <div className="p-10 bg-zinc-950/20" />

@@ -1,4 +1,4 @@
-import { Copy } from "lucide-react";
+
 
 export default function Hero() {
   return (

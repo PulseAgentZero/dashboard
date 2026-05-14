@@ -55,7 +55,7 @@ export default function FinalCTA() {
 
         {/* Content */}
         <h2 className="text-4xl md:text-5xl font-bold text-white tracking-tight mb-6">
-          <span className="text-zinc-600 italic font-mono text-2xl mr-2">//</span>
+          <span className="text-zinc-600 italic font-mono text-2xl mr-2">/</span>
           Take Command of your data.
         </h2>
         

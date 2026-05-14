@@ -69,7 +69,7 @@ export default function TrustGrid() {
             <p className="text-zinc-300 text-sm md:text-base">
               Pulse is the first platform that actually lets us hear what our
               operational data is trying to tell us.
-              <span className="text-zinc-600 text-xl font-serif"> "</span>
+              <span className="text-zinc-600 text-xl font-serif"> &quot;</span>
             </p>
           </div>
           <div className="animate-spin" style={{ animationDuration: "1s" }}>
