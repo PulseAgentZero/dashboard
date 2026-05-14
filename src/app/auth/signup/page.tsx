@@ -3,27 +3,40 @@ import { Google } from "../../../../public/icon/google";
 import Image from "next/image";
 import FormField from "@/components/ui/form-field";
 import PasswordField from "@/components/ui/password-field";
-import PulseFanRotate from "@/components/auth/rotating-logo";
+import { BladeFan } from "../../../../public/icon/bladeFan";
+// import PulseFanRotate from "@/components/auth/rotating-logo";
 
 export default function SignupPage() {
   return (
     <div className="flex min-h-screen w-full bg-white">
       {/* Left Side: Visual */}
-      <div className="hidden lg:flex w-1/2 relative overflow-hidden">
-        <Image
-          src="https://images.unsplash.com/photo-1777223127802-f800a32cddc5?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1yZWxhdGVkfDI3fHx8ZW58MHx8fHx8"
-          alt="Login Visual"
-          fill
-          priority
-          className="object-cover"
-        />
-        <div
-          className="absolute top-0 left-0 z-20 animate-spin"
-          style={{ animationDuration: "20s" }}
-        >
-          <PulseFanRotate text="PULSE" radius={40} iconSize={60} />
-        </div>
-      </div>
+      <div className="hidden lg:flex w-1/2 relative overflow-hidden bg-black">
+  <Image
+    src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=2070&auto=format&fit=crop"
+    alt="Pulse Intelligence Network"
+    fill
+    priority
+    className="object-cover opacity-60" // 1. Reduce opacity to let the black bg show through
+  />
+  
+  {/* 2. Heavy Gradient Overlay: Darker at the top-left and bottom */}
+  <div className="absolute inset-0 bg-gradient-to-br from-black/80 via-black/20 to-black/90 z-10" />
+
+  {/* 3. The Fan (Now clearly visible) */}
+  <div
+    className="absolute top-12 left-12 z-20 animate-spin"
+    style={{ animationDuration: "60s" }}
+  >
+    <BladeFan color="white" size={64}/>
+  </div>
+
+  <div className="absolute bottom-12 left-12 z-20">
+    <h1 className="text-white text-4xl font-black italic tracking-tighter">PULSE</h1>
+    <p className="text-zinc-500 font-mono text-[10px] uppercase tracking-[0.4em] mt-2">
+      Intelligence Layer v1.0
+    </p>
+  </div>
+</div>
 
       {/* Right Side: Form */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8 sm:p-12 md:p-16">

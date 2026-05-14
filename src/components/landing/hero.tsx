@@ -1,52 +1,74 @@
-import Image from "next/image";
-import Link from "next/link";
+import { Copy } from "lucide-react";
 
-const Hero = () => {
+export default function Hero() {
   return (
-    <section className="relative w-full h-screen bg-[#7D91C4] overflow-hidden flex items-center">
-      {/* Main Content */}
-      <div className="container mx-auto px-6 grid md:grid-cols-12 gap-8 items-start pt-20">
-        {/* Left Column: 60% Width (7/12) */}
-        <div className="z-10 text-white md:col-span-7 lg:pr-12">
-          <h1 className="text-5xl md:text-7xl font-bold leading-tight tracking-tight mb-5">
-            Smarter Intelligence for Every Business
-            <br />
-            <span className="opacity-90 italic font-serif">just for you.</span>
-          </h1>
-          <p className="text-lg md:text-[18px] text-white/80 mb-8 max-w-lg leading-relaxed font-medium">
-            Connect Pulse to your database for AI insights, recommendations, and
-            a conversational agent without a data science team.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4">
-            <Link
-              href="/auth/signup"
-              className="bg-[#3B66F5] text-white px-8 py-4 rounded-xl text-lg font-bold shadow-lg hover:-translate-y-0.5 transition-all"
-            >
-              Get started — it&apos;s free
-            </Link>
-          </div>
-        </div>
+    <section className="relative min-h-screen bg-black text-white overflow-hidden flex flex-col items-center pt-30">
+      {/* Background Grid Pattern */}
+      <div
+        className="absolute inset-0 opacity-20"
+        style={{
+          backgroundImage: `linear-gradient(#222 1px, transparent 1px), linear-gradient(90deg, #222 1px, transparent 1px)`,
+          backgroundSize: "60px 60px",
+        }}
+      ></div>
 
-        {/* Right Column: 40% Width (5/12) */}
-        <div className="relative flex justify-center md:justify-end items-end h-full md:col-span-5">
-          {/* image container with constrained width */}
-          <div className="relative w-full max-w-[320px] lg:max-w-95 aspect-full">
-            <Image
-              src="https://images.unsplash.com/photo-1487379595640-f04ccae706cd?q=80&w=987&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-              alt="Global Banking User"
-              fill
-              className="object-cover object-top rounded-t-full shadow-2xl"
-              priority
-            />
-          </div>
-        </div>
+      {/* Announcement Badge */}
+      <div className="relative z-10 mb-12 flex items-center gap-2 bg-zinc-900/50 border border-zinc-800 px-4 py-1.5 rounded-full text-xs text-zinc-400">
+        <span className="w-2 h-2 bg-zinc-500 rounded-full"></span>
+        <span>
+          Open Source Core •{" "}
+          <a href="#" className="underline hover:text-white">
+            Read the launch announcement
+          </a>
+        </span>
       </div>
 
-      {/* Wave/Bottom Detail */}
-      <div className="absolute bottom-0 -right-4 w-1/3 h-28 bg-white rounded-tl-[40px] -skew-x-12 hidden md:block"></div>
-      <div className="absolute bottom-0 left-0 bg-white h-2.5 w-full"></div>
+      <div className="relative z-10 max-w-625 w-full px-16 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        {/* Left Content */}
+        <div className="space-y-8">
+          <h1 className="text-6xl md:text-7xl font-bold tracking-tight leading-[1.1]">
+              Data Intelligence  <br />
+              <span className="text-zinc-400">without the friction.</span>
+            </h1>
+
+          <p className="text-xl text-zinc-400 max-w-125 leading-relaxed">
+              Pulse turns warehouse data into grounded operational answers. No SQL or pipeline setup needed.
+            </p>
+
+          <div className="flex flex-wrap gap-4 items-center">
+              <div className="flex items-center gap-3 bg-indigo-600/90 hover:bg-indigo-600 px-4 py-3 rounded-2xl border border-indigo-400/30 font-mono text-sm transition-all group">
+                <span className="text-indigo-200">Click to Get Started</span>
+              </div>
+              <button className="px-6 py-3 rounded-2xl border border-zinc-700 bg-black hover:bg-zinc-900 transition-colors font-medium">
+                Video Demo
+              </button>
+            </div>
+
+          <div className="pt-4 space-y-2">
+              <p className="text-zinc-400 text-sm">
+  Detected a <span className="text-white font-bold">12% churn spike</span> across 
+  <span className="text-white font-bold"> West African nodes. </span> 
+  Recommend <br /><span className="text-white font-bold">localized retention action.</span>
+</p>
+              <p className="text-zinc-500 text-xs pt-2">
+                Open models from <span className="text-indigo-400">$1/mo</span> with $10-40 in free credits.
+              </p>
+            </div>
+        </div>
+
+        {/* Right Decorative Elements (The "Code Blocks") */}
+        <div className="hidden lg:block relative h-[500px]">
+          {/* Example of the floating purple blocks from the screenshot */}
+          <div className="absolute top-10 right-0 w-74 h-16 bg-gradient-to-r from-transparent to-indigo-900/60 rounded-sm blur-[1px]"></div>
+          <div className="absolute top-32 right-20 w-58 h-16 bg-gradient-to-r from-transparent to-indigo-800/80 rounded-sm"></div>
+          <div className="absolute top-56 right-5 w-90 h-20 bg-gradient-to-r from-transparent to-indigo-900/70 rounded-sm"></div>
+          <div className="absolute bottom-20 right-10 w-82 h-16 bg-gradient-to-r from-transparent to-indigo-700/50 rounded-sm"></div>
+          {/* Vertical and small block accents */}
+          <div className="absolute top-40 right-48 w-30 h-16 bg-indigo-900/40 border-l border-indigo-500/20"></div>
+          <div className="absolute bottom-36 right-32 w-26 h-16 bg-indigo-800/30"></div>
+        </div>
+      </div>
     </section>
   );
-};
+}
 
-export default Hero;

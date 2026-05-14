@@ -1,55 +1,35 @@
-"use client";
-
-import { useState, useEffect } from "react";
-import Link from "next/link";
-import { BladeFan } from "../../../public/icon/bladeFan";
+import Link from 'next/link';
+// import { BladeFan } from '../../../public/icon/bladeFan';
 
 export default function Navbar() {
-  const [scrolled, setScrolled] = useState(false);
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
-  const textColor = scrolled ? "text-slate-700" : "text-white";
-  const fanColor = scrolled ? "#334155" : "#ffffff";
-
   return (
-    <nav
-      className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-8 py-5 transition-all duration-300 ${
-        scrolled ? "bg-white" : "bg-transparent"
-      }`}
-    >
-      {/* Logo */}
-      <div className={`flex items-center gap-2 w-[35%] ${textColor}`}>
-        <BladeFan color={fanColor} size={36} />
-        <p className="text-[18px] font-semibold tracking-wide">PULSE</p>
-      </div>
-
-      {/* Nav links */}
-      <div
-        className={`hidden md:flex gap-8 font-medium w-[30%] items-center justify-center text-[14px] ${textColor}`}
-      >
-        <a href="#" className="hover:opacity-70 transition-opacity">Products</a>
-        <a href="#" className="hover:opacity-70 transition-opacity">Learn</a>
-        <a href="#" className="hover:opacity-70 transition-opacity">Company</a>
-      </div>
-
-      {/* CTA */}
-      <div className="flex items-center justify-end gap-2 w-[35%]">
-        <Link
-          href="/auth/login"
-          className={`text-[13px] font-medium px-4 py-2 transition-opacity hover:opacity-70 ${textColor}`}
+    <nav className="fixed top-0 inset-x-0 z-50 flex items-center justify-between px-16 py-6 bg-black/80 backdrop-blur-sm border-b border-white/10">
+      <div className="flex items-center gap-2">
+        {/* Replace with actual SVG logo from screenshot if available */}
+        <span className="text-white font-black tracking-tighter text-2xl uppercase italic">
+          <div className='flex flex-row items-center gap-2'>
+            {/* <div
+          className="animate-spin"
+          style={{ animationDuration: "9s" }}
         >
-          Log in
-        </Link>
-        <Link
-          href="/auth/signup"
-          className="bg-[#3B66F5] text-white text-[13px] px-5 py-2.5 rounded-lg font-semibold hover:bg-blue-600 transition-colors"
+          <BladeFan color='white' size={25} strokeWidth={3} /> 
+        </div> */}
+            <p>PulseData</p>
+          </div>
+        </span>
+      </div>
+      
+      <div className="hidden md:flex items-center gap-8 text-sm font-medium text-zinc-400">
+        <Link href="#" className="hover:text-white transition-colors">Works</Link>
+        <Link href="#" className="hover:text-white transition-colors">Features</Link>
+        <Link href="#" className="hover:text-white transition-colors">About</Link>
+        <Link href="#" className="hover:text-white transition-colors">Platform</Link>
+        <Link href="#" className="hover:text-white transition-colors">Deploy</Link>
+        <Link 
+          href="/auth/signup" 
+          className="ml-4 bg-white text-black px-5 py-2 rounded-full font-bold hover:bg-zinc-200 transition-colors"
         >
-          Get started
+          Sign Up
         </Link>
       </div>
     </nav>
