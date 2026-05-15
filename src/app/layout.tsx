@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import { QueryProvider } from "@/providers/query-provider";
+import { Toaster } from "sonner";
 import "./globals.css";
 
 const aeonik = localFont({
@@ -32,7 +34,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`h-full antialiased ${aeonik.variable}`}>
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <QueryProvider>{children}</QueryProvider>
+        <Toaster position="top-right" richColors />
+      </body>
     </html>
   );
 }
