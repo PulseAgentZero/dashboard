@@ -73,12 +73,16 @@ export interface OrgContextResponse {
 export interface ConnectionPrefillResponse {
   id: string;
   name: string;
-  db_type: string | null;
-  host: string | null;
-  port: number | null;
-  database_name: string | null;
-  username: string | null;
-  sslmode: string | null;
+  connector_type: string | null;
+  connection_meta: {
+    db_type?: string | null;
+    host?: string | null;
+    port?: number | null;
+    database_name?: string | null;
+    username?: string | null;
+    sslmode?: string | null;
+    [key: string]: unknown;
+  };
 }
 
 export interface SchemaMappingPrefillResponse {

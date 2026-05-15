@@ -15,10 +15,12 @@ export default function StepConnection({ onNext, onBack, onSkip }: Props) {
   const { data: prefill, isLoading } = useConnectionPrefill();
   const [dbType, setDbType] = useState<"postgresql" | "mysql">("postgresql");
 
+  const meta = prefill?.connection_meta;
+
   useEffect(() => {
-    if (prefill?.db_type === "mysql") setDbType("mysql");
-    else if (prefill?.db_type === "postgresql") setDbType("postgresql");
-  }, [prefill?.db_type]);
+    if (meta?.db_type === "mysql") setDbType("mysql");
+    else if (meta?.db_type === "postgresql") setDbType("postgresql");
+  }, [meta?.db_type]);
   const { mutate, isPending } = useSaveConnection();
 
   const defaultPort = dbType === "postgresql" ? 5432 : 3306;
@@ -82,17 +84,17 @@ export default function StepConnection({ onNext, onBack, onSkip }: Props) {
 
         <div className="grid grid-cols-3 gap-4">
           <div className="col-span-2">
-            <Field name="host" label="Host" placeholder="db.example.com" required defaultValue={prefill?.host ?? ""} />
+            <Field name="host" label="Host" placeholder="db.example.com" required defaultValue={String(meta?.host ?? "")} />
           </div>
           <div>
-            <Field name="port" label="Port" type="number" placeholder={String(defaultPort)} required defaultValue={String(prefill?.port ?? defaultPort)} />
+            <Field name="port" label="Port" type="number" placeholder={String(defaultPort)} required defaultValue={String(meta?.port ?? defaultPort)} />
           </div>
         </div>
 
-        <Field name="database_name" label="Database name" placeholder="mydb" required defaultValue={prefill?.database_name ?? ""} />
+        <Field name="database_name" label="Database name" placeholder="mydb" required defaultValue={String(meta?.database_name ?? "")} />
 
         <div className="grid grid-cols-2 gap-4">
-          <Field name="username" label="Username" placeholder="readonly_user" required defaultValue={prefill?.username ?? ""} />
+          <Field name="username" label="Username" placeholder="readonly_user" required defaultValue={String(meta?.username ?? "")} />
           <Field name="password" label="Password" type="password" placeholder="••••••••" required />
         </div>
 
@@ -100,7 +102,7 @@ export default function StepConnection({ onNext, onBack, onSkip }: Props) {
           <label className="block text-[13px] font-medium text-slate-700">SSL mode</label>
           <select
             name="sslmode"
-            defaultValue={prefill?.sslmode ?? "prefer"}
+            defaultValue={String(meta?.sslmode ?? "prefer")}
             className="h-10 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-[13px] text-slate-700 focus:border-blue-400 focus:outline-none transition-colors"
           >
             <option value="prefer">Prefer (recommended)</option>
