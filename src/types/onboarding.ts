@@ -62,3 +62,29 @@ export interface CompleteOnboardingResponse {
   onboarding_done: boolean;
   generated_recommendations: number;
 }
+
+export interface OrgContextResponse {
+  industry?: string | null;
+  business_context?: string | null;
+  entity_label?: string | null;
+  goal_label?: string | null;
+}
+
+export interface ConnectionPrefillResponse {
+  id: string;
+  name: string;
+  db_type: string | null;
+  host: string | null;
+  port: number | null;
+  database_name: string | null;
+  username: string | null;
+  sslmode: string | null;
+}
+
+export interface SchemaMappingPrefillResponse {
+  entity_table: string | null;
+  entity_id_col: string | null;
+  entity_name_col: string | null;
+  target_column: string | null;
+  timestamp_col: string | null;
+}

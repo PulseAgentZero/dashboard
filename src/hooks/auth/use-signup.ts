@@ -15,9 +15,9 @@ export function useSignup() {
     mutationFn: authApi.signup,
     onSuccess(data) {
       tokens.set(data.access_token, data.refresh_token);
-      qc.setQueryData(["me"], data);
-      toast.success("Account created! Welcome to Pulse.");
-      router.push("/onboarding");
+      void qc.invalidateQueries({ queryKey: ["me"] });
+      toast.success("Account created! Check your email to verify.");
+      router.push("/auth/verify-email?notice=1");
     },
     onError(err) {
       const message =

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { authApi } from "@/lib/api/auth";
 import { ApiError } from "@/lib/api/client";
+import { postAuthRedirect } from "@/lib/auth-redirect";
 import { tokens } from "@/lib/auth-tokens";
 
 export function useLogin() {
@@ -15,9 +16,9 @@ export function useLogin() {
     mutationFn: authApi.login,
     onSuccess(data) {
       tokens.set(data.access_token, data.refresh_token);
-      qc.setQueryData(["me"], data);
+      void qc.invalidateQueries({ queryKey: ["me"] });
       toast.success("Welcome back!");
-      router.push(data.org?.onboarding_done ? "/dashboard" : "/onboarding");
+      postAuthRedirect(data.org, router, data.user);
     },
     onError(err) {
       const message =

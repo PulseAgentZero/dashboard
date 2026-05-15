@@ -1,6 +1,8 @@
 "use client";
 
+import { Loader2 } from "lucide-react";
 import { useSaveContext } from "@/hooks/onboarding/use-save-context";
+import { useContextPrefill } from "@/hooks/onboarding/use-context-prefill";
 
 const INDUSTRIES = [
   "Telecom", "E-commerce", "Fintech", "SaaS", "Healthcare",
@@ -13,6 +15,7 @@ interface Props {
 
 export default function StepContext({ onNext }: Props) {
   const { mutate, isPending } = useSaveContext();
+  const { data: prefill, isLoading } = useContextPrefill();
 
   function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -25,6 +28,15 @@ export default function StepContext({ onNext }: Props) {
         goal_label: d.get("goal_label") as string,
       },
       { onSuccess: onNext },
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-8 flex items-center justify-center gap-3 min-h-[300px]">
+        <Loader2 size={18} className="animate-spin text-blue-600" />
+        <span className="text-[13px] text-slate-600">Loading…</span>
+      </div>
     );
   }
 
@@ -42,6 +54,7 @@ export default function StepContext({ onNext }: Props) {
           <label className="block text-[13px] font-medium text-slate-700">Industry</label>
           <select
             name="industry"
+            defaultValue={prefill?.industry ?? ""}
             className="h-10 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-[13px] text-slate-700 focus:border-blue-400 focus:outline-none transition-colors"
           >
             <option value="">Select your industry (optional)</option>
@@ -59,6 +72,7 @@ export default function StepContext({ onNext }: Props) {
             name="business_context"
             required
             rows={3}
+            defaultValue={prefill?.business_context ?? ""}
             placeholder="e.g. We are a telecom company tracking customer churn across 1M subscribers. We want to identify at-risk customers before they cancel."
             className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5 text-[13px] text-slate-700 placeholder:text-slate-400 focus:border-blue-400 focus:outline-none transition-colors resize-none"
           />
@@ -73,6 +87,7 @@ export default function StepContext({ onNext }: Props) {
               name="entity_label"
               required
               type="text"
+              defaultValue={prefill?.entity_label ?? ""}
               placeholder="e.g. customers"
               className="h-10 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-[13px] text-slate-700 placeholder:text-slate-400 focus:border-blue-400 focus:outline-none transition-colors"
             />
@@ -87,6 +102,7 @@ export default function StepContext({ onNext }: Props) {
               name="goal_label"
               required
               type="text"
+              defaultValue={prefill?.goal_label ?? ""}
               placeholder="e.g. reduce churn"
               className="h-10 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-[13px] text-slate-700 placeholder:text-slate-400 focus:border-blue-400 focus:outline-none transition-colors"
             />

@@ -8,7 +8,8 @@ export function useMe() {
   return useQuery({
     queryKey: ["me"],
     queryFn: authApi.me,
-    enabled: !!tokens.getAccess(),
+    enabled:
+      typeof window !== "undefined" && !!tokens.getAccess(),
     staleTime: 5 * 60 * 1000,
   });
 }

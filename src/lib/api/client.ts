@@ -1,7 +1,17 @@
 import { toast } from "sonner";
+import { tokens } from "@/lib/auth-tokens";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 const API_PREFIX = "/api/v1";
+
+const NO_REFRESH_PATHS = [
+  "/auth/login",
+  "/auth/signup",
+  "/auth/refresh",
+  "/auth/verify-email",
+  "/auth/forgot-password",
+  "/auth/reset-password",
+];
 
 export class ApiError extends Error {
   constructor(
@@ -15,11 +25,50 @@ export class ApiError extends Error {
   }
 }
 
-async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
+let refreshPromise: Promise<string | null> | null = null;
+
+async function refreshAccessToken(): Promise<string | null> {
+  const refresh = tokens.getRefresh();
+  if (!refresh) return null;
+
+  if (!refreshPromise) {
+    refreshPromise = (async () => {
+      try {
+        const res = await fetch(`${BASE_URL}${API_PREFIX}/auth/refresh`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ refresh_token: refresh }),
+        });
+        if (!res.ok) {
+          tokens.clear();
+          return null;
+        }
+        const data = await res.json();
+        tokens.set(data.access_token, data.refresh_token);
+        return data.access_token as string;
+      } catch {
+        tokens.clear();
+        return null;
+      } finally {
+        refreshPromise = null;
+      }
+    })();
+  }
+
+  return refreshPromise;
+}
+
+function shouldAttemptRefresh(path: string): boolean {
+  return !NO_REFRESH_PATHS.some((p) => path.startsWith(p));
+}
+
+async function request<T>(
+  path: string,
+  init: RequestInit = {},
+  retried = false,
+): Promise<T> {
   const token =
-    typeof window !== "undefined"
-      ? localStorage.getItem("pulse_access_token")
-      : null;
+    typeof window !== "undefined" ? tokens.getAccess() : null;
 
   const res = await fetch(`${BASE_URL}${API_PREFIX}${path}`, {
     ...init,
@@ -30,9 +79,19 @@ async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
     },
   });
 
+  if (res.status === 401 && !retried && shouldAttemptRefresh(path)) {
+    const newToken = await refreshAccessToken();
+    if (newToken) {
+      return request<T>(path, init, true);
+    }
+    if (typeof window !== "undefined") {
+      tokens.clear();
+      window.location.href = "/auth/login";
+    }
+  }
+
   if (!res.ok) {
     const body = await res.json().catch(() => ({}));
-    // Backend error envelope: { "error": { "code", "message", "fields"? } }
     const err = body.error ?? {};
     const apiErr = new ApiError(
       res.status,
@@ -41,13 +100,10 @@ async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
       err.fields,
     );
 
-    // 401 = expired session — clear tokens and let the page handle redirect
-    if (res.status === 401) {
-      localStorage.removeItem("pulse_access_token");
-      localStorage.removeItem("pulse_refresh_token");
+    if (res.status === 401 && !retried) {
+      tokens.clear();
     }
 
-    // Global toast for server/network errors — callers handle 4xx themselves
     if (res.status >= 500) {
       toast.error("Server error. Please try again.");
     }

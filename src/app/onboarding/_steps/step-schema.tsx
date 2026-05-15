@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
 import { useConnectionSchema } from "@/hooks/onboarding/use-connection-schema";
 import { useSaveSchemaMapping } from "@/hooks/onboarding/use-save-schema-mapping";
+import { useSchemaMappingPrefill } from "@/hooks/onboarding/use-schema-mapping-prefill";
 import type { TableInfo } from "@/types/onboarding";
 
 interface Props {
@@ -13,12 +14,19 @@ interface Props {
 }
 
 export default function StepSchema({ connectionId, onNext, onBack }: Props) {
-  const { data: schema, isLoading } = useConnectionSchema(true);
+  const { data: schema, isLoading: schemaLoading } = useConnectionSchema(true);
+  const { data: prefill, isLoading: prefillLoading } = useSchemaMappingPrefill();
   const { mutate, isPending } = useSaveSchemaMapping();
 
   const [selectedTable, setSelectedTable] = useState("");
   const tables = schema?.tables ?? [];
   const columns = tables.find((t: TableInfo) => t.name === selectedTable)?.columns ?? [];
+
+  useEffect(() => {
+    if (prefill?.entity_table) {
+      setSelectedTable((prev) => prev || prefill.entity_table!);
+    }
+  }, [prefill?.entity_table]);
 
   function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -37,7 +45,7 @@ export default function StepSchema({ connectionId, onNext, onBack }: Props) {
     );
   }
 
-  if (isLoading) {
+  if (schemaLoading || prefillLoading) {
     return (
       <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-8 flex items-center justify-center gap-3 min-h-[300px]">
         <Loader2 size={18} className="animate-spin text-blue-600" />
@@ -78,13 +86,13 @@ export default function StepSchema({ connectionId, onNext, onBack }: Props) {
         {selectedTable && (
           <>
             <div className="grid grid-cols-2 gap-4">
-              <ColSelect name="entity_id_col" label="ID column" required columns={columns} hint="Unique identifier per entity" />
-              <ColSelect name="entity_name_col" label="Name column" columns={columns} hint="Human-readable name (optional)" />
+              <ColSelect name="entity_id_col" label="ID column" required columns={columns} hint="Unique identifier per entity" defaultValue={prefill?.entity_id_col ?? ""} />
+              <ColSelect name="entity_name_col" label="Name column" columns={columns} hint="Human-readable name (optional)" defaultValue={prefill?.entity_name_col ?? ""} />
             </div>
 
             <div className="grid grid-cols-2 gap-4">
-              <ColSelect name="target_column" label="Target column" columns={columns} hint="What you're predicting (e.g. churned)" />
-              <ColSelect name="timestamp_col" label="Timestamp column" columns={columns} hint="Event or record date (optional)" />
+              <ColSelect name="target_column" label="Target column" columns={columns} hint="What you're predicting (e.g. churned)" defaultValue={prefill?.target_column ?? ""} />
+              <ColSelect name="timestamp_col" label="Timestamp column" columns={columns} hint="Event or record date (optional)" defaultValue={prefill?.timestamp_col ?? ""} />
             </div>
 
             <div className="p-3 bg-blue-50 border border-blue-100 rounded-lg text-[12px] text-blue-700">
@@ -111,13 +119,14 @@ export default function StepSchema({ connectionId, onNext, onBack }: Props) {
 }
 
 function ColSelect({
-  name, label, required, columns, hint,
+  name, label, required, columns, hint, defaultValue,
 }: {
   name: string;
   label: string;
   required?: boolean;
   columns: { name: string; data_type: string }[];
   hint?: string;
+  defaultValue?: string;
 }) {
   return (
     <div className="space-y-1.5">
@@ -127,6 +136,7 @@ function ColSelect({
       <select
         name={name}
         required={required}
+        defaultValue={defaultValue ?? ""}
         className="h-10 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-[13px] text-slate-700 focus:border-blue-400 focus:outline-none transition-colors"
       >
         <option value="">Select column</option>

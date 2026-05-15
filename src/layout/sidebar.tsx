@@ -17,6 +17,8 @@ import {
   Users,
 } from "lucide-react";
 import { useSidebar } from "@/lib/sidebar-context";
+import { useAuth } from "@/providers/auth-provider";
+import { useLogout } from "@/hooks/auth/use-logout";
 import { BladeFan } from "../../public/icon/bladeFan";
 
 const navGroups = [
@@ -45,6 +47,8 @@ function isActive(href: string, pathname: string) {
 export default function Sidebar() {
   const { collapsed, toggle } = useSidebar();
   const pathname = usePathname();
+  const { user } = useAuth();
+  const { mutate: logout, isPending: isLoggingOut } = useLogout();
 
   return (
     <aside
@@ -127,12 +131,20 @@ export default function Sidebar() {
             <div className="h-8 w-8 shrink-0 rounded-full bg-linear-to-br from-blue-500 to-teal-400" />
             <div className="min-w-0 flex-1 overflow-hidden">
               <p className="truncate text-xs font-medium text-slate-700">
-                Admin User
+                {user?.full_name || user?.email || "User"}
               </p>
-              <span className="mt-0.5 inline-block rounded bg-blue-50 px-1.5 py-px text-[10px] font-medium text-blue-600">
-                Admin
+              <span className="mt-0.5 inline-block rounded bg-blue-50 px-1.5 py-px text-[10px] font-medium text-blue-600 capitalize">
+                {user?.role || "member"}
               </span>
             </div>
+            <button
+              type="button"
+              onClick={() => logout()}
+              disabled={isLoggingOut}
+              className="shrink-0 text-[11px] font-medium text-slate-500 hover:text-slate-800 disabled:opacity-50"
+            >
+              {isLoggingOut ? "…" : "Sign out"}
+            </button>
           </div>
         )}
       </div>

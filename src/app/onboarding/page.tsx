@@ -5,25 +5,25 @@ import { Check } from "lucide-react";
 import { BladeFan } from "../../../public/icon/bladeFan";
 import StepContext from "./_steps/step-context";
 import StepConnection from "./_steps/step-connection";
-import StepSchema from "./_steps/step-schema";
 import StepLaunch from "./_steps/step-launch";
 
 const STEPS = [
   { id: 1, label: "Business", description: "Tell us about your business" },
   { id: 2, label: "Connect", description: "Connect your data source" },
-  { id: 3, label: "Map Schema", description: "Define your data structure" },
-  { id: 4, label: "Launch", description: "Review and go live" },
+  { id: 3, label: "Launch", description: "Review and go live" },
 ];
 
 export default function OnboardingPage() {
   const [step, setStep] = useState(1);
-  const [connectionId, setConnectionId] = useState<string | null>(null);
 
   function next() {
-    setStep((s) => Math.min(s + 1, 4));
+    setStep((s) => Math.min(s + 1, 3));
   }
   function back() {
     setStep((s) => Math.max(s - 1, 1));
+  }
+  function skipConnection() {
+    setStep(3);
   }
 
   return (
@@ -39,6 +39,7 @@ export default function OnboardingPage() {
         <span className="text-[12px] text-slate-400 font-mono">
           Setup · Step {step} of {STEPS.length}
         </span>
+
       </div>
 
       <div className="max-w-2xl mx-auto px-4 pt-10 pb-16">
@@ -86,21 +87,12 @@ export default function OnboardingPage() {
         {step === 1 && <StepContext onNext={next} />}
         {step === 2 && (
           <StepConnection
-            onNext={(id) => {
-              setConnectionId(id);
-              next();
-            }}
-            onBack={back}
-          />
-        )}
-        {step === 3 && (
-          <StepSchema
-            connectionId={connectionId!}
             onNext={next}
             onBack={back}
+            onSkip={skipConnection}
           />
         )}
-        {step === 4 && <StepLaunch onBack={back} />}
+        {step === 3 && <StepLaunch onBack={back} />}
       </div>
     </div>
   );

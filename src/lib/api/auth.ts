@@ -15,8 +15,19 @@ export const authApi = {
 
   me: () => api.get<MeResponse>("/auth/me"),
 
+  refresh: (refresh_token: string) =>
+    api.post<TokenResponse>("/auth/refresh", { refresh_token }),
+
   logout: (refresh_token: string) =>
     api.post<void>("/auth/logout", { refresh_token }),
+
+  verifyEmail: (token: string) =>
+    api.get<{ message: string }>(
+      `/auth/verify-email?token=${encodeURIComponent(token)}`,
+    ),
+
+  resendVerification: () =>
+    api.post<{ message: string }>("/auth/resend-verification", {}),
 
   forgotPassword: (email: string) =>
     api.post<{ message: string }>("/auth/forgot-password", { email }),
