@@ -2,8 +2,9 @@
 
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { Database, Shell } from "lucide-react";
+import { Database } from "lucide-react";
 import SearchInput from "@/components/ui/search-input";
+import { NotificationBell } from "@/components/nav/notification-bell";
 
 const pageMeta: Record<string, { title: string; crumb: string }> = {
   "/dashboard": { title: "Dashboard", crumb: "Overview" },
@@ -48,10 +49,7 @@ export default function Nav() {
       <div className="flex items-center gap-2">
         <SearchInput placeholder="Search recommendations…" />
 
-        {/* Notification bell */}
-        <button className="relative flex h-9 w-9 items-center justify-center rounded-lg text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-700">
-          <Shell color="black" strokeWidth={1.5} size={20} />
-        </button>
+        <NotificationBell />
 
         {/* Connect Data CTA */}
         <Link

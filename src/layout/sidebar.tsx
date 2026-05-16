@@ -19,6 +19,7 @@ import {
 import { useSidebar } from "@/lib/sidebar-context";
 import { useAuth } from "@/providers/auth-provider";
 import { useLogout } from "@/hooks/auth/use-logout";
+import { useConnections } from "@/hooks/connections/use-connections";
 import { BladeFan } from "../../public/icon/bladeFan";
 
 const navGroups = [
@@ -49,6 +50,16 @@ export default function Sidebar() {
   const pathname = usePathname();
   const { user } = useAuth();
   const { mutate: logout, isPending: isLoggingOut } = useLogout();
+  const { data: connections } = useConnections();
+
+  const connectionDot =
+    connections == null
+      ? null
+      : connections.some((c) => c.status === "active" || c.status === "connected")
+        ? "bg-emerald-400"
+        : connections.length > 0
+          ? "bg-amber-400"
+          : "bg-slate-300";
 
   return (
     <aside
@@ -102,10 +113,17 @@ export default function Sidebar() {
                             : "text-slate-600 hover:bg-slate-50 hover:text-slate-800"
                         } ${collapsed ? "justify-center px-0" : ""}`}
                       >
-                        <Icon
-                          size={17}
-                          className={`shrink-0 ${active ? "text-blue-600" : ""}`}
-                        />
+                        <div className="relative shrink-0">
+                          <Icon
+                            size={17}
+                            className={active ? "text-blue-600" : ""}
+                          />
+                          {href === "/dashboard/connections" && connectionDot && (
+                            <span
+                              className={`absolute -right-0.5 -top-0.5 h-2 w-2 rounded-full ring-2 ring-white ${connectionDot}`}
+                            />
+                          )}
+                        </div>
                         {!collapsed && (
                           <span className="truncate font-medium">{label}</span>
                         )}
