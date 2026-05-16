@@ -57,12 +57,12 @@ export default function Hero() {
         </div>
 
         {/* Right Decorative Elements (The "Code Blocks") */}
-        <div className="hidden lg:block relative h-[500px]">
+        <div className="hidden lg:block relative h-125">
           {/* Example of the floating purple blocks from the screenshot */}
-          <div className="absolute top-10 right-0 w-74 h-16 bg-gradient-to-r from-transparent to-indigo-900/60 rounded-sm blur-[1px]"></div>
-          <div className="absolute top-32 right-20 w-58 h-16 bg-gradient-to-r from-transparent to-indigo-800/80 rounded-sm"></div>
-          <div className="absolute top-56 right-5 w-90 h-20 bg-gradient-to-r from-transparent to-indigo-900/70 rounded-sm"></div>
-          <div className="absolute bottom-20 right-10 w-82 h-16 bg-gradient-to-r from-transparent to-indigo-700/50 rounded-sm"></div>
+          <div className="absolute top-10 right-0 w-74 h-16 bg-linear-to-r from-transparent to-indigo-900/60 rounded-sm blur-[1px]"></div>
+          <div className="absolute top-32 right-20 w-58 h-16 bg-linear-to-r from-transparent to-indigo-800/80 rounded-sm"></div>
+          <div className="absolute top-56 right-5 w-90 h-20 bg-linear-to-r from-transparent to-indigo-900/70 rounded-sm"></div>
+          <div className="absolute bottom-20 right-10 w-82 h-16 bg-linear-to-r from-transparent to-indigo-700/50 rounded-sm"></div>
           {/* Vertical and small block accents */}
           <div className="absolute top-40 right-48 w-30 h-16 bg-indigo-900/40 border-l border-indigo-500/20"></div>
           <div className="absolute bottom-36 right-32 w-26 h-16 bg-indigo-800/30"></div>

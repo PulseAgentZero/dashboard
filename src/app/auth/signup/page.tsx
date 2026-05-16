@@ -7,6 +7,7 @@ import FormField from "@/components/ui/form-field";
 import PasswordField from "@/components/ui/password-field";
 import { BladeFan } from "../../../../public/icon/bladeFan";
 import { useSignup } from "@/hooks/auth/use-signup";
+import { initiateGoogleSignIn } from "@/lib/api/auth";
 
 export default function SignupPage() {
   const { mutate: signup, isPending } = useSignup();
@@ -104,6 +105,7 @@ export default function SignupPage() {
 
             <button
               type="button"
+              onClick={initiateGoogleSignIn}
               className="w-full flex items-center justify-center gap-3 py-3 px-4 border border-slate-200 rounded-xl bg-white text-[12px] font-medium text-slate-700 hover:bg-slate-50 transition duration-150"
             >
               <Google />

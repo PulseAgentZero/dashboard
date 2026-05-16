@@ -6,6 +6,13 @@ import type {
   TokenResponse,
 } from "@/types/auth";
 
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+
+export function initiateGoogleSignIn() {
+  const callbackUrl = `${window.location.origin}/auth/oauth/callback`;
+  window.location.href = `${BASE_URL}/api/v1/auth/oauth/google?redirect_uri=${encodeURIComponent(callbackUrl)}`;
+}
+
 export const authApi = {
   login: (body: LoginRequest) =>
     api.post<TokenResponse>("/auth/login", body),
