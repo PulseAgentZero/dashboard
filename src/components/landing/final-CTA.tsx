@@ -11,7 +11,7 @@ export default function FinalCTA() {
   ];
 
   return (
-    <section className="relative w-full bg-black py-32 overflow-hidden border-t border-zinc-900">
+    <section data-navbar-theme="dark" className="relative w-full bg-black py-32 overflow-hidden border-t border-zinc-900">
       {/* Background Grid - Matches the grid logic in Screenshot 2026-05-14 at 1.44.34 AM.jpg */}
       <div className="absolute inset-0 grid grid-cols-12 grid-rows-6 opacity-20 pointer-events-none">
         {[...Array(72)].map((_, i) => (

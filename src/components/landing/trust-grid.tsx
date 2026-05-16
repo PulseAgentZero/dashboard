@@ -10,35 +10,35 @@ import {
   Leaf,
   FileEdit,
 } from "lucide-react";
-import { Github } from "../../../public/icon/github";
 import { BladeFan } from "../../../public/icon/bladeFan";
 
 export default function TrustGrid() {
   const sectors = [
-    { name: "Healthcare", icon: <Activity className="w-6 h-6" /> },
-    { name: "FMCG", icon: <Package className="w-6 h-6" /> },
-    { name: "Logistics", icon: <Truck className="w-6 h-6" /> },
-    { name: "Retail", icon: <ShoppingBag className="w-6 h-6" /> },
-    { name: "Public", icon: <Landmark className="w-6 h-6" /> },
-    { name: "Fintech", icon: <CreditCard className="w-6 h-6" /> },
-    { name: "Banking", icon: <Building2 className="w-6 h-6" /> },
-    { name: "Private", icon: <Landmark className="w-6 h-6" /> },
-    { name: "Insurance", icon: <FileEdit className="w-6 h-6" /> },
-    { name: "Energy", icon: <Zap className="w-6 h-6" /> },
-    { name: "AgriTech", icon: <Leaf className="w-6 h-6" /> },
+    { name: "Healthcare", icon: <Activity className="w-5 h-5" /> },
+    { name: "FMCG", icon: <Package className="w-5 h-5" /> },
+    { name: "Logistics", icon: <Truck className="w-5 h-5" /> },
+    { name: "Retail", icon: <ShoppingBag className="w-5 h-5" /> },
+    { name: "Public", icon: <Landmark className="w-5 h-5" /> },
+    { name: "Fintech", icon: <CreditCard className="w-5 h-5" /> },
+    { name: "Banking", icon: <Building2 className="w-5 h-5" /> },
+    { name: "Private", icon: <Landmark className="w-5 h-5" /> },
+    { name: "Insurance", icon: <FileEdit className="w-5 h-5" /> },
+    { name: "Energy", icon: <Zap className="w-5 h-5" /> },
+    { name: "AgriTech", icon: <Leaf className="w-5 h-5" /> },
   ];
 
   return (
-    <div className="bg-black text-white px-4 font-sans">
+    <div className="bg-white text-zinc-900 px-4 font-sans py-16">
       <div className="max-w-7xl mx-auto">
-        {/* Main Grid - Matches Screenshot 2026-05-13 at 11.47.47 PM.png */}
-        <div className="grid grid-cols-2 md:grid-cols-6 border-t border-l border-zinc-800">
+        {/* Main Grid - Light Industrial Borders */}
+        <div className="grid grid-cols-2 md:grid-cols-6 border-t border-l border-zinc-200">
+          
           {/* Headline Cell */}
-          <div className="col-span-1 p-8 flex items-center border-r border-b border-zinc-800 min-h-[160px]">
-            <p className="text-zinc-400 text-sm leading-relaxed">
+          <div className="col-span-1 p-8 flex items-center bg-zinc-50/50 border-r border-b border-zinc-200 min-h-[160px]">
+            <p className="text-zinc-500 text-sm leading-relaxed font-medium">
               Intelligence layer for <br />
-              <span className="text-zinc-200">operations </span>
-              <span className="text-zinc-500 italic">that never sleep.</span>
+              <span className="text-zinc-900 font-bold">operations </span>
+              <span className="text-zinc-400 italic">that never sleep.</span>
             </p>
           </div>
 
@@ -46,11 +46,11 @@ export default function TrustGrid() {
           {sectors.map((partner, index) => (
             <div
               key={index}
-              className="col-span-1 p-8 flex items-center justify-center border-r border-b border-zinc-800 grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all cursor-default"
+              className="col-span-1 p-8 flex items-center justify-center border-r border-b border-zinc-200 text-zinc-400 grayscale opacity-70 hover:grayscale-0 hover:opacity-100 hover:text-indigo-600 hover:bg-zinc-50/30 transition-all duration-200 cursor-default"
             >
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2.5">
                 {partner.icon}
-                <span className="font-bold tracking-tight text-xl">
+                <span className="font-bold tracking-tight text-lg text-zinc-800 transition-colors">
                   {partner.name}
                 </span>
               </div>
@@ -58,40 +58,26 @@ export default function TrustGrid() {
           ))}
         </div>
 
-        {/* Testimonial Bar */}
-        <div className="flex flex-col md:flex-row items-center justify-center gap-3 mt-12 text-center md:text-left">
-          <div className="animate-spin" style={{ animationDuration: "1s" }}>
-            <BladeFan color="white" strokeWidth={3} size={28} />
-            {/* <div className="w-full h-full bg-linear-to-tr from-zinc-700 to-zinc-900" /> */}
+        {/* Testimonial Bar - Clean Light Sub-block */}
+        <div className="flex flex-col md:flex-row items-center justify-center gap-4 mt-16 text-center md:text-left rounded-2xl max-w-4xl mx-auto">
+          <div className="animate-spin text-zinc-400" style={{ animationDuration: "12s" }}>
+            <BladeFan color="#a1a1aa" strokeWidth={2.5} size={24} />
           </div>
-          <div className="flex items-center gap-3">
-            <span className="text-zinc-600 text-xl font-serif">“</span>
-            <p className="text-zinc-300 text-sm md:text-base">
+          
+          <div className="flex items-center gap-2">
+            <span className="text-zinc-300 text-2xl font-serif leading-none">“</span>
+            <p className="text-zinc-600 text-sm md:text-base font-medium">
               Pulse is the first platform that actually lets us hear what our
               operational data is trying to tell us.
-              <span className="text-zinc-600 text-xl font-serif"> &quot;</span>
+              <span className="text-zinc-300 text-2xl font-serif leading-none"> ”</span>
             </p>
           </div>
-          <div className="animate-spin" style={{ animationDuration: "1s" }}>
-            <BladeFan color="white" strokeWidth={3} size={28} />
-            {/* <div className="w-full h-full bg-linear-to-tr from-zinc-700 to-zinc-900" /> */}
-          </div>
-
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2">
-              <p className="text-xs text-zinc-400">
-                {/* <span className="text-zinc-200 font-medium">
-                  It’s like giving our database a voice
-                </span> */}
-              </p>
-            </div>
-
-            {/* <div className="flex items-center gap-1 px-3 py-1 bg-zinc-900 border border-zinc-800 rounded-full text-[10px] text-zinc-400 uppercase tracking-widest">
-              <Github />
-              GitHub
-            </div> */}
+          
+          <div className="animate-spin text-zinc-400" style={{ animationDuration: "12s" }}>
+            <BladeFan color="#a1a1aa" strokeWidth={2.5} size={24} />
           </div>
         </div>
+
       </div>
     </div>
   );

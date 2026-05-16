@@ -43,7 +43,7 @@ export default function TeamSection() {
   ];
 
   return (
-    <section className="bg-black text-white font-sans selection:bg-zinc-800">
+    <section data-navbar-theme="dark" className="bg-black text-white font-sans selection:bg-zinc-800">
       <div className="max-w-7xl mx-auto border-x border-zinc-900">
         
         {/* Header Section */}

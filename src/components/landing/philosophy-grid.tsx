@@ -1,7 +1,7 @@
 
 export default function PhilosophyGrid() {
   return (
-    <div className="bg-black text-white font-mono selection:bg-zinc-800">
+    <div data-navbar-theme="dark" className="bg-black text-white font-mono selection:bg-zinc-800">
       <div className="max-w-7xl mx-auto border-x border-zinc-900">
         
         {/* Top Header */}

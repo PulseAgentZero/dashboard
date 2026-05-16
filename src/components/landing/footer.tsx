@@ -20,7 +20,7 @@ export default function MainFooter() {
   ];
 
   return (
-    <footer className="bg-black text-zinc-500 font-sans border-t border-zinc-900">
+    <footer data-navbar-theme="dark" className="bg-black text-zinc-500 font-sans border-t border-zinc-900">
       <div className="max-w-7xl mx-auto border-x border-zinc-900">
         
         {/* Main Grid Content */}
