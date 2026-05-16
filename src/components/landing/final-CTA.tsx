@@ -33,7 +33,7 @@ export default function FinalCTA() {
       </div>
       
 
-      <div className="relative z-10 max-w-4xl mx-auto px-6 flex flex-col items-center text-center">
+      <div className="relative z-10 max-w-8xl mx-auto px-6 flex flex-col items-center text-center">
         {/* Avatar Stack */}
         <div className="flex -space-x-3 mb-10">
   {avatars.map((src, i) => (

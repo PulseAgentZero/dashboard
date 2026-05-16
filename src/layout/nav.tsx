@@ -1,6 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
+import Link from "next/link";
 import { Database, Shell } from "lucide-react";
 import SearchInput from "@/components/ui/search-input";
 
@@ -53,10 +54,13 @@ export default function Nav() {
         </button>
 
         {/* Connect Data CTA */}
-        <button className="flex h-10 items-center gap-1 rounded-lg bg-blue-600 px-4 text-[13px] font-medium text-white transition-colors hover:bg-blue-700 active:bg-blue-800">
+        <Link
+          href="/dashboard/connections"
+          className="flex h-10 items-center gap-1 rounded-lg bg-blue-600 px-4 text-[13px] font-medium text-white transition-colors hover:bg-blue-700 active:bg-blue-800"
+        >
           <Database size={12} />
           <span className="hidden sm:inline text-[14px] mb-0.5">Connect Data</span>
-        </button>
+        </Link>
       </div>
     </header>
   );
