@@ -1,0 +1,27 @@
+# Dependencies
+node_modules
+
+# Build output
+.next
+out
+
+# Development files
+.git
+.gitignore
+*.md
+README*
+
+# Local env files — never bake secrets into the image
+.env
+.env.*
+!.env.example
+
+# Editor / OS
+.DS_Store
+.vscode
+*.swp
+*.swo
+
+# Test / lint
+coverage
+.eslintcache

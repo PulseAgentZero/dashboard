@@ -10,6 +10,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Cpu,
+  Key,
   Layers,
   LayoutDashboard,
   ListChecks,
@@ -18,8 +19,10 @@ import {
   ScrollText,
   Settings,
   Target,
+  Terminal,
   UserCog,
   Users,
+  Webhook,
 } from "lucide-react";
 import { useSidebar } from "@/lib/sidebar-context";
 import { useAuth } from "@/providers/auth-provider";
@@ -44,6 +47,9 @@ const navGroups = [
       { label: "Audit logs", href: "/dashboard/audit-logs", icon: ScrollText },
       { label: "Team & Roles", href: "/dashboard/team", icon: UserCog },
       { label: "Settings", href: "/dashboard/settings", icon: Settings },
+      { label: "API Keys", href: "/dashboard/api-keys", icon: Key },
+      { label: "Webhooks", href: "/dashboard/webhooks", icon: Webhook },
+      { label: "Playground", href: "/dashboard/playground", icon: Terminal },
     ],
   }
 ];

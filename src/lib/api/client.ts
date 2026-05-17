@@ -1,7 +1,8 @@
 import { toast } from "sonner";
 import { tokens } from "@/lib/auth-tokens";
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+// Empty string = same-origin (self-hosted via nginx). Falls back to localhost for local dev.
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 const API_PREFIX = "/api/v1";
 
 const NO_REFRESH_PATHS = [

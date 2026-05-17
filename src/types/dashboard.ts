@@ -20,6 +20,12 @@ export type LastPipelineRun = {
   entities_scored: number | null;
 };
 
+export type RiskTrendPoint = {
+  date: string;
+  avg_risk_score: number;
+  count: number;
+};
+
 export type DashboardOverview = {
   total_entities: number;
   total_entities_change_pct: number | null;
@@ -30,6 +36,7 @@ export type DashboardOverview = {
   active_recommendations: number;
   critical_recommendations: number;
   last_pipeline_run: LastPipelineRun | null;
+  risk_trend: RiskTrendPoint[];
 };
 
 export type Recommendation = {

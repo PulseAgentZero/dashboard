@@ -1,14 +1,14 @@
 "use client";
 
-import { useRiskTrend } from "@/hooks/dashboard/use-risk-trend";
+import { useDashboardOverview } from "@/hooks/dashboard/use-dashboard-overview";
 
 const FALLBACK = [38, 44, 41, 52, 56, 49, 63, 68, 65, 73, 81, 76];
 
 export function TrendsPanel() {
-  const { data, isLoading, isError } = useRiskTrend("30d", "week");
+  const { data, isLoading, isError } = useDashboardOverview();
 
-  const raw: number[] = data?.series?.length
-    ? data.series.map((p) => Math.round((p.avg_risk_score ?? 0) * 100))
+  const raw: number[] = data?.risk_trend?.length
+    ? data.risk_trend.map((p) => Math.round((p.avg_risk_score ?? 0) * 100))
     : FALLBACK;
 
   const max = Math.max(...raw, 1);

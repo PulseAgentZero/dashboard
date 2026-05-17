@@ -475,7 +475,7 @@ function WebhooksTab() {
               </div>
               <div className="min-w-0 flex-1">
                 <p className="truncate text-xs font-medium text-slate-800">{d.event_type}</p>
-                <p className="truncate text-[10px] text-slate-400">{d.url}</p>
+                <p className="truncate text-[10px] text-slate-400">channel: {d.channel_id}</p>
               </div>
               <div className="shrink-0 text-right">
                 {d.response_status && (

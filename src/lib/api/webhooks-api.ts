@@ -2,14 +2,13 @@ import { api } from "./client";
 
 export type WebhookDelivery = {
   id: string;
+  channel_id: string;
   event_type: string;
-  url: string;
-  status: "success" | "failed" | "pending";
+  status: string;
   response_status: number | null;
   attempts: number;
   last_attempt_at: string | null;
   created_at: string;
-  payload?: Record<string, unknown>;
 };
 
 export type LicenseInfo = {

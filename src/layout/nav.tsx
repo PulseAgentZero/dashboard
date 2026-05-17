@@ -17,6 +17,9 @@ const pageMeta: Record<string, { title: string; crumb: string }> = {
   "/dashboard/alerts": { title: "Alerts", crumb: "Alerts" },
   "/dashboard/team": { title: "Team & Roles", crumb: "Team & Roles" },
   "/dashboard/settings": { title: "Settings", crumb: "Settings" },
+  "/dashboard/api-keys": { title: "API Keys", crumb: "API Keys" },
+  "/dashboard/webhooks": { title: "Webhooks", crumb: "Webhooks" },
+  "/dashboard/playground": { title: "Playground", crumb: "Playground" },
 };
 
 const sortedRoutes = Object.keys(pageMeta).sort((a, b) => b.length - a.length);
