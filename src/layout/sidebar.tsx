@@ -9,8 +9,13 @@ import {
   ChartNoAxesCombined,
   ChevronLeft,
   ChevronRight,
+  Cpu,
+  Layers,
   LayoutDashboard,
   ListChecks,
+  Loader2,
+  LogOut,
+  ScrollText,
   Settings,
   Target,
   UserCog,
@@ -34,6 +39,9 @@ const navGroups = [
       { label: "Onboarding", href: "/dashboard/onboarding", icon: ListChecks },
       { label: "Connections", href: "/dashboard/connections", icon: Cable },
       { label: "Alerts", href: "/dashboard/alerts", icon: Bell },
+      { label: "Pipeline", href: "/dashboard/pipeline", icon: Cpu },
+      { label: "Schema mappings", href: "/dashboard/schema-mappings", icon: Layers },
+      { label: "Audit logs", href: "/dashboard/audit-logs", icon: ScrollText },
       { label: "Team & Roles", href: "/dashboard/team", icon: UserCog },
       { label: "Settings", href: "/dashboard/settings", icon: Settings },
     ],
@@ -95,7 +103,7 @@ export default function Sidebar() {
         )}
       </div>
 
-      <nav className="flex-1 overflow-y-auto py-4">
+      <nav className="flex-1 overflow-y-auto py-4 [&::-webkit-scrollbar]:hidden">
         <div className="space-y-5 px-2">
           {navGroups.map((group, index) => (
             <div key={index}>
@@ -161,7 +169,7 @@ export default function Sidebar() {
               disabled={isLoggingOut}
               className="shrink-0 text-[11px] font-medium text-slate-500 hover:text-slate-800 disabled:opacity-50"
             >
-              {isLoggingOut ? "…" : "Sign out"}
+              {isLoggingOut ? <Loader2 size={14} className="animate-spin" /> : <LogOut size={14} />}
             </button>
           </div>
         )}

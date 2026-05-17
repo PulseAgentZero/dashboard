@@ -8,7 +8,7 @@ export function postAuthRedirect(
   if (user && !user.is_verified) {
     router.push("/auth/verify-email?notice=1");
   } else if (!org?.onboarding_done) {
-    router.push("/onboarding");
+    router.push("/dashboard/onboarding");
   } else {
     router.push("/dashboard");
   }

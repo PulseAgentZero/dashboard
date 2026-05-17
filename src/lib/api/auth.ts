@@ -44,4 +44,7 @@ export const authApi = {
       token,
       new_password,
     }),
+
+  acceptInvite: (body: { token: string; full_name: string; password: string }) =>
+    api.post<TokenResponse>("/auth/accept-invite", body),
 };
