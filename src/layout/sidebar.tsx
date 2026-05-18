@@ -22,6 +22,7 @@ import {
   Settings,
   Target,
   Terminal,
+  BookOpen,
   UserCog,
   Users,
 } from "lucide-react";
@@ -84,7 +85,10 @@ const navGroups: NavGroup[] = [
   },
   {
     label: "Developer",
-    items: [{ label: "Playground", href: "/dashboard/playground", icon: Terminal }],
+    items: [
+      { label: "Playground", href: "/dashboard/playground", icon: Terminal },
+      { label: "Documentation", href: "/docs", icon: BookOpen },
+    ],
   },
 ];
 

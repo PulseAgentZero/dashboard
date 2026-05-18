@@ -2,8 +2,17 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   // Standalone output produces a minimal server.js + no node_modules dependency.
-  // Required for the self-hosted Docker image.
+  // Required for the bundled pulseai/pulse Docker image build.
   output: process.env.NEXT_BUILD_STANDALONE === "1" ? "standalone" : undefined,
+  async redirects() {
+    return [
+      {
+        source: "/docs/hosting/frontend",
+        destination: "/docs/hosting/self-hosted",
+        permanent: true,
+      },
+    ];
+  },
   images: {
     remotePatterns: [
       {

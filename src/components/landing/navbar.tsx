@@ -17,6 +17,9 @@ export default function Navbar() {
         <Link href="/#features" className="hover:text-white transition-colors">
           Features
         </Link>
+        <Link href="/docs" className="hover:text-white transition-colors">
+          Docs
+        </Link>
         {cloud && (
           <Link href="/pricing" className="hover:text-white transition-colors">
             Pricing

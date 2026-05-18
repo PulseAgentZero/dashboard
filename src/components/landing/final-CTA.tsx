@@ -1,5 +1,6 @@
 import React from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 
 export default function FinalCTA() {
   const avatars = [
@@ -71,9 +72,12 @@ export default function FinalCTA() {
             <span className="text-white font-bold tracking-tighter">Get started with pulse</span>
 
           </div>
-          <button className="px-8 py-3 rounded-full border border-zinc-800 bg-black text-zinc-300 hover:text-white hover:bg-zinc-900 transition-all font-medium">
-            Read the docs.
-          </button>
+          <Link
+            href="/docs"
+            className="px-8 py-3 rounded-full border border-zinc-800 bg-black text-zinc-300 hover:text-white hover:bg-zinc-900 transition-all font-medium"
+          >
+            Read the docs
+          </Link>
         </div>
 
         {/* Footer Note */}

@@ -3,134 +3,20 @@
 import { useState } from "react";
 import { ChevronRight, Loader2, Play, Terminal } from "lucide-react";
 import { useApiKeys } from "@/hooks/apikeys/use-apikeys";
+import {
+  PUBLIC_API_CATALOG,
+  type PublicApiEndpoint,
+} from "@/lib/docs/public-api-catalog";
 
 const BASE_URL =
   (typeof window !== "undefined" ? "" : process.env.NEXT_PUBLIC_API_URL) ||
   "http://localhost:8000";
 
-type Param = { key: string; placeholder?: string; required?: boolean };
-
-type Endpoint = {
-  id: string;
-  label: string;
-  method: "GET" | "POST";
-  path: string;
-  description: string;
-  pathParams?: Param[];
-  queryParams?: Param[];
-  body?: Record<string, string>;
-  scope: "read" | "write";
-};
-
-type Group = { group: string; endpoints: Endpoint[] };
-
-const CATALOG: Group[] = [
-  {
-    group: "Entities",
-    endpoints: [
-      {
-        id: "list-entities",
-        label: "List entities",
-        method: "GET",
-        path: "/entities",
-        description: "Returns all profiled entities with current risk scores.",
-        queryParams: [
-          { key: "risk_tier", placeholder: "High | Medium | Low | Healthy" },
-          { key: "segment", placeholder: "segment name" },
-          { key: "search", placeholder: "search term" },
-          { key: "page", placeholder: "1" },
-          { key: "limit", placeholder: "50" },
-        ],
-        scope: "read",
-      },
-      {
-        id: "get-entity",
-        label: "Get entity",
-        method: "GET",
-        path: "/entities/{entity_id}",
-        description: "Full profile, risk score, and open recommendations for one entity.",
-        pathParams: [{ key: "entity_id", placeholder: "entity-id", required: true }],
-        scope: "read",
-      },
-      {
-        id: "entity-risk-history",
-        label: "Entity risk history",
-        method: "GET",
-        path: "/entities/{entity_id}/risk-history",
-        description: "Time-series risk scores for an entity.",
-        pathParams: [{ key: "entity_id", placeholder: "entity-id", required: true }],
-        queryParams: [{ key: "period", placeholder: "7d | 30d | 90d | 180d" }],
-        scope: "read",
-      },
-    ],
-  },
-  {
-    group: "Recommendations",
-    endpoints: [
-      {
-        id: "list-recs",
-        label: "List recommendations",
-        method: "GET",
-        path: "/recommendations",
-        description: "Returns open recommendations. Filter by status or urgency.",
-        queryParams: [
-          { key: "status", placeholder: "open | actioned | dismissed" },
-          { key: "urgency", placeholder: "critical | high | medium | low" },
-          { key: "page", placeholder: "1" },
-          { key: "limit", placeholder: "50" },
-        ],
-        scope: "read",
-      },
-      {
-        id: "get-rec",
-        label: "Get recommendation",
-        method: "GET",
-        path: "/recommendations/{recommendation_id}",
-        description: "Full details for a single recommendation.",
-        pathParams: [{ key: "recommendation_id", placeholder: "uuid", required: true }],
-        scope: "read",
-      },
-    ],
-  },
-  {
-    group: "Analytics",
-    endpoints: [
-      {
-        id: "analytics-overview",
-        label: "Analytics overview",
-        method: "GET",
-        path: "/analytics/overview",
-        description: "Aggregate risk and performance stats for the requested period.",
-        queryParams: [{ key: "period", placeholder: "7d | 30d | 90d" }],
-        scope: "read",
-      },
-    ],
-  },
-  {
-    group: "Pipeline",
-    endpoints: [
-      {
-        id: "list-runs",
-        label: "List pipeline runs",
-        method: "GET",
-        path: "/pipeline/runs",
-        description: "Recent pipeline runs for your org.",
-        queryParams: [{ key: "limit", placeholder: "25" }],
-        scope: "read",
-      },
-      {
-        id: "trigger-pipeline",
-        label: "Trigger pipeline run",
-        method: "POST",
-        path: "/pipeline/trigger",
-        description: "Queue a new pipeline run. Requires a write-scoped key.",
-        scope: "write",
-      },
-    ],
-  },
-];
-
-function buildUrl(endpoint: Endpoint, pathValues: Record<string, string>, queryValues: Record<string, string>) {
+function buildUrl(
+  endpoint: PublicApiEndpoint,
+  pathValues: Record<string, string>,
+  queryValues: Record<string, string>,
+) {
   let path = endpoint.path;
   for (const [k, v] of Object.entries(pathValues)) {
     if (v) path = path.replace(`{${k}}`, encodeURIComponent(v));
@@ -148,7 +34,9 @@ export function PlaygroundPage() {
     (keysRaw as { api_keys?: typeof allKeys })?.api_keys ??
     (Array.isArray(keysRaw) ? keysRaw : []);
 
-  const [selectedEndpoint, setSelectedEndpoint] = useState<Endpoint>(CATALOG[0].endpoints[0]);
+  const [selectedEndpoint, setSelectedEndpoint] = useState<PublicApiEndpoint>(
+    PUBLIC_API_CATALOG[0]!.endpoints[0]!,
+  );
   const [selectedKeyPrefix, setSelectedKeyPrefix] = useState<string>("");
   const [pathValues, setPathValues] = useState<Record<string, string>>({});
   const [queryValues, setQueryValues] = useState<Record<string, string>>({});
@@ -194,7 +82,7 @@ export function PlaygroundPage() {
     }
   }
 
-  function selectEndpoint(ep: Endpoint) {
+  function selectEndpoint(ep: PublicApiEndpoint) {
     setSelectedEndpoint(ep);
     setPathValues({});
     setQueryValues({});
@@ -207,7 +95,7 @@ export function PlaygroundPage() {
     <div className="flex h-[calc(100vh-64px)] overflow-hidden">
       {/* ── Left: endpoint catalog ─────────────────────────────────── */}
       <aside className="w-56 shrink-0 overflow-y-auto border-r border-slate-200 bg-white py-4">
-        {CATALOG.map((g) => (
+        {PUBLIC_API_CATALOG.map((g) => (
           <div key={g.group} className="mb-4">
             <p className="mb-1 px-3 text-[10px] font-semibold uppercase tracking-wider text-slate-400">
               {g.group}

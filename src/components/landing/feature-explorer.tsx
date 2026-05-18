@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import Link from "next/link";
 import { MousePointer2 } from "lucide-react";
 
 export default function FeatureExplorer() {
@@ -45,7 +46,7 @@ export default function FeatureExplorer() {
   ];
 
   return (
-    <div className="bg-black text-white min-h-screen p-8 font-mono selection:bg-zinc-800">
+    <div id="features" className="bg-black text-white min-h-screen p-8 font-mono selection:bg-zinc-800">
       <div className="max-w-7xl mx-auto border-x border-zinc-900">
         {/* Top Header Section - Matches Screenshot 2026-05-13 at 11.56.49 PM.jpg */}
         <div className="grid grid-cols-1 md:grid-cols-2 border-y border-zinc-900">
@@ -67,9 +68,12 @@ export default function FeatureExplorer() {
             <button className="bg-white/90 text-black px-6 py-2 rounded-full flex items-center gap-2 font-sans font-bold hover:bg-zinc-400 transition-colors">
               Explore all features
             </button>
-            <button className="border border-zinc-800 px-6 py-2 rounded-full font-sans font-medium hover:bg-zinc-900 transition-colors">
+            <Link
+              href="/docs"
+              className="border border-zinc-800 px-6 py-2 rounded-full font-sans font-medium hover:bg-zinc-900 transition-colors"
+            >
               Docs
-            </button>
+            </Link>
           </div>
         </div>
 
