@@ -1,28 +1,49 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
-  Bot, Building2, CheckCircle2, Copy, Download, Eye, EyeOff,
-  KeyRound, Loader2, Plus, RefreshCw, ShieldCheck, Trash2, User, Webhook, XCircle,
+  Bot, Building2, Copy, Download, Eye, EyeOff,
+  KeyRound, Loader2, Plus, ShieldCheck, Trash2, User, Webhook,
 } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/providers/auth-provider";
-import { useOrganization, useUpdateOrganization } from "@/hooks/org/use-organization";
-import { useUpdateMe, useUpdatePassword } from "@/hooks/users/use-users";
+import {
+  useOrganization,
+  useRemoveOrgLogo,
+  useUpdateOrganization,
+  useUploadOrgLogo,
+} from "@/hooks/org/use-organization";
+import {
+  useRemoveAvatar,
+  useUpdateMe,
+  useUpdatePassword,
+  useUploadAvatar,
+} from "@/hooks/users/use-users";
+import { ImageUploadField } from "@/components/settings/image-upload-field";
+import Link from "next/link";
 import { useApiKeys, useCreateApiKey, useRevokeApiKey, useLlmKeys, useUpdateLlmKeys } from "@/hooks/apikeys/use-apikeys";
-import { useWebhookDeliveries, useRetryWebhook, useLicense, useActivateLicense } from "@/hooks/webhooks/use-webhooks";
+import { useUsage } from "@/hooks/usage/use-usage";
+import { UsageBar } from "@/components/shared/usage-bar";
+import { isCloudDeployment } from "@/lib/deployment";
+import { useLicense, useActivateLicense } from "@/hooks/webhooks/use-webhooks";
+import { WebhooksSettingsTab } from "@/components/settings/webhooks-settings-tab";
 import { api } from "@/lib/api/client";
-import type { WebhookDelivery } from "@/lib/api/webhooks-api";
 
-const TABS = [
+const ALL_TABS = [
   { id: "org", label: "Organization", icon: Building2 },
   { id: "account", label: "My account", icon: User },
   { id: "apikeys", label: "API keys", icon: KeyRound },
-  { id: "llm", label: "LLM keys", icon: Bot },
+  { id: "llm", label: "LLM keys", icon: Bot, selfHostedOnly: true },
   { id: "webhooks", label: "Webhooks", icon: Webhook },
-  { id: "license", label: "License", icon: ShieldCheck },
+  { id: "license", label: "License", icon: ShieldCheck, selfHostedOnly: true },
 ] as const;
-type Tab = (typeof TABS)[number]["id"];
+
+type Tab = (typeof ALL_TABS)[number]["id"];
+
+function getVisibleTabs() {
+  const cloud = isCloudDeployment();
+  return ALL_TABS.filter((t) => !cloud || !("selfHostedOnly" in t && t.selfHostedOnly));
+}
 
 const INDUSTRIES = [
   "Telecom", "Healthcare", "Retail & FMCG", "Logistics & Supply Chain",
@@ -47,7 +68,11 @@ const inputCls =
 
 function OrgTab() {
   const { data: org, isLoading } = useOrganization();
+  const { user } = useAuth();
   const { mutate: update, isPending } = useUpdateOrganization();
+  const { mutate: uploadLogo, isPending: uploadingLogo } = useUploadOrgLogo();
+  const { mutate: removeLogo, isPending: removingLogo } = useRemoveOrgLogo();
+  const isAdmin = user?.role === "admin";
 
   function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -92,6 +117,22 @@ function OrgTab() {
 
   return (
     <form key={org?.id} onSubmit={handleSubmit} className="space-y-5">
+      <ImageUploadField
+        label="Business logo"
+        hint={
+          isAdmin
+            ? "Shown in the sidebar and shared exports. Square images work best."
+            : "Only organization admins can change the business logo."
+        }
+        imageUrl={org?.logo_url}
+        fallbackLabel={org?.name ?? "Org"}
+        shape="square"
+        disabled={!isAdmin}
+        uploading={uploadingLogo || removingLogo}
+        onUpload={(file) => uploadLogo(file)}
+        onRemove={() => removeLogo()}
+      />
+
       <div className="grid gap-5 sm:grid-cols-2">
         <Field label="Organization name">
           <input name="name" className={inputCls} defaultValue={org?.name ?? ""} placeholder="Acme Corp" />
@@ -160,6 +201,8 @@ function OrgTab() {
 function AccountTab() {
   const { user } = useAuth();
   const { mutate: updateMe, isPending: updatingMe } = useUpdateMe();
+  const { mutate: uploadAvatar, isPending: uploadingAvatar } = useUploadAvatar();
+  const { mutate: removeAvatar, isPending: removingAvatar } = useRemoveAvatar();
   const { mutate: updatePwd, isPending: updatingPwd } = useUpdatePassword();
   const [pwd, setPwd] = useState({ current: "", next: "", confirm: "" });
   const [pwdError, setPwdError] = useState("");
@@ -186,6 +229,17 @@ function AccountTab() {
       <section>
         <p className="mb-4 text-xs font-semibold uppercase tracking-wide text-slate-400">Profile</p>
         <form onSubmit={handleProfile} className="space-y-4">
+          <ImageUploadField
+            label="Profile photo"
+            hint="Your photo appears in the sidebar and team member list."
+            imageUrl={user?.profile_image_url}
+            fallbackLabel={user?.full_name || user?.email || "User"}
+            shape="circle"
+            uploading={uploadingAvatar || removingAvatar}
+            onUpload={(file) => uploadAvatar(file)}
+            onRemove={() => removeAvatar()}
+          />
+
           <div className="grid gap-4 sm:grid-cols-2">
             <Field label="Full name">
               <input
@@ -254,11 +308,15 @@ function AccountTab() {
 
 function ApiKeysTab() {
   const { data: keys, isLoading } = useApiKeys();
+  const { data: usage } = useUsage();
   const { mutate: create, isPending: creating, data: newKey } = useCreateApiKey();
   const { mutate: revoke, isPending: revoking, variables: revokingId } = useRevokeApiKey();
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({ name: "", scope: "read" });
   const [revealed, setRevealed] = useState<string | null>(null);
+
+  const slot = usage?.limits?.api_keys;
+  const atLimit = slot ? slot.limit !== null && slot.used >= slot.limit : false;
 
   function handleCreate(e: React.SyntheticEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -267,13 +325,28 @@ function ApiKeysTab() {
     });
   }
 
-  const keyList = Array.isArray(keys) ? keys : [];
+  const keyList = keys ?? [];
 
   return (
     <div className="space-y-5">
       <section>
         <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-400">API keys</p>
         <p className="mb-4 text-xs text-slate-500">Use these keys to authenticate programmatic access to the Pulse API.</p>
+
+        {slot && (
+          <div className="mb-4">
+            <UsageBar used={slot.used} limit={slot.limit} label="API keys used" />
+            {atLimit && isCloudDeployment() && (
+              <p className="mt-2 text-xs text-slate-500">
+                Free plan allows {slot.limit} API key.{" "}
+                <Link href="/pricing" className="font-semibold text-blue-600 hover:underline">
+                  Upgrade to Pro
+                </Link>{" "}
+                for unlimited keys.
+              </p>
+            )}
+          </div>
+        )}
 
         {newKey?.key && (
           <div className="mb-4 rounded-lg border border-emerald-200 bg-emerald-50 p-4">
@@ -308,7 +381,6 @@ function ApiKeysTab() {
                 <select className={inputCls} value={form.scope} onChange={(e) => setForm((f) => ({ ...f, scope: e.target.value }))}>
                   <option value="read">read</option>
                   <option value="write">write</option>
-                  <option value="admin">admin</option>
                 </select>
               </div>
             </div>
@@ -346,7 +418,12 @@ function ApiKeysTab() {
         </div>
 
         {!showForm && (
-          <button onClick={() => setShowForm(true)} className="mt-3 flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-50">
+          <button
+            type="button"
+            onClick={() => setShowForm(true)}
+            disabled={atLimit}
+            className="mt-3 flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+          >
             <Plus size={12} /> Generate new key
           </button>
         )}
@@ -427,81 +504,6 @@ function LlmKeysTab() {
   );
 }
 
-// ─── Webhooks ────────────────────────────────────────────────────────────────
-
-function toDeliveries(raw: unknown): WebhookDelivery[] {
-  if (Array.isArray(raw)) return raw as WebhookDelivery[];
-  if (raw && typeof raw === "object") {
-    const r = raw as Record<string, unknown>;
-    for (const k of ["deliveries", "data", "items"]) {
-      if (Array.isArray(r[k])) return r[k] as WebhookDelivery[];
-    }
-  }
-  return [];
-}
-
-function WebhooksTab() {
-  const { data: raw, isLoading } = useWebhookDeliveries();
-  const { mutate: retry, isPending: retrying, variables: retryingId } = useRetryWebhook();
-  const deliveries = toDeliveries(raw);
-
-  return (
-    <div className="space-y-4">
-      <div>
-        <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Webhook deliveries</p>
-        <p className="mt-1 text-xs text-slate-500">Outbound webhook events sent to your registered endpoints.</p>
-      </div>
-
-      {isLoading && Array.from({ length: 4 }).map((_, i) => <div key={i} className="h-12 animate-pulse rounded-lg bg-slate-100" />)}
-
-      {!isLoading && deliveries.length === 0 && (
-        <div className="flex flex-col items-center py-10 text-center">
-          <Webhook size={28} className="text-slate-200" />
-          <p className="mt-2 text-sm font-medium text-slate-500">No deliveries yet</p>
-          <p className="mt-0.5 text-xs text-slate-400">Webhook events will appear here when triggered.</p>
-        </div>
-      )}
-
-      {deliveries.length > 0 && (
-        <div className="divide-y divide-slate-100 rounded-xl border border-slate-200">
-          {deliveries.map((d) => (
-            <div key={d.id} className="flex items-center gap-4 px-4 py-3">
-              <div className="shrink-0">
-                {d.status === "success"
-                  ? <CheckCircle2 size={14} className="text-emerald-500" />
-                  : d.status === "failed"
-                  ? <XCircle size={14} className="text-rose-500" />
-                  : <Loader2 size={14} className="animate-spin text-slate-400" />}
-              </div>
-              <div className="min-w-0 flex-1">
-                <p className="truncate text-xs font-medium text-slate-800">{d.event_type}</p>
-                <p className="truncate text-[10px] text-slate-400">channel: {d.channel_id}</p>
-              </div>
-              <div className="shrink-0 text-right">
-                {d.response_status && (
-                  <span className={`text-[11px] font-semibold ${d.response_status < 300 ? "text-emerald-600" : "text-rose-600"}`}>
-                    {d.response_status}
-                  </span>
-                )}
-                <p className="text-[10px] text-slate-400">{d.attempts} attempt{d.attempts !== 1 ? "s" : ""}</p>
-              </div>
-              {d.status === "failed" && (
-                <button
-                  disabled={retrying && retryingId === d.id}
-                  onClick={() => retry(d.id)}
-                  className="flex shrink-0 items-center gap-1 rounded-lg border border-slate-200 px-2.5 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-50 disabled:opacity-50"
-                >
-                  {retrying && retryingId === d.id ? <Loader2 size={11} className="animate-spin" /> : <RefreshCw size={11} />}
-                  Retry
-                </button>
-              )}
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
 
 // ─── License ─────────────────────────────────────────────────────────────────
 
@@ -592,7 +594,14 @@ function LicenseTab() {
 // ─── Settings page ────────────────────────────────────────────────────────────
 
 export function SettingsPage() {
+  const visibleTabs = useMemo(() => getVisibleTabs(), []);
   const [tab, setTab] = useState<Tab>("org");
+
+  useEffect(() => {
+    if (!visibleTabs.some((t) => t.id === tab)) {
+      setTab("org");
+    }
+  }, [visibleTabs, tab]);
 
   return (
     <div className="mx-auto max-w-8xl space-y-5">
@@ -605,7 +614,7 @@ export function SettingsPage() {
 
       <div className="rounded-xl border border-slate-200 bg-white">
         <div className="flex flex-wrap border-b border-slate-100 px-5 pt-4">
-          {TABS.map(({ id, label, icon: Icon }) => (
+          {visibleTabs.map(({ id, label, icon: Icon }) => (
             <button
               key={id}
               onClick={() => setTab(id)}
@@ -626,7 +635,7 @@ export function SettingsPage() {
           {tab === "account" && <AccountTab />}
           {tab === "apikeys" && <ApiKeysTab />}
           {tab === "llm" && <LlmKeysTab />}
-          {tab === "webhooks" && <WebhooksTab />}
+          {tab === "webhooks" && <WebhooksSettingsTab />}
           {tab === "license" && <LicenseTab />}
         </div>
       </div>

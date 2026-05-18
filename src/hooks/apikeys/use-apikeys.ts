@@ -1,11 +1,16 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { apiKeysApi, llmKeysApi } from "@/lib/api/apikeys-api";
+import { toastPlanError } from "@/lib/plan-errors";
+import { useAuthEnabled } from "@/hooks/use-auth-enabled";
 
 export function useApiKeys() {
+  const enabled = useAuthEnabled();
+
   return useQuery({
     queryKey: ["api-keys"],
     queryFn: apiKeysApi.list,
+    enabled,
     staleTime: 30_000,
     retry: 1,
   });
@@ -19,7 +24,7 @@ export function useCreateApiKey() {
     onSuccess: () => {
       void qc.invalidateQueries({ queryKey: ["api-keys"] });
     },
-    onError: () => toast.error("Failed to create API key"),
+    onError: (e) => toastPlanError(e, "Failed to create API key"),
   });
 }
 

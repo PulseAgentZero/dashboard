@@ -49,10 +49,10 @@ export function AnalyticsPage() {
   const hasGate = trendError || segError || cohortError;
 
   const trendPoints: number[] = (() => {
-    if (trendError || !trend) return [];
-    const raw = trend as Record<string, unknown>;
-    const points = (raw.points ?? raw.data ?? raw.trend ?? []) as Array<Record<string, unknown>>;
-    return Array.isArray(points) ? points.map((p) => Number(p.avg_risk_score ?? p.risk_score ?? p.value ?? 0)) : [];
+    if (trendError || !trend?.series?.length) return [];
+    return trend.series.map((p) =>
+      Math.round((p.avg_risk_score ?? 0) * 100),
+    );
   })();
 
   const segList = (() => {

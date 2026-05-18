@@ -1,18 +1,36 @@
 "use client";
 
+import { useAnalyticsRiskTrend } from "@/hooks/analytics/use-analytics";
 import { useDashboardOverview } from "@/hooks/dashboard/use-dashboard-overview";
 
-const FALLBACK = [38, 44, 41, 52, 56, 49, 63, 68, 65, 73, 81, 76];
+function toPercentScores(
+  points: Array<{ avg_risk_score?: number }>,
+): number[] {
+  return points.map((p) => Math.round((p.avg_risk_score ?? 0) * 100));
+}
 
 export function TrendsPanel() {
-  const { data, isLoading, isError } = useDashboardOverview();
+  const {
+    data: trend,
+    isLoading: trendLoading,
+    isError: trendError,
+  } = useAnalyticsRiskTrend("30d", "week");
+  const { data: overview, isLoading: overviewLoading } = useDashboardOverview();
 
-  const raw: number[] = data?.risk_trend?.length
-    ? data.risk_trend.map((p) => Math.round((p.avg_risk_score ?? 0) * 100))
-    : FALLBACK;
+  const isLoading = trendLoading || overviewLoading;
+
+  const raw: number[] = (() => {
+    if (trend?.series?.length) {
+      return toPercentScores(trend.series);
+    }
+    if (overview?.risk_trend?.length) {
+      return toPercentScores(overview.risk_trend);
+    }
+    return [];
+  })();
 
   const max = Math.max(...raw, 1);
-  const peak = Math.max(...raw);
+  const peak = raw.length > 0 ? Math.max(...raw) : 0;
   const last = raw[raw.length - 1] ?? 0;
   const first = raw[0] ?? 0;
   const change = raw.length > 1 ? last - first : 0;
@@ -28,15 +46,22 @@ export function TrendsPanel() {
             Risk score trend
           </h2>
         </div>
-        {isError && (
-          <span className="rounded-md bg-slate-100 px-2 py-1 text-[11px] text-slate-400">
-            Demo data
+        {trendError && (
+          <span className="rounded-md bg-amber-50 px-2 py-1 text-[11px] font-medium text-amber-700">
+            Live data unavailable
           </span>
         )}
       </div>
 
       {isLoading ? (
         <div className="h-44 animate-pulse rounded-lg bg-slate-100" />
+      ) : raw.length === 0 ? (
+        <div className="flex h-44 flex-col items-center justify-center rounded-lg bg-slate-50 px-4 text-center">
+          <p className="text-sm font-medium text-slate-600">No trend data yet</p>
+          <p className="mt-1 text-xs text-slate-400">
+            Run a pipeline to populate weekly risk scores.
+          </p>
+        </div>
       ) : (
         <div className="flex h-44 items-end gap-1 rounded-lg bg-slate-50 px-3 pb-3 pt-4">
           {raw.map((v, i) => (
@@ -53,15 +78,27 @@ export function TrendsPanel() {
 
       <div className="mt-4 grid grid-cols-3 gap-3">
         {[
-          { label: "Peak", value: `${peak}%`, color: "text-slate-900" },
+          { label: "Peak", value: raw.length ? `${peak}%` : "—", color: "text-slate-900" },
           {
             label: "30d change",
-            value: change === 0 ? "—" : `${change > 0 ? "+" : ""}${change}%`,
-            color: change > 0 ? "text-rose-600" : change < 0 ? "text-emerald-600" : "text-slate-500",
+            value:
+              raw.length < 2
+                ? "—"
+                : change === 0
+                  ? "0%"
+                  : `${change > 0 ? "+" : ""}${change}%`,
+            color:
+              raw.length < 2
+                ? "text-slate-500"
+                : change > 0
+                  ? "text-rose-600"
+                  : change < 0
+                    ? "text-emerald-600"
+                    : "text-slate-500",
           },
           {
             label: "Data points",
-            value: raw.length.toString(),
+            value: raw.length ? raw.length.toString() : "—",
             color: "text-slate-900",
           },
         ].map(({ label, value, color }) => (

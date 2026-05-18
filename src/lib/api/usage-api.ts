@@ -13,6 +13,8 @@ export type PlanUsage = {
     users: UsageSlot;
     pipeline_runs_this_month: UsageSlot;
     agent_queries_this_month: UsageSlot;
+    studio_dashboards?: UsageSlot;
+    studio_executions_today?: UsageSlot;
   };
 };
 

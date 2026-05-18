@@ -18,9 +18,41 @@ export function useUpdateOrganization() {
     mutationFn: (body: UpdateOrgRequest) => orgApi.update(body),
     onSuccess: () => {
       void qc.invalidateQueries({ queryKey: ["organization"] });
-      void qc.invalidateQueries({ queryKey: ["auth", "me"] });
+      void qc.invalidateQueries({ queryKey: ["me"] });
       toast.success("Organization updated");
     },
     onError: () => toast.error("Failed to update organization"),
+  });
+}
+
+export function useUploadOrgLogo() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (file: File) => {
+      const uploaded = await orgApi.uploadAsset(file, "logo");
+      return orgApi.update({ logo_url: uploaded.url });
+    },
+    onSuccess: () => {
+      void qc.invalidateQueries({ queryKey: ["organization"] });
+      void qc.invalidateQueries({ queryKey: ["me"] });
+      toast.success("Business logo updated");
+    },
+    onError: (err: unknown) => {
+      const msg = err instanceof Error ? err.message : "Failed to upload logo";
+      toast.error(msg);
+    },
+  });
+}
+
+export function useRemoveOrgLogo() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: () => orgApi.update({ logo_url: null }),
+    onSuccess: () => {
+      void qc.invalidateQueries({ queryKey: ["organization"] });
+      void qc.invalidateQueries({ queryKey: ["me"] });
+      toast.success("Business logo removed");
+    },
+    onError: () => toast.error("Failed to remove logo"),
   });
 }

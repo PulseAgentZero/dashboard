@@ -6,32 +6,8 @@ import { toast } from "sonner";
 import { useApiKeys, useCreateApiKey, useRevokeApiKey } from "@/hooks/apikeys/use-apikeys";
 import { useUsage } from "@/hooks/usage/use-usage";
 
-function UsageBar({ used, limit, label }: { used: number; limit: number | null; label: string }) {
-  if (limit === null) return null;
-  const pct = Math.min((used / limit) * 100, 100);
-  const atLimit = used >= limit;
-  return (
-    <div className="rounded-lg border border-slate-200 bg-white p-4">
-      <div className="mb-2 flex items-center justify-between">
-        <span className="text-sm font-medium text-slate-700">{label}</span>
-        <span className={`text-sm font-semibold ${atLimit ? "text-rose-600" : "text-slate-600"}`}>
-          {used} / {limit}
-        </span>
-      </div>
-      <div className="h-1.5 w-full rounded-full bg-slate-100">
-        <div
-          className={`h-1.5 rounded-full transition-all ${atLimit ? "bg-rose-500" : "bg-blue-500"}`}
-          style={{ width: `${pct}%` }}
-        />
-      </div>
-      {atLimit && (
-        <p className="mt-2 text-xs text-rose-600">
-          Limit reached — upgrade to Pro to create more.
-        </p>
-      )}
-    </div>
-  );
-}
+import { UsageBar } from "@/components/shared/usage-bar";
+
 
 function CreateModal({ onClose, onCreated }: { onClose: () => void; onCreated: (key: string) => void }) {
   const [name, setName] = useState("");
@@ -136,10 +112,7 @@ export function ApiKeysPage() {
   const [showCreate, setShowCreate] = useState(false);
   const [newKey, setNewKey] = useState<string | null>(null);
 
-  const keys: {
-    id: string; name: string; key_prefix: string; scope: string;
-    last_used_at: string | null; expires_at: string | null; created_at: string;
-  }[] = (keysData as { api_keys?: typeof keys })?.api_keys ?? (Array.isArray(keysData) ? keysData : []);
+  const keys = keysData ?? [];
 
   const slot = usage?.limits?.api_keys;
   const atLimit = slot ? (slot.limit !== null && slot.used >= slot.limit) : false;

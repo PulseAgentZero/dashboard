@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { alertsApi } from "@/lib/api/alerts-api";
+import { toastPlanError } from "@/lib/plan-errors";
 import type { AlertRule, AlertChannel } from "@/lib/api/alerts-api";
 
 export function useAlertRules() {
@@ -53,9 +54,10 @@ export function useCreateAlertChannel() {
       alertsApi.createChannel(body),
     onSuccess: () => {
       void qc.invalidateQueries({ queryKey: ["alerts", "channels"] });
+      void qc.invalidateQueries({ queryKey: ["usage"] });
       toast.success("Channel created");
     },
-    onError: () => toast.error("Failed to create channel"),
+    onError: (e) => toastPlanError(e, "Failed to create channel", { upgradePath: "/dashboard/plan" }),
   });
 }
 
@@ -65,6 +67,7 @@ export function useDeleteAlertChannel() {
     mutationFn: (id: string) => alertsApi.deleteChannel(id),
     onSuccess: () => {
       void qc.invalidateQueries({ queryKey: ["alerts", "channels"] });
+      void qc.invalidateQueries({ queryKey: ["usage"] });
       toast.success("Channel removed");
     },
     onError: () => toast.error("Failed to remove channel"),

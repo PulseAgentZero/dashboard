@@ -26,13 +26,16 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# Install deps first — cached unless package files change
+# Install deps first — cached unless package files change.
+# Prefer npm (package-lock.json); pnpm 10+ needs Node 22, so pin 9.x if used.
 COPY package.json package-lock.json* pnpm-lock.yaml* ./
 RUN \
-  if [ -f pnpm-lock.yaml ]; then \
-    corepack enable && pnpm install --frozen-lockfile; \
-  else \
+  if [ -f package-lock.json ]; then \
     npm ci; \
+  elif [ -f pnpm-lock.yaml ]; then \
+    corepack enable && corepack prepare pnpm@9.15.9 --activate && pnpm install --frozen-lockfile; \
+  else \
+    npm install; \
   fi
 
 COPY . .

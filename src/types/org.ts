@@ -21,4 +21,11 @@ export type UpdateOrgRequest = {
   entity_label?: string | null;
   goal_label?: string | null;
   timezone?: string | null;
+  logo_url?: string | null;
+};
+
+export type AssetUploadResponse = {
+  url: string;
+  category: string;
+  object_key?: string | null;
 };

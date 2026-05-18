@@ -3,12 +3,16 @@
 import { CheckCircle2, Clock, Database, XCircle, Zap } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { useDashboardOverview } from "@/hooks/dashboard/use-dashboard-overview";
+import { useAuthEnabled } from "@/hooks/use-auth-enabled";
 import { connectionsApi } from "@/lib/api/dashboard";
 
 function useConnections() {
+  const enabled = useAuthEnabled();
+
   return useQuery({
     queryKey: ["connections"],
     queryFn: connectionsApi.list,
+    enabled,
     staleTime: 60_000,
     retry: 1,
   });

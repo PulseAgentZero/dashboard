@@ -1,5 +1,13 @@
 import { api } from "./client";
+import { uploadMultipart } from "./upload";
 import type { OrgUser, InvitationsResponse } from "@/types/users";
+
+export type UserProfileResponse = {
+  id: string;
+  email: string;
+  full_name: string;
+  profile_image_url: string | null;
+};
 
 export const usersApi = {
   list: () => api.get<OrgUser[]>("/users"),
@@ -14,8 +22,13 @@ export const usersApi = {
   deactivate: (userId: string) => api.delete<void>(`/users/${userId}`),
   revokeInvitation: (invitationId: string) =>
     api.delete<void>(`/users/invitations/${invitationId}`),
-  updateMe: (body: { full_name?: string | null }) =>
-    api.put<{ id: string; full_name: string; email: string }>("/users/me", body),
+  updateMe: (body: { full_name?: string | null; avatar_url?: string | null }) =>
+    api.put<UserProfileResponse>("/users/me", body),
+  uploadAvatar: (file: File) => {
+    const fd = new FormData();
+    fd.append("file", file);
+    return uploadMultipart<UserProfileResponse>("/users/me/avatar", fd);
+  },
   updatePassword: (body: { current_password: string; new_password: string }) =>
     api.put<void>("/users/me/password", body),
 };

@@ -12,8 +12,23 @@ export type ApiKey = {
 
 export type ApiKeyCreateResponse = ApiKey & { key: string };
 
+export type ApiKeysListResponse = {
+  api_keys: ApiKey[];
+};
+
+export function parseApiKeysList(
+  data: ApiKeysListResponse | ApiKey[] | null | undefined,
+): ApiKey[] {
+  if (!data) return [];
+  if (Array.isArray(data)) return data;
+  return data.api_keys ?? [];
+}
+
 export const apiKeysApi = {
-  list: () => api.get<ApiKey[]>("/api-keys"),
+  list: async (): Promise<ApiKey[]> => {
+    const data = await api.get<ApiKeysListResponse | ApiKey[]>("/api-keys");
+    return parseApiKeysList(data);
+  },
   create: (body: { name: string; scope: string; expires_at?: string | null }) =>
     api.post<ApiKeyCreateResponse>("/api-keys", body),
   revoke: (id: string) => api.delete<void>(`/api-keys/${id}`),

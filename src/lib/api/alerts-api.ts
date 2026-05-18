@@ -17,9 +17,12 @@ export type AlertChannel = {
   id: string;
   name: string;
   type: string;
-  config: Record<string, unknown>;
+  config?: Record<string, unknown>;
   is_active: boolean;
   created_at: string;
+  /** Present for webhook channels when returned by list API */
+  events?: string[];
+  url_hint?: string | null;
 };
 
 export type AlertEvent = {

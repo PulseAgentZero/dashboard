@@ -124,7 +124,7 @@ function MetricCard({ m }: { m: MetricItem }) {
 }
 
 export function MetricsGrid() {
-  const { data, isLoading } = useDashboardOverview();
+  const { data, isLoading, isError } = useDashboardOverview();
 
   if (isLoading) {
     return (
@@ -136,7 +136,14 @@ export function MetricsGrid() {
 
   if (!data) {
     return (
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="space-y-3">
+        {isError && (
+          <p className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-2 text-sm text-amber-800">
+            Could not load dashboard metrics. Check that the API is running and{" "}
+            <code className="text-xs">NEXT_PUBLIC_API_URL</code> points to it.
+          </p>
+        )}
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {["Entities modeled", "High-risk entities", "Open recommendations", "Last pipeline"].map(
           (label) => (
             <div key={label} className="rounded-xl border border-slate-200 bg-white p-5">
@@ -145,6 +152,7 @@ export function MetricsGrid() {
             </div>
           ),
         )}
+        </div>
       </div>
     );
   }

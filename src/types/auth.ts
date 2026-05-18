@@ -23,6 +23,7 @@ export interface UserOut {
   is_active: boolean;
   last_login_at: string | null;
   created_at: string;
+  profile_image_url?: string | null;
 }
 
 export interface OrgOut {
@@ -33,6 +34,7 @@ export interface OrgOut {
   plan: string;
   onboarding_done: boolean;
   created_at: string;
+  logo_url?: string | null;
 }
 
 export interface TokenResponse {

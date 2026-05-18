@@ -77,10 +77,37 @@ export function useUpdateMe() {
   return useMutation({
     mutationFn: (body: { full_name?: string | null }) => usersApi.updateMe(body),
     onSuccess: () => {
-      void qc.invalidateQueries({ queryKey: ["auth", "me"] });
+      void qc.invalidateQueries({ queryKey: ["me"] });
       toast.success("Profile updated");
     },
     onError: () => toast.error("Failed to update profile"),
+  });
+}
+
+export function useUploadAvatar() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (file: File) => usersApi.uploadAvatar(file),
+    onSuccess: () => {
+      void qc.invalidateQueries({ queryKey: ["me"] });
+      toast.success("Profile photo updated");
+    },
+    onError: (err: unknown) => {
+      const msg = err instanceof Error ? err.message : "Failed to upload photo";
+      toast.error(msg);
+    },
+  });
+}
+
+export function useRemoveAvatar() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: () => usersApi.updateMe({ avatar_url: null }),
+    onSuccess: () => {
+      void qc.invalidateQueries({ queryKey: ["me"] });
+      toast.success("Profile photo removed");
+    },
+    onError: () => toast.error("Failed to remove photo"),
   });
 }
 
