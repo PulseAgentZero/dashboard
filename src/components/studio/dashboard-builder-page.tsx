@@ -4,7 +4,10 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { Loader2, Plus, Save, Settings } from "lucide-react";
 import type { VizPanelData } from "@/components/studio/dashboard/dashboard-grid";
+import { DashboardFilterBar } from "@/components/studio/dashboard/dashboard-filter-bar";
 import { DashboardGrid } from "@/components/studio/dashboard/dashboard-grid";
+import { DashboardToolbar } from "@/components/studio/dashboard/dashboard-toolbar";
+import { useDashboardAutoRefresh } from "@/hooks/studio/use-dashboard-auto-refresh";
 import { EmbedCodeModal } from "@/components/studio/modals/embed-code-modal";
 import { PublicBadge } from "@/components/studio/ui/public-badge";
 import { TagEditor } from "@/components/studio/ui/tag-editor";
@@ -26,6 +29,7 @@ import {
 } from "@/lib/studio/dashboard-layout";
 import { canManageEmbed } from "@/lib/studio/roles";
 import { useAuth } from "@/providers/auth-provider";
+import { normalizeTimeRange, type DashboardTimeRange } from "@/lib/studio/time-range";
 import type {
   DashboardExecuteResult,
   DashboardLayoutItem,
@@ -62,6 +66,10 @@ export function DashboardBuilderPage({ dashboardId }: Props) {
   const [pickerOpen, setPickerOpen] = useState(false);
   const [executeResults, setExecuteResults] = useState<DashboardExecuteResult[]>([]);
   const [pendingVizIds, setPendingVizIds] = useState<Set<string>>(() => new Set());
+  const [paramValues, setParamValues] = useState<Record<string, string>>({});
+  const [timeRange, setTimeRange] = useState<DashboardTimeRange>({ preset: "last_24h" });
+  const [refreshIntervalSeconds, setRefreshIntervalSeconds] = useState<number | null>(null);
+  const [lastRefreshedAt, setLastRefreshedAt] = useState<Date | null>(null);
 
   const vizIds = useMemo(
     () =>
@@ -83,9 +91,13 @@ export function DashboardBuilderPage({ dashboardId }: Props) {
   const executeResultsRef = useRef(executeResults);
   executeResultsRef.current = executeResults;
 
+  const timeRangeRef = useRef(timeRange);
+  timeRangeRef.current = timeRange;
+
   const runExecute = useCallback(
     async (
-      paramValues: Record<string, string>,
+      values: Record<string, string>,
+      range: DashboardTimeRange,
       opts?: { loadingVizIds?: string[] },
     ) => {
       const ids = opts?.loadingVizIds ?? vizIds;
@@ -105,9 +117,11 @@ export function DashboardBuilderPage({ dashboardId }: Props) {
       try {
         const res = await executeDashboard.mutateAsync({
           id: dashboardId,
-          param_values: paramValues,
+          param_values: values,
+          time_range: range,
         });
         setExecuteResults((prev) => mergeExecuteResults(prev, res.results));
+        setLastRefreshedAt(new Date());
         const rateLimited = res.results.find((r) =>
           r.error?.toLowerCase().includes("execution budget"),
         );
@@ -145,6 +159,13 @@ export function DashboardBuilderPage({ dashboardId }: Props) {
     setTags(dashboard.tags ?? []);
     setIsPublic(dashboard.is_public);
     setDashboardParams(dashboard.dashboard_params ?? []);
+    setParamValues(
+      Object.fromEntries(
+        (dashboard.dashboard_params ?? []).map((p) => [p.name, p.default_value ?? ""]),
+      ),
+    );
+    setTimeRange(normalizeTimeRange(dashboard.time_range));
+    setRefreshIntervalSeconds(dashboard.refresh_interval_seconds ?? null);
   }, [dashboard, itemsKey, layoutKey]);
 
   useEffect(() => {
@@ -154,10 +175,23 @@ export function DashboardBuilderPage({ dashboardId }: Props) {
 
     const t = setTimeout(() => {
       autoExecutedKey.current = key;
-      void runExecuteRef.current(defaultParamValuesRef.current);
+      void runExecuteRef.current(
+        defaultParamValuesRef.current,
+        timeRangeRef.current,
+      );
     }, 500);
     return () => clearTimeout(t);
   }, [dashboard?.id, vizIds.join(",")]);
+
+  const handleManualRefresh = useCallback(() => {
+    void runExecute(paramValues, timeRange);
+  }, [paramValues, runExecute, timeRange]);
+
+  useDashboardAutoRefresh({
+    intervalSeconds: refreshIntervalSeconds,
+    onRefresh: handleManualRefresh,
+    enabled: vizIds.length > 0,
+  });
 
   const allViz = orgVizData?.visualizations ?? [];
 
@@ -195,6 +229,8 @@ export function DashboardBuilderPage({ dashboardId }: Props) {
         tags,
         is_public: isPublic,
         dashboard_params: dashboardParams,
+        refresh_interval_seconds: refreshIntervalSeconds,
+        time_range: timeRange,
       },
     });
     setSettingsOpen(false);
@@ -330,6 +366,30 @@ export function DashboardBuilderPage({ dashboardId }: Props) {
           </div>
         </div>
       )}
+
+      <DashboardToolbar
+        timeRange={timeRange}
+        onTimeRangeChange={(range) => {
+          setTimeRange(range);
+          void runExecute(paramValues, range);
+        }}
+        refreshIntervalSeconds={refreshIntervalSeconds}
+        onRefreshIntervalChange={setRefreshIntervalSeconds}
+        onManualRefresh={handleManualRefresh}
+        lastRefreshedAt={lastRefreshedAt}
+        loading={executeDashboard.isPending}
+      />
+
+      <DashboardFilterBar
+        params={dashboardParams}
+        initialValues={paramValues}
+        onApply={(v) => {
+          setParamValues(v);
+          void runExecute(v, timeRange);
+        }}
+        loading={executeDashboard.isPending}
+        autoApplyOnChange
+      />
 
       <DashboardGrid
         items={dashboard.items}

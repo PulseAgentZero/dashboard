@@ -278,7 +278,7 @@ export function WebhooksSettingsTab() {
             <UsageBar used={slot.used} limit={slot.limit} label="Webhook channels used" />
             {atLimit && isCloudDeployment() && (
               <p className="mt-2 text-xs text-slate-500">
-                Free plan allows {slot.limit} webhook channel.{" "}
+                Your plan allows {slot.limit} webhook channel.{" "}
                 <Link href="/dashboard/plan" className="font-semibold text-blue-600 hover:underline">
                   Upgrade to Pro
                 </Link>{" "}

@@ -1,13 +1,11 @@
 import { isCloudDeployment, isSelfHostedDeployment } from "@/lib/deployment";
+import { isProPlan, normalizePlan } from "@/lib/plan-utils";
 import type { LicenseInfo } from "@/lib/api/webhooks-api";
 
 /** Matches api/app/api/dependencies/plan_gate.py `_CLOUD_FEATURE_PLAN`. */
 export const AUDIT_LOG_FEATURE = "audit_log";
 
-export function isProPlan(plan: string | null | undefined): boolean {
-  const p = (plan ?? "free").toLowerCase();
-  return p === "pro" || p === "enterprise";
-}
+export { isProPlan, isPaidPlan, isUnlimitedPlan, normalizePlan, planDisplayName, resolveEffectivePlan } from "@/lib/plan-utils";
 
 /** Cloud: Pro plan required to read audit logs. */
 export function canAccessAuditLogsCloud(plan: string | null | undefined): boolean {
@@ -22,7 +20,7 @@ export function canAccessAuditLogsSelfHosted(
   license: LicenseInfo | null | undefined,
 ): boolean {
   if (!license?.is_valid || license.locked) return false;
-  const plan = (license.effective_plan ?? license.plan ?? "free").toLowerCase();
+  const plan = normalizePlan(license.effective_plan ?? license.plan);
   if (isProPlan(plan)) return true;
   const features = (license.effective_features ?? license.features ?? []).map((f) =>
     f.toLowerCase(),

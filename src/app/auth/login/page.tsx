@@ -111,7 +111,7 @@ export default function LoginPage() {
 
             <button
               type="button"
-              onClick={initiateGoogleSignIn}
+              onClick={() => initiateGoogleSignIn("login")}
               className="w-full flex items-center justify-center gap-3 py-3 px-4 border border-slate-200 rounded-xl bg-white text-[12px] font-medium text-slate-700 hover:bg-slate-50 focus:outline-none focus:ring-1 focus:ring-offset-2 focus:ring-slate-200 transition duration-150"
             >
               <Google />

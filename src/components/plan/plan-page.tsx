@@ -20,16 +20,26 @@ import {
   useInitializeCloudCheckout,
   useInitializeSelfHostedCheckout,
   useSubscription,
+  useOpenManagePaymentLink,
   useVerifyCloudPayment,
 } from "@/hooks/billing/use-billing";
 import {
   FREE_PLAN_FEATURES,
+  GROWTH_PLAN_FEATURES,
+  GROWTH_PRICE_DISPLAY,
   PLAN_COMPARISON,
   PRO_PLAN_FEATURES,
   PRO_PRICE_DISPLAY,
   SELF_HOSTED_LICENSE_FEATURES,
 } from "@/lib/plans";
 import { isCloudDeployment, isSelfHostedDeployment } from "@/lib/deployment";
+import {
+  isPaidPlan,
+  isProPlan,
+  planDisplayName,
+  resolveEffectivePlan,
+} from "@/lib/plan-utils";
+import type { CloudPlanTier } from "@/lib/api/billing-api";
 import { tokens } from "@/lib/auth-tokens";
 
 export function PlanPage() {
@@ -44,13 +54,20 @@ export function PlanPage() {
   const { mutate: startLicenseCheckout, isPending: licenseCheckout } =
     useInitializeSelfHostedCheckout();
   const { mutate: verifyPayment, isPending: verifying } = useVerifyCloudPayment();
+  const { mutate: openManageLink, isPending: openingManageLink } =
+    useOpenManagePaymentLink();
   const verifiedRef = useRef<string | null>(null);
   const [licenseEmail, setLicenseEmail] = useState("");
 
   const cloud = isCloudDeployment();
   const selfHosted = isSelfHostedDeployment();
-  const plan = usage?.plan ?? org?.plan ?? subscription?.plan ?? "free";
-  const isPro = plan.toLowerCase() === "pro";
+  const effectivePlan = resolveEffectivePlan(
+    usage?.plan,
+    org?.plan,
+    subscription ?? undefined,
+  );
+  const isGrowth = effectivePlan === "growth";
+  const isPro = isProPlan(effectivePlan);
 
   useEffect(() => {
     if (user?.email) setLicenseEmail(user.email);
@@ -65,9 +82,11 @@ export function PlanPage() {
     });
   }, [reference, verifyPayment, router, cloud]);
 
-  function handleUpgradePro() {
-    const callbackUrl = `${window.location.origin}/dashboard/plan`;
-    startCloudCheckout(callbackUrl);
+  function handleUpgrade(tier: CloudPlanTier) {
+    startCloudCheckout({
+      callbackUrl: `${window.location.origin}/dashboard/plan`,
+      plan: tier,
+    });
   }
 
   function handleLicensePurchase(e: React.FormEvent) {
@@ -116,36 +135,83 @@ export function PlanPage() {
         </div>
       )}
 
-      {/* Plan tier cards */}
+      {subscription?.payment_attention && (
+        <div className="rounded-2xl border border-amber-200 bg-amber-50 px-5 py-4 text-sm text-amber-900">
+          <p className="font-semibold">Payment needs attention</p>
+          <p className="mt-1 text-amber-800">
+            Your last renewal failed. Update your card before{" "}
+            {subscription.grace_ends_at
+              ? new Date(subscription.grace_ends_at).toLocaleDateString()
+              : "the grace period ends"}{" "}
+            to keep {planDisplayName(effectivePlan)} access.
+          </p>
+          {subscription.manage_link_available && (
+            <button
+              type="button"
+              disabled={openingManageLink}
+              onClick={() => openManageLink()}
+              className="mt-3 rounded-lg bg-amber-800 px-4 py-2 text-xs font-bold text-white hover:bg-amber-900 disabled:opacity-50"
+            >
+              {openingManageLink ? "Opening…" : "Update payment method"}
+            </button>
+          )}
+        </div>
+      )}
+
       {cloud && (
-        <div className="grid gap-5 lg:grid-cols-2">
+        <div className="grid gap-5 lg:grid-cols-3">
           <TierCard
             name="Free"
             tagline="Get started with core Pulse features"
             price="₦0"
             priceSub="forever"
             features={FREE_PLAN_FEATURES}
-            isCurrent={!isPro}
+            isCurrent={effectivePlan === "free"}
             variant="free"
           />
 
           <TierCard
+            name="Growth"
+            tagline="Higher limits for growing teams"
+            price={GROWTH_PRICE_DISPLAY.replace("/month", "")}
+            priceSub="per month"
+            features={GROWTH_PLAN_FEATURES}
+            isCurrent={isGrowth}
+            variant="growth"
+            highlighted={!isPaidPlan(effectivePlan)}
+            badge={isGrowth ? "Current plan" : undefined}
+            footer={
+              isGrowth ? (
+                <PaidActiveFooter planLabel="Growth" subscription={subscription} />
+              ) : (
+                <PaidUpgradeFooter
+                  label="Upgrade to Growth"
+                  onUpgrade={() => handleUpgrade("growth")}
+                  loading={cloudCheckout || verifying}
+                />
+              )
+            }
+          />
+
+          <TierCard
             name="Pro"
-            tagline="Unlimited scale for growing teams"
+            tagline="Unlimited scale + audit logs"
             price={PRO_PRICE_DISPLAY.replace("/month", "")}
             priceSub="per month"
             features={PRO_PLAN_FEATURES}
             isCurrent={isPro}
             variant="pro"
             highlighted={!isPro}
-            badge={!isPro ? "Recommended" : "Current plan"}
+            badge={isPro ? "Current plan" : "Recommended"}
             footer={
               isPro ? (
-                <ProActiveFooter subscription={subscription} />
+                <PaidActiveFooter planLabel="Pro" subscription={subscription} />
               ) : (
-                <ProUpgradeFooter
-                  onUpgrade={handleUpgradePro}
+                <PaidUpgradeFooter
+                  label="Upgrade to Pro"
+                  onUpgrade={() => handleUpgrade("pro")}
                   loading={cloudCheckout || verifying}
+                  primary
                 />
               )
             }
@@ -204,15 +270,16 @@ export function PlanPage() {
         <div className="border-b border-slate-100 px-6 py-5">
           <h2 className="text-base font-semibold text-slate-900">Limits at a glance</h2>
           <p className="mt-0.5 text-sm text-slate-500">
-            How Free and Pro compare across workspace resources
+            How Free, Growth, and Pro compare across workspace resources
           </p>
         </div>
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[520px] text-left text-sm">
+          <table className="w-full min-w-[640px] text-left text-sm">
             <thead>
               <tr className="bg-slate-50/80 text-[11px] font-semibold uppercase tracking-wide text-slate-500">
                 <th className="px-6 py-3.5 font-semibold">Resource</th>
                 <th className="px-6 py-3.5 font-semibold">Free</th>
+                <th className="px-6 py-3.5 font-semibold">Growth</th>
                 <th className="bg-indigo-50/80 px-6 py-3.5 font-semibold text-indigo-700">
                   Pro
                 </th>
@@ -226,6 +293,7 @@ export function PlanPage() {
                 >
                   <td className="px-6 py-3.5 font-medium text-slate-800">{row.label}</td>
                   <td className="px-6 py-3.5 text-slate-500">{row.free}</td>
+                  <td className="px-6 py-3.5 text-slate-600">{row.growth}</td>
                   <td className="bg-indigo-50/30 px-6 py-3.5 font-semibold text-indigo-700">
                     {row.pro}
                   </td>
@@ -278,26 +346,32 @@ function TierCard({
   priceSub: string;
   features: string[];
   isCurrent: boolean;
-  variant: "free" | "pro";
+  variant: "free" | "growth" | "pro";
   highlighted?: boolean;
   badge?: string;
   footer?: React.ReactNode;
 }) {
   const isPro = variant === "pro";
+  const isGrowth = variant === "growth";
+  const isPaid = isPro || isGrowth;
 
   return (
     <article
       className={`relative flex flex-col overflow-hidden rounded-2xl border shadow-sm transition-shadow ${
-        isPro && isCurrent
-          ? "border-indigo-300 bg-gradient-to-br from-indigo-600 via-indigo-600 to-violet-700 text-white shadow-indigo-600/20"
-          : isPro && highlighted
-            ? "border-indigo-200 bg-white ring-2 ring-indigo-500/20"
+        isPaid && isCurrent
+          ? isPro
+            ? "border-indigo-300 bg-gradient-to-br from-indigo-600 via-indigo-600 to-violet-700 text-white shadow-indigo-600/20"
+            : "border-teal-300 bg-gradient-to-br from-teal-600 to-emerald-700 text-white shadow-teal-600/20"
+          : isPaid && highlighted
+            ? isPro
+              ? "border-indigo-200 bg-white ring-2 ring-indigo-500/20"
+              : "border-teal-200 bg-white ring-2 ring-teal-500/20"
             : isCurrent
               ? "border-slate-300 bg-white ring-2 ring-slate-300/50"
               : "border-slate-200 bg-white"
       }`}
     >
-      {isPro && isCurrent && (
+      {isPaid && isCurrent && (
         <div className="pointer-events-none absolute -right-12 -top-12 h-40 w-40 rounded-full bg-white/10" />
       )}
 
@@ -306,17 +380,25 @@ function TierCard({
           <div className="flex items-center gap-3">
             <div
               className={`grid h-11 w-11 place-items-center rounded-xl ${
-                isPro && isCurrent
+                isPaid && isCurrent
                   ? "bg-white/20"
                   : isPro
                     ? "bg-indigo-100"
-                    : "bg-slate-100"
+                    : isGrowth
+                      ? "bg-teal-100"
+                      : "bg-slate-100"
               }`}
             >
-              {isPro ? (
+              {isPaid ? (
                 <Crown
                   size={20}
-                  className={isCurrent ? "text-amber-300" : "text-indigo-600"}
+                  className={
+                    isCurrent
+                      ? "text-amber-300"
+                      : isPro
+                        ? "text-indigo-600"
+                        : "text-teal-600"
+                  }
                 />
               ) : (
                 <Shield size={20} className="text-slate-600" />
@@ -325,14 +407,18 @@ function TierCard({
             <div>
               <h2
                 className={`text-lg font-bold ${
-                  isPro && isCurrent ? "text-white" : "text-slate-900"
+                  isPaid && isCurrent ? "text-white" : "text-slate-900"
                 }`}
               >
                 {name}
               </h2>
               <p
                 className={`text-xs ${
-                  isPro && isCurrent ? "text-indigo-200" : "text-slate-500"
+                  isPaid && isCurrent
+                    ? isPro
+                      ? "text-indigo-200"
+                      : "text-teal-100"
+                    : "text-slate-500"
                 }`}
               >
                 {tagline}
@@ -342,11 +428,13 @@ function TierCard({
           {badge && (
             <span
               className={`shrink-0 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide ${
-                isPro && isCurrent
+                isPaid && isCurrent
                   ? "bg-white/20 text-white"
                   : isPro
                     ? "bg-indigo-600 text-white"
-                    : "bg-slate-200 text-slate-700"
+                    : isGrowth
+                      ? "bg-teal-600 text-white"
+                      : "bg-slate-200 text-slate-700"
               }`}
             >
               {badge}
@@ -363,7 +451,13 @@ function TierCard({
             {price}
           </span>
           <span
-            className={`text-sm ${isPro && isCurrent ? "text-indigo-200" : "text-slate-500"}`}
+            className={`text-sm ${
+              isPaid && isCurrent
+                ? isPro
+                  ? "text-indigo-200"
+                  : "text-teal-100"
+                : "text-slate-500"
+            }`}
           >
             {priceSub}
           </span>
@@ -374,17 +468,23 @@ function TierCard({
             <li
               key={f}
               className={`flex items-start gap-2 text-sm ${
-                isPro && isCurrent ? "text-indigo-50" : "text-slate-600"
+                isPaid && isCurrent
+                  ? isPro
+                    ? "text-indigo-50"
+                    : "text-teal-50"
+                  : "text-slate-600"
               }`}
             >
               <Check
                 size={14}
                 className={`mt-0.5 shrink-0 ${
-                  isPro && isCurrent
+                  isPaid && isCurrent
                     ? "text-emerald-300"
                     : isPro
                       ? "text-indigo-600"
-                      : "text-slate-400"
+                      : isGrowth
+                        ? "text-teal-600"
+                        : "text-slate-400"
                 }`}
               />
               {f}
@@ -398,27 +498,34 @@ function TierCard({
   );
 }
 
-function ProUpgradeFooter({
+function PaidUpgradeFooter({
+  label,
   onUpgrade,
   loading,
+  primary,
 }: {
+  label: string;
   onUpgrade: () => void;
   loading: boolean;
+  primary?: boolean;
 }) {
+  const btnClass = primary
+    ? "bg-indigo-600 shadow-indigo-600/25 hover:bg-indigo-700"
+    : "bg-teal-600 shadow-teal-600/25 hover:bg-teal-700";
   return (
     <>
       <button
         type="button"
         onClick={onUpgrade}
         disabled={loading}
-        className="flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 py-3.5 text-sm font-bold text-white shadow-lg shadow-indigo-600/25 hover:bg-indigo-700 disabled:opacity-50"
+        className={`flex w-full items-center justify-center gap-2 rounded-xl py-3.5 text-sm font-bold text-white shadow-lg disabled:opacity-50 ${btnClass}`}
       >
         {loading ? (
           <Loader2 size={16} className="animate-spin" />
         ) : (
           <Sparkles size={16} />
         )}
-        {loading ? "Redirecting to Paystack…" : "Upgrade to Pro"}
+        {loading ? "Redirecting to Paystack…" : label}
       </button>
       <p className="mt-3 flex items-center justify-center gap-1.5 text-[11px] text-slate-400">
         <CreditCard size={12} />
@@ -428,20 +535,21 @@ function ProUpgradeFooter({
   );
 }
 
-function ProActiveFooter({
+function PaidActiveFooter({
+  planLabel,
   subscription,
 }: {
+  planLabel: string;
   subscription: ReturnType<typeof useSubscription>["data"];
 }) {
+  const unlimited = planLabel === "Pro";
   return (
-    <div
-      className={`rounded-xl px-4 py-3 ${
-        "border border-white/20 bg-white/10"
-      }`}
-    >
-      <p className="text-sm font-medium text-white">You&apos;re on Pro</p>
+    <div className="rounded-xl border border-white/20 bg-white/10 px-4 py-3">
+      <p className="text-sm font-medium text-white">You&apos;re on {planLabel}</p>
       <p className="mt-0.5 text-xs text-indigo-100">
-        Unlimited usage across all workspace meters.
+        {unlimited
+          ? "Unlimited usage across all workspace meters."
+          : "Growth limits apply — upgrade to Pro for unlimited usage and audit logs."}
       </p>
       {subscription && (
         <dl className="mt-3 space-y-1 text-xs text-indigo-100">

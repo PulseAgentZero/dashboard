@@ -378,9 +378,9 @@ function ApiKeysTab() {
             <UsageBar used={slot.used} limit={slot.limit} label="API keys used" />
             {atLimit && isCloudDeployment() && (
               <p className="mt-2 text-xs text-slate-500">
-                Free plan allows {slot.limit} API key.{" "}
-                <Link href="/pricing" className="font-semibold text-blue-600 hover:underline">
-                  Upgrade to Pro
+                Your plan allows {slot.limit} API key.{" "}
+                <Link href="/dashboard/plan" className="font-semibold text-blue-600 hover:underline">
+                  Upgrade plan
                 </Link>{" "}
                 for unlimited keys.
               </p>

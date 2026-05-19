@@ -186,12 +186,6 @@ export const ENV_VAR_GROUPS: EnvVarGroup[] = [
           "Dashboard URL for CORS and email links. No trailing slash. Self-hosted: your browser URL.",
       },
       {
-        name: "DEPLOYMENT_MODE",
-        default: "self_hosted",
-        description:
-          "Set automatically by the `pulseai/pulse` image. Do not change unless you know you need a custom deployment profile.",
-      },
-      {
         name: "ENVIRONMENT",
         default: "development",
         description: "development | staging | production",

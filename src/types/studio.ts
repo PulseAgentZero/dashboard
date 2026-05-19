@@ -157,6 +157,19 @@ export type StudioDashboardItem = {
   created_at: string;
 };
 
+export type DashboardTimeRange = {
+  preset:
+    | "last_15m"
+    | "last_1h"
+    | "last_6h"
+    | "last_24h"
+    | "last_7d"
+    | "last_30d"
+    | "custom";
+  from?: string | null;
+  to?: string | null;
+};
+
 export type StudioDashboard = {
   id: string;
   org_id: string;
@@ -168,6 +181,8 @@ export type StudioDashboard = {
   layout: DashboardLayoutItem[];
   dashboard_params: QueryParamDefinition[];
   tags: string[];
+  refresh_interval_seconds?: number | null;
+  time_range?: DashboardTimeRange;
   created_at: string;
   updated_at: string;
   items: StudioDashboardItem[];
@@ -222,6 +237,8 @@ export type PublicDashboard = {
   slug: string;
   layout: DashboardLayoutItem[];
   dashboard_params: QueryParamDefinition[];
+  refresh_interval_seconds?: number | null;
+  time_range?: DashboardTimeRange;
   visualizations: PublicVisualization[];
 };
 

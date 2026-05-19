@@ -20,6 +20,10 @@ export function useSignup() {
       router.push("/auth/verify-email?notice=1");
     },
     onError(err) {
+      if (err instanceof ApiError && err.code === "INSTANCE_ORG_EXISTS") {
+        toast.error(err.message);
+        return;
+      }
       const message =
         err instanceof ApiError ? err.message : "Something went wrong";
       toast.error(message);

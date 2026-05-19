@@ -12,6 +12,7 @@ import {
   Rows3,
 } from "lucide-react";
 import { StarButton } from "@/components/studio/ui/star-button";
+import { QUERY_TEMPLATES } from "@/lib/studio/query-templates";
 import type { StudioDashboard, StudioQuery } from "@/types/studio";
 
 function formatRelative(dateStr: string) {
@@ -59,11 +60,13 @@ export function QueryListRow({
   onStar,
   onRun,
   running,
+  compact = false,
 }: {
   query: StudioQuery;
   onStar: () => void;
   onRun: () => void;
   running?: boolean;
+  compact?: boolean;
 }) {
   const activity = query.last_run_at
     ? `Ran ${formatRelative(query.last_run_at)}`
@@ -74,6 +77,43 @@ export function QueryListRow({
       : query.refresh_enabled
         ? "Scheduled refresh"
         : null;
+
+  if (compact) {
+    return (
+      <div className="group flex items-center gap-3 border-b border-slate-100 px-4 py-2.5 last:border-b-0 hover:bg-slate-50/60">
+        <Link href={`/dashboard/studio/queries/${query.id}`} className="min-w-0 flex-1">
+          <p className="truncate text-sm font-medium text-slate-900 group-hover:text-indigo-600">
+            {query.name}
+          </p>
+          <p className="truncate text-xs text-slate-400">
+            {detail ? `${activity} · ${detail}` : activity}
+          </p>
+        </Link>
+        <div className="flex shrink-0 items-center gap-0.5">
+          <StarButton starred={query.starred} onToggle={onStar} />
+          <button
+            type="button"
+            onClick={onRun}
+            disabled={running}
+            title="Run query"
+            className="flex h-8 w-8 items-center justify-center rounded-md text-slate-400 hover:bg-slate-100 hover:text-indigo-600 disabled:opacity-50"
+          >
+            {running ? (
+              <Loader2 size={15} className="animate-spin" />
+            ) : (
+              <Play size={15} />
+            )}
+          </button>
+          <Link
+            href={`/dashboard/studio/queries/${query.id}`}
+            className="flex h-8 w-8 items-center justify-center rounded-md text-slate-400 hover:bg-slate-100"
+          >
+            <ChevronRight size={16} />
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="group flex items-stretch gap-4 border-b border-slate-100 px-5 py-4 last:border-b-0 hover:bg-slate-50/80">
@@ -141,11 +181,44 @@ export function QueryListRow({
 export function DashboardListRow({
   dashboard,
   onStar,
+  compact = false,
 }: {
   dashboard: StudioDashboard;
   onStar: () => void;
+  compact?: boolean;
 }) {
   const panelCount = dashboard.items?.length ?? dashboard.layout?.length ?? 0;
+
+  if (compact) {
+    return (
+      <div className="group flex items-center gap-3 border-b border-slate-100 px-4 py-2.5 last:border-b-0 hover:bg-slate-50/60">
+        <Link
+          href={`/dashboard/studio/dashboards/${dashboard.id}`}
+          className="min-w-0 flex-1"
+        >
+          <p className="truncate text-sm font-medium text-slate-900 group-hover:text-indigo-600">
+            {dashboard.name}
+            {dashboard.is_public && (
+              <span className="ml-2 text-xs font-normal text-slate-400">Public</span>
+            )}
+          </p>
+          <p className="truncate text-xs text-slate-400">
+            {panelCount} panel{panelCount === 1 ? "" : "s"} · Updated{" "}
+            {formatRelative(dashboard.updated_at)}
+          </p>
+        </Link>
+        <div className="flex shrink-0 items-center gap-0.5">
+          <StarButton starred={dashboard.starred} onToggle={onStar} />
+          <Link
+            href={`/dashboard/studio/dashboards/${dashboard.id}`}
+            className="flex h-8 w-8 items-center justify-center rounded-md text-slate-400 hover:bg-slate-100"
+          >
+            <ChevronRight size={16} />
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="group flex items-stretch gap-4 border-b border-slate-100 px-5 py-4 last:border-b-0 hover:bg-slate-50/80">
@@ -209,18 +282,31 @@ export function DashboardListRow({
   );
 }
 
-export function StudioListSkeleton({ rows = 5 }: { rows?: number }) {
+export function StudioListSkeleton({
+  rows = 5,
+  compact = false,
+}: {
+  rows?: number;
+  compact?: boolean;
+}) {
   return (
     <div className="divide-y divide-slate-100">
-      {Array.from({ length: rows }).map((_, i) => (
-        <div key={i} className="flex gap-4 px-5 py-4">
-          <div className="h-11 w-11 shrink-0 animate-pulse rounded-xl bg-slate-100" />
-          <div className="flex-1 space-y-2 py-1">
-            <div className="h-4 w-48 animate-pulse rounded bg-slate-100" />
-            <div className="h-3 w-full max-w-md animate-pulse rounded bg-slate-100" />
+      {Array.from({ length: rows }).map((_, i) =>
+        compact ? (
+          <div key={i} className="px-4 py-3">
+            <div className="h-4 w-40 animate-pulse rounded bg-slate-100" />
+            <div className="mt-1.5 h-3 w-24 animate-pulse rounded bg-slate-100" />
           </div>
-        </div>
-      ))}
+        ) : (
+          <div key={i} className="flex gap-4 px-5 py-4">
+            <div className="h-11 w-11 shrink-0 animate-pulse rounded-xl bg-slate-100" />
+            <div className="flex-1 space-y-2 py-1">
+              <div className="h-4 w-48 animate-pulse rounded bg-slate-100" />
+              <div className="h-3 w-full max-w-md animate-pulse rounded bg-slate-100" />
+            </div>
+          </div>
+        ),
+      )}
     </div>
   );
 }
@@ -229,52 +315,51 @@ export function StudioListEmpty({
   kind,
   canCreate,
   onCreateDashboard,
+  showTemplates = false,
 }: {
   kind: "queries" | "dashboards";
   canCreate: boolean;
   onCreateDashboard?: () => void;
+  showTemplates?: boolean;
 }) {
   const isQueries = kind === "queries";
-  const Icon = isQueries ? FileCode2 : LayoutDashboard;
 
   return (
-    <div className="flex flex-col items-center px-6 py-16 text-center">
-      <div
-        className={`grid h-14 w-14 place-items-center rounded-2xl ${
-          isQueries ? "bg-indigo-50" : "bg-violet-50"
-        }`}
-      >
-        <Icon size={28} className={isQueries ? "text-indigo-300" : "text-violet-300"} />
-      </div>
-      <p className="mt-4 text-base font-semibold text-slate-700">
-        No {isQueries ? "queries" : "dashboards"} yet
-      </p>
-      <p className="mt-1 max-w-sm text-sm text-slate-500">
-        {isQueries
-          ? "Write SQL against your connections, save queries, and build visualizations."
-          : "Combine saved queries and charts into shareable dashboards."}
-      </p>
+    <div className="px-6 py-10 text-center">
+      <p className="text-sm text-slate-600">No {isQueries ? "queries" : "dashboards"} yet.</p>
       {canCreate && (
-        <div className="mt-5 flex flex-wrap justify-center gap-2">
+        <div className="mt-3">
           {isQueries ? (
             <Link
               href="/dashboard/studio/queries/new"
-              className="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700"
+              className="text-sm font-medium text-indigo-600 hover:text-indigo-700"
             >
-              <FileCode2 size={15} />
-              New query
+              Create a query
             </Link>
           ) : (
             <button
               type="button"
               onClick={onCreateDashboard}
-              className="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700"
+              className="text-sm font-medium text-indigo-600 hover:text-indigo-700"
             >
-              <LayoutDashboard size={15} />
-              New dashboard
+              Create a dashboard
             </button>
           )}
         </div>
+      )}
+      {showTemplates && isQueries && (
+        <ul className="mx-auto mt-6 max-w-sm space-y-1 text-left text-sm">
+          {QUERY_TEMPLATES.slice(0, 4).map((t) => (
+            <li key={t.id}>
+              <Link
+                href={`/dashboard/studio/queries/new?template=${t.id}`}
+                className="text-slate-600 hover:text-indigo-600"
+              >
+                {t.name}
+              </Link>
+            </li>
+          ))}
+        </ul>
       )}
     </div>
   );

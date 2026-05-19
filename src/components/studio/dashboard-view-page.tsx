@@ -7,18 +7,22 @@ import { GitFork, Loader2, Pencil, Share2 } from "lucide-react";
 import type { VizPanelData } from "@/components/studio/dashboard/dashboard-grid";
 import { DashboardFilterBar } from "@/components/studio/dashboard/dashboard-filter-bar";
 import { DashboardGrid } from "@/components/studio/dashboard/dashboard-grid";
+import { DashboardToolbar } from "@/components/studio/dashboard/dashboard-toolbar";
 import { ForkDashboardModal } from "@/components/studio/modals/fork-dashboard-modal";
 import { PublicBadge } from "@/components/studio/ui/public-badge";
 import { StarButton } from "@/components/studio/ui/star-button";
+import { useDashboardAutoRefresh } from "@/hooks/studio/use-dashboard-auto-refresh";
 import {
   useExecuteDashboard,
   useForkDashboard,
   useStarDashboard,
   useStudioDashboard,
+  useUpdateDashboard,
 } from "@/hooks/studio/use-studio-dashboards";
 import { useVisualizationsByIds } from "@/hooks/studio/use-viz-catalog";
 import { mergeExecuteResults, resolveDashboardLayout } from "@/lib/studio/dashboard-layout";
-import { canCreateStudioContent } from "@/lib/studio/roles";
+import { canCreateStudioContent, canManageDashboardSettings } from "@/lib/studio/roles";
+import { normalizeTimeRange, type DashboardTimeRange } from "@/lib/studio/time-range";
 import { useAuth } from "@/providers/auth-provider";
 import { toast } from "sonner";
 import type { DashboardExecuteResult, QueryParamDefinition } from "@/types/studio";
@@ -32,11 +36,19 @@ export function DashboardViewPage({ dashboardId }: Props) {
   const { user } = useAuth();
   const { data: dashboard, isLoading } = useStudioDashboard(dashboardId);
   const executeDashboard = useExecuteDashboard();
+  const updateDashboard = useUpdateDashboard();
   const forkDashboard = useForkDashboard();
   const starDashboard = useStarDashboard();
+  const canPersistSettings = canManageDashboardSettings(user?.role);
+
   const [forkOpen, setForkOpen] = useState(false);
   const [executeResults, setExecuteResults] = useState<DashboardExecuteResult[]>([]);
   const [pendingVizIds, setPendingVizIds] = useState<Set<string>>(() => new Set());
+  const [paramValues, setParamValues] = useState<Record<string, string>>({});
+  const [timeRange, setTimeRange] = useState<DashboardTimeRange>({ preset: "last_24h" });
+  const [refreshIntervalSeconds, setRefreshIntervalSeconds] = useState<number | null>(null);
+  const [lastRefreshedAt, setLastRefreshedAt] = useState<Date | null>(null);
+  const [autoApplyVars, setAutoApplyVars] = useState(true);
 
   const vizIds = useMemo(
     () =>
@@ -48,19 +60,22 @@ export function DashboardViewPage({ dashboardId }: Props) {
 
   const { data: vizCatalog } = useVisualizationsByIds(vizIds);
 
-  const defaultParams = useMemo(() => {
-    const v: Record<string, string> = {};
-    dashboard?.dashboard_params?.forEach((p: QueryParamDefinition) => {
-      v[p.name] = p.default_value ?? "";
+  useEffect(() => {
+    if (!dashboard) return;
+    const defaults: Record<string, string> = {};
+    dashboard.dashboard_params?.forEach((p: QueryParamDefinition) => {
+      defaults[p.name] = p.default_value ?? "";
     });
-    return v;
-  }, [dashboard?.dashboard_params]);
+    setParamValues(defaults);
+    setTimeRange(normalizeTimeRange(dashboard.time_range));
+    setRefreshIntervalSeconds(dashboard.refresh_interval_seconds ?? null);
+  }, [dashboard?.id, dashboard?.updated_at]);
 
   const executeResultsRef = useRef(executeResults);
   executeResultsRef.current = executeResults;
 
   const runExecute = useCallback(
-    async (paramValues: Record<string, string>) => {
+    async (values: Record<string, string>, range: DashboardTimeRange) => {
       if (vizIds.length === 0) return;
 
       setPendingVizIds((prev) => {
@@ -77,9 +92,11 @@ export function DashboardViewPage({ dashboardId }: Props) {
       try {
         const res = await executeDashboard.mutateAsync({
           id: dashboardId,
-          param_values: paramValues,
+          param_values: values,
+          time_range: range,
         });
         setExecuteResults((prev) => mergeExecuteResults(prev, res.results));
+        setLastRefreshedAt(new Date());
         const rateLimited = res.results.find((r) =>
           r.error?.toLowerCase().includes("execution budget"),
         );
@@ -93,10 +110,47 @@ export function DashboardViewPage({ dashboardId }: Props) {
     [dashboardId, executeDashboard, vizIds],
   );
 
+  const persistSettings = useCallback(
+    (patch: { refresh_interval_seconds?: number | null; time_range?: DashboardTimeRange }) => {
+      if (!canPersistSettings) return;
+      updateDashboard.mutate({ id: dashboardId, body: patch });
+    },
+    [canPersistSettings, dashboardId, updateDashboard],
+  );
+
+  const handleTimeRangeChange = useCallback(
+    (range: DashboardTimeRange) => {
+      setTimeRange(range);
+      persistSettings({ time_range: range });
+      void runExecute(paramValues, range);
+    },
+    [paramValues, persistSettings, runExecute],
+  );
+
+  const handleRefreshIntervalChange = useCallback(
+    (seconds: number | null) => {
+      setRefreshIntervalSeconds(seconds);
+      persistSettings({ refresh_interval_seconds: seconds });
+    },
+    [persistSettings],
+  );
+
+  const handleManualRefresh = useCallback(() => {
+    void runExecute(paramValues, timeRange);
+  }, [paramValues, runExecute, timeRange]);
+
+  useDashboardAutoRefresh({
+    intervalSeconds: refreshIntervalSeconds,
+    onRefresh: handleManualRefresh,
+    enabled: vizIds.length > 0,
+  });
+
   const runExecuteRef = useRef(runExecute);
   runExecuteRef.current = runExecute;
-  const defaultParamsRef = useRef(defaultParams);
-  defaultParamsRef.current = defaultParams;
+  const paramValuesRef = useRef(paramValues);
+  paramValuesRef.current = paramValues;
+  const timeRangeRef = useRef(timeRange);
+  timeRangeRef.current = timeRange;
   const autoExecutedKey = useRef<string | null>(null);
 
   useEffect(() => {
@@ -106,7 +160,7 @@ export function DashboardViewPage({ dashboardId }: Props) {
 
     const t = setTimeout(() => {
       autoExecutedKey.current = key;
-      void runExecuteRef.current(defaultParamsRef.current);
+      void runExecuteRef.current(paramValuesRef.current, timeRangeRef.current);
     }, 500);
     return () => clearTimeout(t);
   }, [dashboard?.id, vizIds.join(",")]);
@@ -199,12 +253,44 @@ export function DashboardViewPage({ dashboardId }: Props) {
         </div>
       </div>
 
-      <DashboardFilterBar
-        params={dashboard.dashboard_params ?? []}
-        initialValues={defaultParams}
-        onApply={(v) => void runExecute(v)}
+      <DashboardToolbar
+        timeRange={timeRange}
+        onTimeRangeChange={handleTimeRangeChange}
+        refreshIntervalSeconds={refreshIntervalSeconds}
+        onRefreshIntervalChange={handleRefreshIntervalChange}
+        onManualRefresh={handleManualRefresh}
+        lastRefreshedAt={lastRefreshedAt}
         loading={executeDashboard.isPending}
       />
+
+      <DashboardFilterBar
+        params={dashboard.dashboard_params ?? []}
+        initialValues={paramValues}
+        onApply={(v) => {
+          setParamValues(v);
+          void runExecute(v, timeRange);
+        }}
+        loading={executeDashboard.isPending}
+        autoApplyOnChange={autoApplyVars}
+      />
+
+      {(dashboard.dashboard_params?.length ?? 0) > 0 && (
+        <label className="flex items-center gap-2 text-xs text-slate-600">
+          <input
+            type="checkbox"
+            checked={autoApplyVars}
+            onChange={(e) => setAutoApplyVars(e.target.checked)}
+            className="rounded border-slate-300"
+          />
+          Apply variables automatically on change
+        </label>
+      )}
+
+      <p className="text-xs text-slate-500">
+        Use <code className="rounded bg-slate-100 px-1">{`{{__time_from}}`}</code> and{" "}
+        <code className="rounded bg-slate-100 px-1">{`{{__time_to}}`}</code> in SQL for time-range
+        filters.
+      </p>
 
       <DashboardGrid
         items={dashboard.items}

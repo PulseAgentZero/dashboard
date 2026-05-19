@@ -29,6 +29,10 @@ export function canDeleteDashboard(role: string | undefined): boolean {
   return hasMinRole(role, "manager");
 }
 
+export function canManageDashboardSettings(role: string | undefined): boolean {
+  return hasMinRole(role, "manager");
+}
+
 export function canEditQuery(
   role: string | undefined,
   createdBy: string | null | undefined,

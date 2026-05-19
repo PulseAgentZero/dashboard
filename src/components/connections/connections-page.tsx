@@ -29,6 +29,7 @@ import { useUsage } from "@/hooks/usage/use-usage";
 import { useAuth } from "@/providers/auth-provider";
 import { useSchemaMappings } from "@/hooks/schema-mappings/use-schema-mappings";
 import { supportsEntityMapping } from "@/lib/connectors/pipeline-supported";
+import { planDisplayName } from "@/lib/plan-utils";
 
 const STATUS_STYLES: Record<string, { pill: string; dot: string }> = {
   active: { pill: "bg-emerald-50 text-emerald-700", dot: "bg-emerald-500" },
@@ -226,7 +227,7 @@ export function ConnectionsPage() {
   const { requestDeleteConfirm, deleteConfirmModal } = useDeleteConfirm();
 
   const plan = usage?.plan ?? org?.plan ?? "free";
-  const isPro = plan.toLowerCase() === "pro";
+  const isUnlimited = plan.toLowerCase() === "pro" || plan.toLowerCase() === "enterprise";
   const list = connections ?? [];
 
   const stats = useMemo(() => {
@@ -241,7 +242,7 @@ export function ConnectionsPage() {
 
   const connectionSlot = usage?.limits?.connections;
   const atLimit =
-    !isPro &&
+    !isUnlimited &&
     connectionSlot?.limit != null &&
     connectionSlot.used >= connectionSlot.limit;
 
@@ -315,14 +316,16 @@ export function ConnectionsPage() {
           <SummaryPill
             label="Plan allowance"
             value={
-              isPro || connectionSlot?.limit == null
+              isUnlimited || connectionSlot?.limit == null
                 ? "∞"
                 : `${connectionSlot.used} / ${connectionSlot.limit}`
             }
-            sub={isPro ? "Pro — unlimited connections" : "Free tier connection slots"}
-            accent={
-              atLimit ? "warning" : isPro ? "success" : "default"
+            sub={
+              isUnlimited
+                ? "Pro — unlimited connections"
+                : `${planDisplayName(plan)} plan connection slots`
             }
+            accent={atLimit ? "warning" : isUnlimited ? "success" : "default"}
           />
         </div>
       )}
@@ -336,8 +339,8 @@ export function ConnectionsPage() {
             <div>
               <p className="text-sm font-semibold text-amber-900">Connection limit reached</p>
               <p className="mt-0.5 text-xs text-amber-800/90">
-                Free plans include {connectionSlot?.limit} connections. Upgrade to Pro for
-                unlimited sources.
+                Your {planDisplayName(plan)} plan allows {connectionSlot?.limit} connections.
+                Upgrade to Pro for unlimited sources.
               </p>
             </div>
           </div>

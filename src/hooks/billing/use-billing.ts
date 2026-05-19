@@ -2,9 +2,13 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { billingApi } from "@/lib/api/billing-api";
+import {
+  billingApi,
+  type CloudPlanTier,
+} from "@/lib/api/billing-api";
 import { useAuthEnabled } from "@/hooks/use-auth-enabled";
 import { isCloudDeployment } from "@/lib/deployment";
+import { planDisplayName } from "@/lib/plan-utils";
 import { ApiError } from "@/lib/api/client";
 
 export function useSubscription() {
@@ -19,9 +23,27 @@ export function useSubscription() {
   });
 }
 
+export function useOpenManagePaymentLink() {
+  return useMutation({
+    mutationFn: () => billingApi.getManageLink(),
+    onSuccess: (data) => {
+      if (data.link) window.open(data.link, "_blank", "noopener,noreferrer");
+    },
+    onError: (e: unknown) => {
+      const msg =
+        e instanceof ApiError ? e.message : "Could not open payment update page";
+      toast.error(msg);
+    },
+  });
+}
+
 export function useInitializeCloudCheckout() {
   return useMutation({
-    mutationFn: (callbackUrl: string) => billingApi.initializeCloud(callbackUrl),
+    mutationFn: (args: { callbackUrl: string; plan?: CloudPlanTier }) =>
+      billingApi.initializeCloud({
+        callback_url: args.callbackUrl,
+        plan: args.plan ?? "pro",
+      }),
     onSuccess: (data) => {
       if (data.authorization_url) {
         window.location.href = data.authorization_url;
@@ -45,9 +67,10 @@ export function useVerifyCloudPayment() {
       void qc.invalidateQueries({ queryKey: ["usage"] });
       void qc.invalidateQueries({ queryKey: ["billing", "subscription"] });
       void qc.invalidateQueries({ queryKey: ["organization"] });
+      const tier = data.effective_plan ?? data.plan;
       toast.success(
-        data.plan === "pro"
-          ? "Pro plan activated. Thank you!"
+        tier && tier !== "free"
+          ? `${planDisplayName(tier)} plan activated. Thank you!`
           : "Payment verified.",
       );
     },

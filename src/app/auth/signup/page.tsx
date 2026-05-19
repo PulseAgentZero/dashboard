@@ -1,19 +1,38 @@
 "use client";
 
+import { useState } from "react";
+import Link from "next/link";
 import { Mails, PersonStanding, Building2 } from "lucide-react";
+import { toast } from "sonner";
 import { Google } from "../../../../public/icon/google";
 import Image from "next/image";
 import FormField from "@/components/ui/form-field";
 import PasswordField from "@/components/ui/password-field";
 import { BladeFan } from "../../../../public/icon/bladeFan";
 import { useSignup } from "@/hooks/auth/use-signup";
+import { useAuthInstance } from "@/hooks/auth/use-auth-instance";
 import { initiateGoogleSignIn } from "@/lib/api/auth";
+import { isSelfHostedDeployment } from "@/lib/deployment";
 
 export default function SignupPage() {
+  const [termsAccepted, setTermsAccepted] = useState(false);
   const { mutate: signup, isPending } = useSignup();
+  const { data: instance, isLoading } = useAuthInstance();
+  const registrationOpen = instance?.registration_open ?? true;
+
+  function requireTermsAccepted(): boolean {
+    if (termsAccepted) return true;
+    toast.error("Please accept the Terms of Service and Privacy Policy to continue.");
+    return false;
+  }
+
+  const closedMessage = isSelfHostedDeployment()
+    ? "This Pulse instance is already set up. Sign in with your account or ask an admin for an invite."
+    : "New organization registration is not available on this instance.";
 
   function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (!requireTermsAccepted()) return;
     const data = new FormData(e.currentTarget);
     signup({
       full_name: data.get("name") as string,
@@ -57,6 +76,11 @@ export default function SignupPage() {
             <p className="mt-2 text-slate-600">Get started with Pulse in minutes.</p>
           </div>
 
+          {isLoading ? (
+            <p className="text-[13px] text-slate-500">Loading…</p>
+          ) : null}
+
+          {registrationOpen && !isLoading ? (
           <form className="space-y-6" onSubmit={handleSubmit}>
             <div className="space-y-4">
               <FormField
@@ -86,9 +110,41 @@ export default function SignupPage() {
               <PasswordField id="password" label="Password" required />
             </div>
 
+            <div className="flex items-start gap-3">
+              <input
+                id="accept-terms"
+                name="accept_terms"
+                type="checkbox"
+                checked={termsAccepted}
+                onChange={(e) => setTermsAccepted(e.target.checked)}
+                className="mt-0.5 h-4 w-4 shrink-0 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+              />
+              <label htmlFor="accept-terms" className="text-[13px] leading-snug text-slate-600">
+                I agree to the{" "}
+                <Link
+                  href="/terms"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-medium text-blue-600 hover:text-blue-500"
+                >
+                  Terms of Service
+                </Link>{" "}
+                and{" "}
+                <Link
+                  href="/privacy"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-medium text-blue-600 hover:text-blue-500"
+                >
+                  Privacy Policy
+                </Link>
+                .
+              </label>
+            </div>
+
             <button
               type="submit"
-              disabled={isPending}
+              disabled={isPending || !termsAccepted}
               className="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-[13px] font-semibold text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-1 focus:ring-offset-1 focus:ring-blue-500 transition duration-150 disabled:opacity-60 disabled:cursor-not-allowed"
             >
               {isPending ? "Creating account…" : "Create account"}
@@ -105,13 +161,24 @@ export default function SignupPage() {
 
             <button
               type="button"
-              onClick={initiateGoogleSignIn}
-              className="w-full flex items-center justify-center gap-3 py-3 px-4 border border-slate-200 rounded-xl bg-white text-[12px] font-medium text-slate-700 hover:bg-slate-50 transition duration-150"
+              onClick={() => {
+                if (!requireTermsAccepted()) return;
+                initiateGoogleSignIn("signup");
+              }}
+              disabled={!termsAccepted}
+              className="w-full flex items-center justify-center gap-3 py-3 px-4 border border-slate-200 rounded-xl bg-white text-[12px] font-medium text-slate-700 hover:bg-slate-50 transition duration-150 disabled:cursor-not-allowed disabled:opacity-60"
             >
               <Google />
               Sign up with Google
             </button>
           </form>
+          ) : null}
+
+          {!registrationOpen && !isLoading ? (
+            <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-[13px] text-amber-900">
+              {closedMessage}
+            </div>
+          ) : null}
 
           <p className="text-center text-[13px] text-slate-600">
             Already have an account?{" "}

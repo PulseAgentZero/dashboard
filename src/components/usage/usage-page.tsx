@@ -26,17 +26,17 @@ import {
   sortMetersBySeverity,
   summarizeMeterStatuses,
 } from "@/lib/usage-meters";
-
-const FREE_CONNECTION_LIMIT = 3;
+import { isUnlimitedPlan, planDisplayName } from "@/lib/plan-utils";
 
 function withConnectionsLimit(
   usage: PlanUsage,
   connectionCount: number,
-  isPro: boolean,
+  unlimited: boolean,
 ): PlanUsage["limits"] {
-  const connections = usage.limits.connections ?? {
+  const existing = usage.limits.connections;
+  const connections = {
     used: connectionCount,
-    limit: isPro ? null : FREE_CONNECTION_LIMIT,
+    limit: unlimited ? null : (existing?.limit ?? 5),
   };
   return { ...usage.limits, connections };
 }
@@ -80,12 +80,12 @@ export function UsagePage() {
   const { data: connections } = useConnections();
 
   const plan = usage?.plan ?? org?.plan ?? "free";
-  const isPro = plan.toLowerCase() === "pro";
+  const unlimited = isUnlimitedPlan(plan);
 
   const limits = useMemo(() => {
     if (!usage) return undefined;
-    return withConnectionsLimit(usage, connections?.length ?? 0, isPro);
-  }, [usage, connections?.length, isPro]);
+    return withConnectionsLimit(usage, connections?.length ?? 0, unlimited);
+  }, [usage, connections?.length, unlimited]);
 
   const health = limits ? computeHealthScore(limits) : 0;
   const chartData = limits ? buildChartData(limits) : [];
@@ -141,14 +141,18 @@ export function UsagePage() {
           <SummaryPill
             label="Current plan"
             value={plan.charAt(0).toUpperCase() + plan.slice(1)}
-            sub={isPro ? "Unlimited quotas" : "Limited quotas on key meters"}
-            accent={isPro ? "success" : "default"}
+            sub={
+              unlimited
+                ? "Unlimited quotas"
+                : `${planDisplayName(plan)} plan limits on key meters`
+            }
+            accent={unlimited ? "success" : "default"}
           />
           <SummaryPill
             label="Capacity headroom"
             value={`${health}%`}
             sub={
-              isPro
+              unlimited
                 ? "Pro plan — no hard caps"
                 : "Average room left on limited meters"
             }
@@ -173,7 +177,7 @@ export function UsagePage() {
         </div>
       )}
 
-      {atRisk && !isPro && (
+      {atRisk && !unlimited && (
         <div className="flex flex-col gap-3 rounded-2xl border border-rose-200 bg-gradient-to-r from-rose-50 via-orange-50/80 to-amber-50 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex gap-3">
             <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-rose-100">
@@ -239,7 +243,7 @@ export function UsagePage() {
               <>
                 <p className="mt-4 text-5xl font-bold tracking-tight tabular-nums">{health}%</p>
                 <p className="mt-2 text-sm leading-relaxed text-slate-400">
-                  {isPro
+                  {unlimited
                     ? "Pro includes unlimited quotas on every meter in your workspace."
                     : "Higher is better — average spare capacity across limited resources."}
                 </p>
@@ -249,7 +253,7 @@ export function UsagePage() {
                     style={{ width: `${health}%` }}
                   />
                 </div>
-                {!isPro && statusSummary && (
+                {!unlimited && statusSummary && (
                   <ul className="mt-5 space-y-2 text-xs text-slate-400">
                     <li className="flex justify-between">
                       <span>Healthy</span>

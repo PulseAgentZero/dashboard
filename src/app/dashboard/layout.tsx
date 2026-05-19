@@ -5,6 +5,7 @@ import { SidebarProvider } from "@/lib/sidebar-context";
 import Sidebar from "@/layout/sidebar";
 import Nav from "@/layout/nav";
 import AuthGuard from "@/components/auth/auth-guard";
+import { InactivityMonitor } from "@/components/auth/inactivity-monitor";
 import VerifyEmailBanner from "@/components/auth/verify-email-banner";
 import { SetupBanner } from "@/components/dashboard/setup-banner";
 import { ProductTour } from "@/components/tour/product-tour";
@@ -26,6 +27,7 @@ export default function DashboardLayout({
 
   return (
     <AuthGuard>
+      <InactivityMonitor />
       <SidebarProvider>
         <div className="flex h-screen overflow-hidden bg-[#f6f8fb] text-slate-900">
           <Sidebar />

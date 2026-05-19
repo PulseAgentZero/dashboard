@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { History, Loader2, Pencil, Trash2 } from "lucide-react";
 import { AddToDashboardModal } from "@/components/studio/modals/add-to-dashboard-modal";
 import { ParamInputs } from "@/components/studio/core/param-inputs";
@@ -42,6 +42,7 @@ import { studioApi } from "@/lib/api/studio-api";
 import { tokens } from "@/lib/auth-tokens";
 import { downloadQueryResultAsCsv } from "@/lib/studio/export-result-csv";
 import { sqlParamsToDefinitions } from "@/lib/studio/parse-sql-params";
+import { getQueryTemplate } from "@/lib/studio/query-templates";
 import { canCreateStudioContent, canEditQuery, canRefreshSchema } from "@/lib/studio/roles";
 import { useAuth } from "@/providers/auth-provider";
 import type { QueryResult, StudioVisualization } from "@/types/studio";
@@ -54,8 +55,10 @@ type Props = {
 
 export function QueryEditorPage({ queryId }: Props) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { user } = useAuth();
   const isNew = !queryId;
+  const templateAppliedRef = useRef(false);
 
   const [sql, setSql] = useState(DEFAULT_SQL);
   const [paramValues, setParamValues] = useState<Record<string, string>>({});
@@ -114,6 +117,16 @@ export function QueryEditorPage({ queryId }: Props) {
     const defaultId = pickDefaultStudioConnectionId(connections);
     if (defaultId) setConnectionId(defaultId);
   }, [connections, queryId, connectionId]);
+
+  useEffect(() => {
+    if (!isNew || templateAppliedRef.current) return;
+    const templateId = searchParams.get("template");
+    if (!templateId) return;
+    const template = getQueryTemplate(templateId);
+    if (!template) return;
+    templateAppliedRef.current = true;
+    setSql(template.sql);
+  }, [isNew, searchParams]);
 
   useEffect(() => {
     if (polledRun?.status === "completed" && polledRun.result) {

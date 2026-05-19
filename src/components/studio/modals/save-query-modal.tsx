@@ -172,6 +172,10 @@ export function SaveQueryModal({
             onChange={setCron}
             onEnabledChange={setCronEnabled}
           />
+          <p className="text-xs text-slate-500">
+            Background cache refresh on the server (cron). For live viewing, set refresh on the
+            Studio dashboard toolbar.
+          </p>
           <div className="flex justify-end gap-2">
             <button type="button" onClick={onClose} className="rounded-lg px-4 py-2 text-sm hover:bg-slate-100">
               Cancel

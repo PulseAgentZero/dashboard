@@ -48,6 +48,12 @@ export function useActivateLicense() {
       void qc.invalidateQueries({ queryKey: ["license"] });
       toast.success("License activated");
     },
-    onError: () => toast.error("Invalid or expired license key"),
+    onError: (err: unknown) => {
+      const message =
+        err && typeof err === "object" && "message" in err && typeof err.message === "string"
+          ? err.message
+          : "Invalid or expired license key";
+      toast.error(message);
+    },
   });
 }

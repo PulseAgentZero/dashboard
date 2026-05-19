@@ -16,7 +16,7 @@ export function useAuditLogAccess() {
   const selfHosted = isSelfHostedDeployment();
   const { data: license, isLoading: licenseLoading } = useLicense();
 
-  const plan = usage?.plan ?? org?.plan ?? "free";
+  const plan = usage?.plan ?? org?.plan ?? "free"; // usage.plan is effective_plan from API
   const loading = selfHosted ? licenseLoading : usageLoading;
   const hasAccess = canAccessAuditLogs(plan, license);
 

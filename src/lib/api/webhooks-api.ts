@@ -54,5 +54,5 @@ export const licenseApi = {
   get: () => api.get<LicenseInfo>("/license"),
 
   activate: (key: string) =>
-    api.post<LicenseInfo>("/license", { license_key: key }),
+    api.post<LicenseInfo>("/license/activate", { license_key: key }),
 };

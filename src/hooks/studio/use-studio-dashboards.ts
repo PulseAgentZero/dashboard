@@ -59,8 +59,15 @@ export function useDeleteDashboard() {
 
 export function useExecuteDashboard() {
   return useMutation({
-    mutationFn: ({ id, param_values }: { id: string; param_values?: Record<string, unknown> }) =>
-      studioApi.executeDashboard(id, param_values ?? {}),
+    mutationFn: ({
+      id,
+      param_values,
+      time_range,
+    }: {
+      id: string;
+      param_values?: Record<string, unknown>;
+      time_range?: import("@/types/studio").DashboardTimeRange;
+    }) => studioApi.executeDashboard(id, { param_values: param_values ?? {}, time_range }),
     onError: (e: Error) => {
       if (e instanceof ApiError && e.code === "RATE_LIMITED") {
         toast.error("Daily execution limit reached.");

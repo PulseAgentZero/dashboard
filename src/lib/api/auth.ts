@@ -8,12 +8,24 @@ import type {
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 
-export function initiateGoogleSignIn() {
+export interface AuthInstanceStatus {
+  deployment_mode: string;
+  registration_open: boolean;
+  can_create_organization: boolean;
+}
+
+export function initiateGoogleSignIn(intent: "login" | "signup" = "login") {
   const callbackUrl = `${window.location.origin}/auth/oauth/callback`;
-  window.location.href = `${BASE_URL}/api/v1/auth/oauth/google?redirect_uri=${encodeURIComponent(callbackUrl)}`;
+  const params = new URLSearchParams({
+    redirect_uri: callbackUrl,
+    intent,
+  });
+  window.location.href = `${BASE_URL}/api/v1/auth/oauth/google?${params.toString()}`;
 }
 
 export const authApi = {
+  instance: () => api.get<AuthInstanceStatus>("/auth/instance"),
+
   login: (body: LoginRequest) =>
     api.post<TokenResponse>("/auth/login", body),
 
@@ -47,4 +59,16 @@ export const authApi = {
 
   acceptInvite: (body: { token: string; full_name: string; password: string }) =>
     api.post<TokenResponse>("/auth/accept-invite", body),
+
+  confirmGoogleLink: (body: { link_token: string; password?: string }) =>
+    api.post<TokenResponse>("/auth/oauth/google/link", body),
+
+  cancelGoogleLink: (link_token: string) =>
+    api.post<void>("/auth/oauth/google/link/cancel", { link_token }),
+
+  completeGoogleSignup: (body: {
+    pending_token: string;
+    org_name: string;
+    full_name?: string;
+  }) => api.post<TokenResponse>("/auth/oauth/google/complete-signup", body),
 };

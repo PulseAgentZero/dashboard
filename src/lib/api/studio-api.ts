@@ -32,7 +32,12 @@ export type ListQueriesParams = {
 
 export type ListDashboardsParams = ListQueriesParams;
 
+export type StudioTagsResponse = {
+  tags: string[];
+};
+
 export const studioApi = {
+  listTags: () => api.get<StudioTagsResponse>(`${STUDIO}/tags`),
   getSchema: (connectionId?: string) => {
     const q = connectionId ? `?connection_id=${connectionId}` : "";
     return api.get<SchemaResponse>(`${STUDIO}/schema${q}`);
@@ -179,6 +184,8 @@ export const studioApi = {
     layout?: DashboardLayoutItem[];
     dashboard_params?: QueryParamDefinition[];
     tags?: string[];
+    refresh_interval_seconds?: number | null;
+    time_range?: import("@/types/studio").DashboardTimeRange;
   }) => api.post<StudioDashboard>(`${STUDIO}/dashboards`, body),
 
   updateDashboard: (
@@ -190,13 +197,24 @@ export const studioApi = {
       layout: DashboardLayoutItem[];
       dashboard_params: QueryParamDefinition[];
       tags: string[];
+      refresh_interval_seconds: number | null;
+      time_range: import("@/types/studio").DashboardTimeRange;
     }>,
   ) => api.patch<StudioDashboard>(`${STUDIO}/dashboards/${id}`, body),
 
   deleteDashboard: (id: string) => api.delete<void>(`${STUDIO}/dashboards/${id}`),
 
-  executeDashboard: (id: string, param_values: Record<string, unknown> = {}) =>
-    api.post<StudioDashboardExecuteResponse>(`${STUDIO}/dashboards/${id}/execute`, { param_values }),
+  executeDashboard: (
+    id: string,
+    body: {
+      param_values?: Record<string, unknown>;
+      time_range?: import("@/types/studio").DashboardTimeRange;
+    } = {},
+  ) =>
+    api.post<StudioDashboardExecuteResponse>(`${STUDIO}/dashboards/${id}/execute`, {
+      param_values: body.param_values ?? {},
+      ...(body.time_range ? { time_range: body.time_range } : {}),
+    }),
 
   forkDashboard: (id: string, name?: string) =>
     api.post<StudioDashboard>(`${STUDIO}/dashboards/${id}/fork`, name ? { name } : {}),
