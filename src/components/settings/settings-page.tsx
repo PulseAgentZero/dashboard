@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import {
   Bot, Building2, Copy, Download, Eye, EyeOff,
   KeyRound, Loader2, Plus, ShieldCheck, Trash2, User, Webhook,
@@ -645,12 +645,6 @@ function LicenseTab() {
 export function SettingsPage() {
   const visibleTabs = useMemo(() => getVisibleTabs(), []);
   const [tab, setTab] = useState<Tab>("org");
-
-  useEffect(() => {
-    if (!visibleTabs.some((t) => t.id === tab)) {
-      setTab("org");
-    }
-  }, [visibleTabs, tab]);
 
   return (
     <div className="mx-auto max-w-8xl space-y-5">

@@ -1,175 +1,172 @@
 "use client";
-import { useState } from "react";
-import Link from "next/link";
-import { MousePointer2 } from "lucide-react";
+
+import React, { useEffect, useRef } from "react";
 
 export default function FeatureExplorer() {
-  const [activeFeature, setActiveFeature] = useState(0);
+  const meshRef = useRef<HTMLCanvasElement | null>(null);
 
-  const features = [
-    {
-      id: "01",
-      title: "Industry-Agnostic Modeling",
-      cmd: "npx pulse init", // Keep the 'cmd' style for a "pro" feel
-      description:
-        "// Zero hardcoding. Describe your business in plain English and Pulse builds a custom behavior model on top of your schema.",
-      code: "CONTEXT: Reading business_context.txt\nSCHEMA: Identified 'subscriber_id' as Primary Entity\nGOAL: Churn Reduction",
-    },
-    {
-      id: "02",
-      title: "Direct-to-Database Introspection",
-      description:
-        "// Data Sovereignty. Pulse connects to your live DB and reads metadata only. Your customer data never leaves your environment.",
-      code: "CONNECTING: postgres://prod-db-01\nSTATUS: Read-only access granted\nMETADATA: 14 tables indexed, 0 rows copied.",
-    },
-    {
-      id: "03",
-      title: "Dynamic Query Reasoning",
-      description:
-        "// No SQL required. The agent translates natural language into optimized analytical queries against your live database.",
-      code: "> Show me high-risk entities in Lagos\nSQL: SELECT * FROM entities WHERE risk_score > 0.8 AND location = 'Lagos'...",
-    },
-    {
-      id: "04",
-      title: "Conversational Action Drafts",
-      description:
-        "// Instant Intervention. The agent uses behavioral profiles to draft personalized retention messages or operational plans.",
-      code: "ANALYZING: Entity ID 00445\nSIGNAL: 40% drop in usage\nDRAFTING: Personalized SMS...",
-    },
-    {
-      id: "05",
-      title: "Self-Hostable Infrastructure",
-      description:
-        "// Privacy First. Deploy the entire stack inside your own VPC using Docker or Kubernetes for total NDPR compliance.",
-      code: "DEPLOYING: pulse-engine:latest\nNETWORK: Internal VPC only\nSECURITY: Fernet encryption active",
-    },
-  ];
+  // High-performance background fluid movement context loop for the feature image frame
+  useEffect(() => {
+    const canvas = meshRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    let id: number;
+    canvas.width = 450;
+    canvas.height = 450;
+
+    let time = 0;
+
+    const drawMesh = () => {
+      time += 0.003;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Create a shifting dual-color horizontal mesh gradient match
+      const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+      
+      const wave1 = Math.sin(time * 2) * 15;
+      const wave2 = Math.cos(time * 1.5) * 20;
+
+      gradient.addColorStop(0, `hsl(${30 + wave1}, 95%, 60%)`);  // Shifting Warm Orange
+      gradient.addColorStop(0.5, `hsl(${345 + wave2}, 90%, 52%)`); // Deep Pink Red Aurora
+      gradient.addColorStop(1, `hsl(${15 + wave1}, 100%, 55%)`);  // Bright Gold Dune Hue
+
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Render overlay organic vertical color bands matching the screenshot texture
+      for (let i = 0; i < canvas.width; i += 4) {
+        const heightFactor = Math.sin(i * 0.015 + time * 4) * 45;
+        ctx.fillStyle = `rgba(255, 255, 255, ${Math.abs(Math.sin(i * 0.005)) * 0.08})`;
+        ctx.fillRect(i, 0, 2, canvas.height + heightFactor);
+      }
+
+      id = requestAnimationFrame(drawMesh);
+    };
+
+    drawMesh();
+    return () => cancelAnimationFrame(id);
+  }, []);
 
   return (
-    <div id="features" className="bg-black text-white min-h-screen p-8 font-mono selection:bg-zinc-800">
-      <div className="max-w-7xl mx-auto border-x border-zinc-900">
-        {/* Top Header Section - Matches Screenshot 2026-05-13 at 11.56.49 PM.jpg */}
-        <div className="grid grid-cols-1 md:grid-cols-2 border-y border-zinc-900">
-          <div className="p-12 border-r border-zinc-900">
-            <h2 className="text-xl text-zinc-400">
-              / the enterprise intelligence layer.
+    <>
+      <style>{`
+        @keyframes floatCard {
+          0%, 100% { transform: translateY(0px) scale(1); }
+          50%       { transform: translateY(-8px) scale(1.01); }
+        }
+        @keyframes subtlePulse {
+          0%, 100% { opacity: 0.85; transform: scale(1); }
+          50%       { opacity: 1; transform: scale(1.03); }
+        }
+        .animate-float-dashboard {
+          animation: floatCard 7s ease-in-out infinite;
+        }
+        .animate-pulse-glow {
+          animation: subtlePulse 4s ease-in-out infinite;
+        }
+      `}</style>
+
+      <section
+        data-navbar-theme="light"
+        className="relative bg-[#09090b] text-white min-h-[85vh] py-20 md:py-32 flex items-center justify-center overflow-hidden select-none"
+      >
+        {/* Background alignment alignment layout grids */}
+        <div className="absolute inset-y-0 left-6 md:left-12 lg:left-24 w-px bg-white/5 pointer-events-none" />
+        <div className="absolute inset-y-0 right-6 md:right-12 lg:right-24 w-px bg-white/5 pointer-events-none" />
+
+        <div className="w-full max-w-6xl mx-auto px-6 sm:px-12 grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-8 items-center z-10">
+          
+          {/* Left Text Content Frame Column */}
+          <div className="flex flex-col items-start max-w-xl">
+            <span className="text-white/60 font-serif text-xl sm:text-2xl mb-4 tracking-tight">
+              Data Hub
+            </span>
+            
+            <h2 className="text-4xl sm:text-5xl md:text-[54px] font-normal tracking-tight text-white leading-[1.12] mb-10 font-sans">
+              Analyze, collaborate <br /> and build on the <br /> onchain data platform
             </h2>
-          </div>
-          <div className="p-10 bg-zinc-950/20" />
-        </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 border-b border-zinc-900">
-          <div className="p-12 flex items-center border-r border-zinc-900">
-            <p className="text-zinc-400 font-sans">
-              Ships. Fixes. Tests. Refactors. Learns you, all the while.
-            </p>
+            <button className="bg-white text-black font-mono font-bold tracking-widest text-xs px-7 py-3.5 rounded-full transition-all duration-300 hover:bg-neutral-200 active:scale-95 uppercase shadow-md">
+              Learn More
+            </button>
           </div>
-          <div className="p-12 flex items-center gap-4">
-            <Link
-              href="/features"
-              className="bg-white/90 text-black px-6 py-2 rounded-full flex items-center gap-2 font-sans font-bold hover:bg-zinc-400 transition-colors"
-            >
-              Explore all features
-            </Link>
-            <Link
-              href="/docs"
-              className="border border-zinc-800 px-6 py-2 rounded-full font-sans font-medium hover:bg-zinc-900 transition-colors"
-            >
-              Docs
-            </Link>
-          </div>
-        </div>
 
-        {/* Feature Interaction Section */}
-        <div className="grid grid-cols-1 md:grid-cols-2 min-h-150">
-          {/* Left Side: List */}
-          <div className="border-r border-zinc-900">
-            {features.map((feature, index) => (
-              <div
-                key={feature.id}
-                onMouseEnter={() => setActiveFeature(index)}
-                className={`p-8 border-b border-zinc-900 cursor-none group transition-colors duration-300 ${
-                  activeFeature === index
-                    ? "bg-zinc-900/50"
-                    : "hover:bg-zinc-900/30"
-                }`}
-              >
-                <div className="flex items-baseline gap-4">
-                  <span
-                    className={`text-xs ${activeFeature === index ? "text-zinc-400" : "text-zinc-700"}`}
-                  >
-                    {feature.id}
-                  </span>
-                  <h3
-                    className={`text-lg transition-colors ${activeFeature === index ? "text-white" : "text-zinc-500"}`}
-                  >
-                    {feature.title}{" "}
-                    {feature.cmd && (
-                      <code className="text-sm bg-zinc-800/50 px-2 py-1 rounded ml-2">
-                        {feature.cmd}
-                      </code>
-                    )}
-                  </h3>
+          {/* Right Column Layout: Animated Dashboard Canvas Platform */}
+          <div className="flex items-center justify-center lg:justify-end w-full">
+            <div className="relative w-full max-w-[420px] sm:max-w-[460px] aspect-square rounded-[32px] overflow-hidden shadow-2xl border border-white/5 bg-neutral-900/40">
+              
+              {/* Dynamic canvas backdrop mesh */}
+              <canvas 
+                ref={meshRef} 
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+
+              {/* Glassmorphic Live Interface Data Overlay Layer */}
+              <div className="absolute inset-0 p-6 flex items-center justify-center bg-black/5 backdrop-blur-xs z-10">
+                
+                {/* Floating Metrics Module Panel Card */}
+                <div className="animate-float-dashboard w-[85%] bg-black/40 backdrop-blur-xl rounded-2xl border border-white/10 p-5 shadow-2xl relative">
+                  
+                  {/* Top Panel Context Bar Details */}
+                  <div className="flex items-center justify-between mb-4 border-b border-white/5 pb-3">
+                    <div className="flex flex-col">
+                      <span className="text-white/40 text-[10px] font-mono tracking-wider uppercase">Active Index</span>
+                      <span className="text-sm font-semibold tracking-tight text-white/90">Level USD</span>
+                    </div>
+                    <div className="flex items-center gap-1.5 bg-white/5 px-2 py-0.5 rounded-md border border-white/10">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse-glow" />
+                      <span className="text-[9px] font-mono text-white/70">9d VOL</span>
+                    </div>
+                  </div>
+
+                  {/* Micro Bar Chart Layout Vector */}
+                  <div className="h-28 flex items-end gap-1.5 pt-2 px-1 relative">
+                    {/* Horizontal background scale threshold metrics indicators */}
+                    <div className="absolute inset-x-0 bottom-0 h-px bg-white/10" />
+                    <div className="absolute inset-x-0 bottom-8 h-px bg-white/5" />
+                    <div className="absolute inset-x-0 bottom-16 h-px bg-white/5" />
+
+                    {/* Sequential Chart Bars */}
+                    {[20, 28, 24, 38, 32, 45, 52, 42, 61, 55, 74, 82, 68, 95, 110, 125, 105, 140].map((val, idx) => (
+                      <div key={idx} className="w-full flex flex-col justify-end h-full group relative">
+                        <div 
+                          className="w-full bg-white/90 rounded-t-xs transition-all duration-500 origin-bottom group-hover:bg-emerald-400" 
+                          style={{ height: `${(val / 150) * 100}%` }}
+                        />
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Footer Author Meta Context */}
+                  <div className="flex items-center gap-2 mt-4 pt-3 border-t border-white/5">
+                    <div className="w-4 h-4 rounded-full bg-gradient-to-tr from-amber-400 to-rose-500 shrink-0" />
+                    <span className="text-[10px] font-mono text-white/50 tracking-tight">@joneso</span>
+                  </div>
+
                 </div>
 
-                {/* Custom Cursor Indicator */}
-                <div className="opacity-0 group-hover:opacity-100 pointer-events-none fixed z-50 transition-opacity">
-                  <MousePointer2
-                    className="text-indigo-500 fill-indigo-500 -rotate-90 translate-x-4 translate-y-4"
-                    size={20}
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Right Side: Dynamic Context & Laptop UI */}
-          <div className="p-12 flex flex-col gap-6 bg-zinc-950/10">
-            <div className="mb-3 transition-all duration-500 ease-in-out">
-              <p className="text-zinc-400 leading-relaxed max-w-sm">
-                <span className="text-white font-bold">
-                  {features[activeFeature].description.split(".")[0]}.
-                </span>
-                {features[activeFeature].description
-                  .split(".")
-                  .slice(1)
-                  .join(".")}
-              </p>
-            </div>
-
-            {/* Laptop UI Terminal - Matches Screenshot 2026-05-13 at 11.56.49 PM.jpg */}
-            <div className="rounded-lg overflow-hidden border border-zinc-800 shadow-2xl shadow-indigo-900/10 transition-transform duration-500 transform hover:scale-[1.02]">
-              <div className="bg-[#00011f] px-4 py-2 flex gap-1.5 border-b border-zinc-800">
-                <div className="w-3 h-3 rounded-full bg-red-500/50" />
-                <div className="w-3 h-3 rounded-full bg-yellow-500/50" />
-                <div className="w-3 h-3 rounded-full bg-green-500/50" />
-                <span className="text-[10px] text-zinc-500 ml-2">
-                  ~/project
-                </span>
-              </div>
-              <div className="bg-[#00005ab0] p-6 min-h-62.5 font-mono text-sm leading-6">
-                <div className="flex gap-2 text-indigo-400 mb-4">
-                  <span>&gt;</span>
-                  <span className="text-zinc-300">cmd</span>
-                </div>
-                <div className="space-y-1">
-                  <pre className="text-zinc-400 whitespace-pre-wrap">
-                    {features[activeFeature].code}
-                  </pre>
-                  <div className="mt-4 flex items-center gap-2">
-                    <span className="bg-indigo-500/20 text-indigo-400 px-1.5 py-0.5 rounded text-[10px] font-bold">
-                      PULSE
-                    </span>
-                    <span className="text-zinc-500">
-                      Executing live reasoning against database...
-                    </span>
+                {/* Secondary Offset Background Card Module Layer (Right Edge Context) */}
+                <div className="absolute top-24 -right-16 w-44 bg-black/30 backdrop-blur-md rounded-xl border border-white/5 p-4 transform rotate-2 opacity-50 pointer-events-none hidden sm:block">
+                  <span className="text-[9px] font-mono text-white/40 block mb-1 uppercase tracking-widest">Analytics</span>
+                  <span className="text-xs font-medium text-white/80 block">Onchain Economics</span>
+                  <div className="w-full h-px bg-white/10 my-2" />
+                  <div className="h-4 flex items-center gap-0.5">
+                    {[20, 60, 40, 80, 50, 30].map((h, i) => (
+                      <div key={i} className="w-1 bg-white/40 rounded-full" style={{ height: `${h}%` }} />
+                    ))}
                   </div>
                 </div>
+
               </div>
+
             </div>
           </div>
+
         </div>
-      </div>
-    </div>
+      </section>
+    </>
   );
 }
