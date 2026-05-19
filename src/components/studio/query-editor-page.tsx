@@ -76,6 +76,22 @@ export function QueryEditorPage({ queryId }: Props) {
   const [connectionId, setConnectionId] = useState<string | null>(null);
   const editorInsertRef = useRef<((text: string) => void) | null>(null);
 
+  const handleSchemaInsert = useCallback((text: string) => {
+    if (editorInsertRef.current) {
+      editorInsertRef.current(text);
+      return;
+    }
+    setSql((s) => {
+      if (!s.trim()) return text;
+      const needsSpace = s.length > 0 && !/\s$/.test(s);
+      return s + (needsSpace ? " " : "") + text;
+    });
+  }, []);
+
+  const handleInsertReady = useCallback((insert: (text: string) => void) => {
+    editorInsertRef.current = insert;
+  }, []);
+
   const { data: connections } = useConnections();
   const { data: query, isLoading: queryLoading } = useStudioQuery(queryId);
   const effectiveConnectionId = query?.connection_id ?? connectionId;
@@ -323,7 +339,7 @@ export function QueryEditorPage({ queryId }: Props) {
             isLoading={schemaLoading || refreshSchema.isPending}
             onRefresh={() => refreshSchema.mutate(effectiveConnectionId ?? undefined)}
             canRefresh={canRefreshSchema(user?.role)}
-            onInsert={(text) => setSql((s) => s + text)}
+            onInsert={handleSchemaInsert}
           />
         </div>
         <div className="flex min-w-0 flex-1 flex-col gap-3">
@@ -332,7 +348,13 @@ export function QueryEditorPage({ queryId }: Props) {
             values={paramValues}
             onChange={setParamValues}
           />
-          <SQLEditor value={sql} onChange={setSql} onRun={() => void handleRun()} tables={schema?.tables} />
+          <SQLEditor
+            value={sql}
+            onChange={setSql}
+            onRun={() => void handleRun()}
+            onInsertReady={handleInsertReady}
+            tables={schema?.tables}
+          />
           <RunStatusPoller run={polledRun} isPolling={isPolling} />
           <ResultsTable result={result} />
         </div>
