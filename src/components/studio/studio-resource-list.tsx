@@ -12,7 +12,6 @@ import {
   Rows3,
 } from "lucide-react";
 import { StarButton } from "@/components/studio/ui/star-button";
-import { QUERY_TEMPLATES } from "@/lib/studio/query-templates";
 import type { StudioDashboard, StudioQuery } from "@/types/studio";
 
 function formatRelative(dateStr: string) {
@@ -315,52 +314,55 @@ export function StudioListEmpty({
   kind,
   canCreate,
   onCreateDashboard,
-  showTemplates = false,
 }: {
   kind: "queries" | "dashboards";
   canCreate: boolean;
   onCreateDashboard?: () => void;
-  showTemplates?: boolean;
 }) {
   const isQueries = kind === "queries";
+  const Icon = isQueries ? FileCode2 : LayoutDashboard;
 
   return (
-    <div className="px-6 py-10 text-center">
-      <p className="text-sm text-slate-600">No {isQueries ? "queries" : "dashboards"} yet.</p>
-      {canCreate && (
-        <div className="mt-3">
-          {isQueries ? (
-            <Link
-              href="/dashboard/studio/queries/new"
-              className="text-sm font-medium text-indigo-600 hover:text-indigo-700"
-            >
-              Create a query
-            </Link>
-          ) : (
-            <button
-              type="button"
-              onClick={onCreateDashboard}
-              className="text-sm font-medium text-indigo-600 hover:text-indigo-700"
-            >
-              Create a dashboard
-            </button>
-          )}
-        </div>
-      )}
-      {showTemplates && isQueries && (
-        <ul className="mx-auto mt-6 max-w-sm space-y-1 text-left text-sm">
-          {QUERY_TEMPLATES.slice(0, 4).map((t) => (
-            <li key={t.id}>
-              <Link
-                href={`/dashboard/studio/queries/new?template=${t.id}`}
-                className="text-slate-600 hover:text-indigo-600"
-              >
-                {t.name}
-              </Link>
-            </li>
-          ))}
-        </ul>
-      )}
+    <div className="flex flex-col items-center px-6 py-16 text-center">
+      <div
+        className={`grid h-14 w-14 place-items-center rounded-2xl ring-1 ${
+          isQueries
+            ? "bg-indigo-50 ring-indigo-100"
+            : "bg-violet-50 ring-violet-100"
+        }`}
+      >
+        <Icon
+          size={28}
+          className={isQueries ? "text-indigo-500" : "text-violet-500"}
+        />
+      </div>
+      <p className="mt-5 text-base font-semibold text-slate-800">
+        No {isQueries ? "queries" : "dashboards"} yet
+      </p>
+      <p className="mt-1 max-w-sm text-sm text-slate-500">
+        {isQueries
+          ? "Write SQL against your connected data and save results for dashboards."
+          : "Combine saved queries into panels to monitor metrics at a glance."}
+      </p>
+      {canCreate &&
+        (isQueries ? (
+          <Link
+            href="/dashboard/studio/queries/new"
+            className="mt-6 inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-indigo-700"
+          >
+            <FileCode2 size={16} />
+            Create your first query
+          </Link>
+        ) : (
+          <button
+            type="button"
+            onClick={onCreateDashboard}
+            className="mt-6 inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-indigo-700"
+          >
+            <LayoutDashboard size={16} />
+            Create your first dashboard
+          </button>
+        ))}
     </div>
   );
 }

@@ -6,7 +6,7 @@ import { DashboardPageShell } from "@/components/layout/dashboard-page-shell";
 import { STUDIO_LIST_PAGE_SIZE } from "@/lib/pagination";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { FileCode2, LayoutDashboard, Plus, Search } from "lucide-react";
+import { LayoutDashboard, Plus, Search } from "lucide-react";
 import { CreateDashboardModal } from "@/components/studio/modals/create-dashboard-modal";
 import {
   DashboardListRow,
@@ -194,13 +194,6 @@ export function StudioHomePage() {
             kind={tab}
             canCreate={canCreate}
             onCreateDashboard={() => setCreateDashOpen(true)}
-            showTemplates={
-              isQueries &&
-              total === 0 &&
-              !debouncedSearch &&
-              !starredOnly &&
-              !tagFilter
-            }
           />
         ) : isQueries ? (
           <div>

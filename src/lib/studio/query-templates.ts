@@ -48,5 +48,3 @@ export const QUERY_TEMPLATES: QueryTemplate[] = [
 export function getQueryTemplate(id: string): QueryTemplate | undefined {
   return QUERY_TEMPLATES.find((t) => t.id === id);
 }
-
-export const STUDIO_SHOW_TEMPLATES_THRESHOLD = 3;
