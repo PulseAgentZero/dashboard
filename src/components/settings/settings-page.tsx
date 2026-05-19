@@ -28,6 +28,12 @@ import { UsageBar } from "@/components/shared/usage-bar";
 import { isCloudDeployment } from "@/lib/deployment";
 import { useLicense, useActivateLicense } from "@/hooks/webhooks/use-webhooks";
 import { WebhooksSettingsTab } from "@/components/settings/webhooks-settings-tab";
+import {
+  changePasswordSchema,
+  profileSchema,
+  useFormValidation,
+} from "@/lib/validation";
+import { FieldError } from "@/components/ui/field-error";
 import { api } from "@/lib/api/client";
 import { RetakeTourButton } from "@/components/tour/retake-tour-button";
 import { useDeleteConfirm } from "@/hooks/use-delete-confirm";
@@ -232,24 +238,50 @@ function AccountTab() {
   const { mutate: removeAvatar, isPending: removingAvatar } = useRemoveAvatar();
   const { mutate: updatePwd, isPending: updatingPwd } = useUpdatePassword();
   const [pwd, setPwd] = useState({ current: "", next: "", confirm: "" });
-  const [pwdError, setPwdError] = useState("");
+  const {
+    fieldErrors: profileErrors,
+    clearErrors: clearProfileErrors,
+    validateFormData: validateProfile,
+    handleApiError: handleProfileApiError,
+  } = useFormValidation();
+  const {
+    fieldErrors: pwdErrors,
+    clearErrors: clearPwdErrors,
+    validate: validatePassword,
+    handleApiError: handlePasswordApiError,
+  } = useFormValidation();
 
   function handleProfile(e: React.SyntheticEvent<HTMLFormElement>) {
     e.preventDefault();
-    const d = new FormData(e.currentTarget);
-    updateMe({ full_name: (d.get("full_name") as string) || undefined });
+    clearProfileErrors();
+    const data = validateProfile(profileSchema, new FormData(e.currentTarget));
+    if (!data) return;
+    updateMe(
+      { full_name: data.full_name },
+      { onError: handleProfileApiError },
+    );
   }
 
   function handlePassword(e: React.SyntheticEvent<HTMLFormElement>) {
     e.preventDefault();
-    setPwdError("");
-    if (pwd.next !== pwd.confirm) { setPwdError("New passwords don't match."); return; }
-    if (pwd.next.length < 8) { setPwdError("Password must be at least 8 characters."); return; }
+    clearPwdErrors();
+    const data = validatePassword(changePasswordSchema, {
+      current_password: pwd.current,
+      new_password: pwd.next,
+      confirm: pwd.confirm,
+    });
+    if (!data) return;
     updatePwd(
-      { current_password: pwd.current, new_password: pwd.next },
-      { onSuccess: () => setPwd({ current: "", next: "", confirm: "" }) },
+      { current_password: data.current_password, new_password: data.new_password },
+      {
+        onSuccess: () => setPwd({ current: "", next: "", confirm: "" }),
+        onError: handlePasswordApiError,
+      },
     );
   }
+
+  const pwdInputCls = (key: keyof typeof pwd) =>
+    `${inputCls}${pwdErrors[key] ? " border-rose-300 focus:border-rose-400 focus:ring-rose-400" : ""}`;
 
   return (
     <div className="space-y-8">
@@ -272,10 +304,12 @@ function AccountTab() {
               <input
                 key={user?.id}
                 name="full_name"
-                className={inputCls}
+                className={profileErrors.full_name ? `${inputCls} border-rose-300` : inputCls}
                 defaultValue={user?.full_name ?? ""}
                 placeholder="Your name"
+                aria-invalid={Boolean(profileErrors.full_name)}
               />
+              <FieldError message={profileErrors.full_name} />
             </Field>
             <Field label="Email">
               <input className={inputCls} value={user?.email ?? ""} disabled readOnly />
@@ -312,23 +346,28 @@ function AccountTab() {
         <p className="mb-4 text-xs font-semibold uppercase tracking-wide text-slate-400">Change password</p>
         <form onSubmit={handlePassword} className="space-y-4">
           <Field label="Current password">
-            <input type="password" className={inputCls} value={pwd.current}
+            <input type="password" className={pwdInputCls("current")} value={pwd.current}
               onChange={(e) => setPwd((p) => ({ ...p, current: e.target.value }))}
-              placeholder="••••••••" autoComplete="current-password" />
+              placeholder="••••••••" autoComplete="current-password"
+              aria-invalid={Boolean(pwdErrors.current)} />
+            <FieldError message={pwdErrors.current} />
           </Field>
           <div className="grid gap-4 sm:grid-cols-2">
             <Field label="New password">
-              <input type="password" className={inputCls} value={pwd.next}
+              <input type="password" className={pwdInputCls("next")} value={pwd.next}
                 onChange={(e) => setPwd((p) => ({ ...p, next: e.target.value }))}
-                placeholder="••••••••" autoComplete="new-password" />
+                placeholder="••••••••" autoComplete="new-password"
+                aria-invalid={Boolean(pwdErrors.next)} />
+              <FieldError message={pwdErrors.next} />
             </Field>
             <Field label="Confirm new password">
-              <input type="password" className={inputCls} value={pwd.confirm}
+              <input type="password" className={pwdInputCls("confirm")} value={pwd.confirm}
                 onChange={(e) => setPwd((p) => ({ ...p, confirm: e.target.value }))}
-                placeholder="••••••••" autoComplete="new-password" />
+                placeholder="••••••••" autoComplete="new-password"
+                aria-invalid={Boolean(pwdErrors.confirm)} />
+              <FieldError message={pwdErrors.confirm} />
             </Field>
           </div>
-          {pwdError && <p className="rounded-lg bg-rose-50 px-3 py-2 text-xs text-rose-700">{pwdError}</p>}
           <div className="flex justify-end border-t border-slate-100 pt-3">
             <button type="submit" disabled={updatingPwd || !pwd.current || !pwd.next}
               className="flex items-center gap-2 rounded-lg bg-slate-900 px-5 py-2 text-sm font-semibold text-white hover:bg-slate-700 disabled:opacity-50">

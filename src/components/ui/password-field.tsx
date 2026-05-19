@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Key, View, EyeClosed } from "lucide-react";
+import { FieldError } from "@/components/ui/field-error";
 
 type PasswordFieldProps = {
   label?: string;
@@ -9,6 +10,7 @@ type PasswordFieldProps = {
   name?: string;
   placeholder?: string;
   required?: boolean;
+  error?: string;
 };
 
 export default function PasswordField({
@@ -17,8 +19,10 @@ export default function PasswordField({
   name,
   placeholder = "••••••••",
   required,
+  error,
 }: PasswordFieldProps) {
   const [visible, setVisible] = useState(false);
+  const invalid = Boolean(error);
 
   return (
     <div className="space-y-1.5">
@@ -36,7 +40,13 @@ export default function PasswordField({
           name={name ?? id}
           required={required}
           placeholder={placeholder}
-          className="h-10.5 w-full rounded-lg border border-slate-200 bg-slate-50 pl-9 pr-10 text-[13px] text-slate-700 placeholder:text-slate-500 focus:border-blue-400 focus:outline-none transition-colors"
+          aria-invalid={invalid}
+          aria-describedby={invalid ? `${id}-error` : undefined}
+          className={`h-10.5 w-full rounded-lg border bg-slate-50 pl-9 pr-10 text-[13px] text-slate-700 placeholder:text-slate-500 focus:outline-none transition-colors ${
+            invalid
+              ? "border-rose-300 focus:border-rose-400"
+              : "border-slate-200 focus:border-blue-400"
+          }`}
         />
         <button
           type="button"
@@ -47,6 +57,7 @@ export default function PasswordField({
           {visible ? <EyeClosed size={15} /> : <View size={15} />}
         </button>
       </div>
+      <FieldError message={error} />
     </div>
   );
 }

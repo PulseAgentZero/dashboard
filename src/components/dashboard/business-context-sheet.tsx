@@ -5,6 +5,9 @@ import { Loader2, X } from "lucide-react";
 import { toast } from "sonner";
 import { useOrganization } from "@/hooks/org/use-organization";
 import { usePatchMemberSettings } from "@/hooks/org/use-member-settings";
+import { businessContextSchema, useFormValidation } from "@/lib/validation";
+import { FieldError } from "@/components/ui/field-error";
+import { ApiError } from "@/lib/api/client";
 
 const INDUSTRIES = [
   "Telecom", "Healthcare", "Retail & FMCG", "Logistics & Supply Chain",
@@ -24,6 +27,7 @@ type BusinessContextSheetProps = {
 export function BusinessContextSheet({ open, onClose, onSaved }: BusinessContextSheetProps) {
   const { data: org } = useOrganization();
   const { mutate: save, isPending } = usePatchMemberSettings();
+  const { fieldErrors, clearErrors, validate, handleApiError } = useFormValidation();
 
   useEffect(() => {
     if (!open) return;
@@ -38,18 +42,21 @@ export function BusinessContextSheet({ open, onClose, onSaved }: BusinessContext
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    clearErrors();
     const d = new FormData(e.currentTarget);
-    const business_context = (d.get("business_context") as string).trim();
-    if (!business_context) {
-      toast.error("Business context is required");
-      return;
-    }
+    const payload = validate(businessContextSchema, {
+      industry: (d.get("industry") as string) || undefined,
+      business_context: d.get("business_context") as string,
+      entity_label: (d.get("entity_label") as string) || undefined,
+      goal_label: (d.get("goal_label") as string) || undefined,
+    });
+    if (!payload) return;
     save(
       {
-        industry: (d.get("industry") as string) || undefined,
-        business_context,
-        entity_label: (d.get("entity_label") as string) || undefined,
-        goal_label: (d.get("goal_label") as string) || undefined,
+        industry: payload.industry || undefined,
+        business_context: payload.business_context,
+        entity_label: payload.entity_label || undefined,
+        goal_label: payload.goal_label || undefined,
       },
       {
         onSuccess: () => {
@@ -57,9 +64,19 @@ export function BusinessContextSheet({ open, onClose, onSaved }: BusinessContext
           onSaved?.();
           onClose();
         },
+        onError: (err) => {
+          if (handleApiError(err)) return;
+          toast.error(
+            err instanceof ApiError ? err.message : "Failed to save business context",
+          );
+        },
       },
     );
   }
+
+  const contextInputCls = fieldErrors.business_context
+    ? `${inputCls} border-rose-300 focus:border-rose-400 focus:ring-rose-400`
+    : inputCls;
 
   return (
   <>
@@ -105,10 +122,12 @@ export function BusinessContextSheet({ open, onClose, onSaved }: BusinessContext
             <textarea
               name="business_context"
               required
-              className={`${inputCls} min-h-28 resize-y`}
+              className={`${contextInputCls} min-h-28 resize-y`}
               defaultValue={org?.business_context ?? ""}
               placeholder="We are a telecom operator managing enterprise accounts…"
+              aria-invalid={Boolean(fieldErrors.business_context)}
             />
+            <FieldError message={fieldErrors.business_context} />
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">

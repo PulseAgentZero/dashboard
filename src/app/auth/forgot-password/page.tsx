@@ -5,14 +5,22 @@ import { Mails } from "lucide-react";
 import AuthLayout from "@/components/auth/auth-layout";
 import FormField from "@/components/ui/form-field";
 import { useForgotPassword } from "@/hooks/auth/use-forgot-password";
+import { forgotPasswordSchema, useFormValidation } from "@/lib/validation";
 
 export default function ForgotPasswordPage() {
   const { mutate, isPending, isSuccess } = useForgotPassword();
+  const { fieldErrors, clearErrors, validateFormData, handleApiError } =
+    useFormValidation();
 
   function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
     e.preventDefault();
-    const email = new FormData(e.currentTarget).get("email") as string;
-    mutate(email);
+    clearErrors();
+    const data = validateFormData(
+      forgotPasswordSchema,
+      new FormData(e.currentTarget),
+    );
+    if (!data) return;
+    mutate(data.email, { onError: handleApiError });
   }
 
   return (
@@ -35,6 +43,7 @@ export default function ForgotPasswordPage() {
             placeholder="name@company.com"
             icon={Mails}
             required
+            error={fieldErrors.email}
           />
           <button
             type="submit"

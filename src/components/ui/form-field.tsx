@@ -1,4 +1,5 @@
 import { type LucideIcon } from "lucide-react";
+import { FieldError } from "@/components/ui/field-error";
 
 type FormFieldProps = {
   label: string;
@@ -8,6 +9,7 @@ type FormFieldProps = {
   name?: string;
   required?: boolean;
   icon?: LucideIcon;
+  error?: string;
 };
 
 export default function FormField({
@@ -18,7 +20,10 @@ export default function FormField({
   name,
   required,
   icon: Icon,
+  error,
 }: FormFieldProps) {
+  const invalid = Boolean(error);
+
   return (
     <div className="space-y-1.5">
       <label htmlFor={id} className="block text-[13px] font-medium text-slate-700">
@@ -37,9 +42,16 @@ export default function FormField({
           name={name ?? id}
           required={required}
           placeholder={placeholder}
-          className={`h-10.5 w-full rounded-lg border border-slate-200 bg-slate-50 ${Icon ? "pl-9" : "pl-3"} pr-4 text-[13px] text-slate-700 placeholder:text-slate-500 placeholder:text-[13px] focus:border-blue-400 focus:outline-none transition-colors`}
+          aria-invalid={invalid}
+          aria-describedby={invalid ? `${id}-error` : undefined}
+          className={`h-10.5 w-full rounded-lg border bg-slate-50 ${Icon ? "pl-9" : "pl-3"} pr-4 text-[13px] text-slate-700 placeholder:text-slate-500 placeholder:text-[13px] focus:outline-none transition-colors ${
+            invalid
+              ? "border-rose-300 focus:border-rose-400"
+              : "border-slate-200 focus:border-blue-400"
+          }`}
         />
       </div>
+      <FieldError message={error} />
     </div>
   );
 }

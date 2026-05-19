@@ -10,6 +10,8 @@ import { authApi } from "@/lib/api/auth";
 import { ApiError } from "@/lib/api/client";
 import { postAuthRedirect } from "@/lib/auth-redirect";
 import { tokens } from "@/lib/auth-tokens";
+import { linkGoogleAccountSchema, useFormValidation } from "@/lib/validation";
+import { shouldDeferMutationToast } from "@/lib/validation/parse";
 
 export default function LinkAccountContent() {
   const params = useSearchParams();
@@ -17,6 +19,9 @@ export default function LinkAccountContent() {
   const qc = useQueryClient();
   const linkToken = params.get("link_token");
   const email = params.get("email") ?? "your account";
+
+  const { fieldErrors, clearErrors, validateFormData, handleApiError } =
+    useFormValidation();
 
   const linkMutation = useMutation({
     mutationFn: (password: string) => {
@@ -33,6 +38,7 @@ export default function LinkAccountContent() {
       postAuthRedirect(data.org, router, data.user);
     },
     onError: (err) => {
+      if (shouldDeferMutationToast(err)) return;
       const message =
         err instanceof ApiError ? err.message : "Could not link your Google account.";
       toast.error(message);
@@ -75,11 +81,21 @@ export default function LinkAccountContent() {
         className="space-y-6"
         onSubmit={(e) => {
           e.preventDefault();
-          const data = new FormData(e.currentTarget);
-          linkMutation.mutate(data.get("password") as string);
+          clearErrors();
+          const data = validateFormData(
+            linkGoogleAccountSchema,
+            new FormData(e.currentTarget),
+          );
+          if (!data) return;
+          linkMutation.mutate(data.password, { onError: handleApiError });
         }}
       >
-        <PasswordField id="password" label="Confirm your password" required />
+        <PasswordField
+          id="password"
+          label="Confirm your password"
+          required
+          error={fieldErrors.password}
+        />
 
         <button
           type="submit"

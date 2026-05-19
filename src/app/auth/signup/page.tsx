@@ -13,10 +13,12 @@ import { useSignup } from "@/hooks/auth/use-signup";
 import { useAuthInstance } from "@/hooks/auth/use-auth-instance";
 import { initiateGoogleSignIn } from "@/lib/api/auth";
 import { isSelfHostedDeployment } from "@/lib/deployment";
+import { signupSchema, useFormValidation } from "@/lib/validation";
 
 export default function SignupPage() {
   const [termsAccepted, setTermsAccepted] = useState(false);
   const { mutate: signup, isPending } = useSignup();
+  const { fieldErrors, clearErrors, validate, handleApiError } = useFormValidation();
   const { data: instance, isLoading } = useAuthInstance();
   const registrationOpen = instance?.registration_open ?? true;
 
@@ -33,13 +35,19 @@ export default function SignupPage() {
   function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
     e.preventDefault();
     if (!requireTermsAccepted()) return;
-    const data = new FormData(e.currentTarget);
-    signup({
-      full_name: data.get("name") as string,
-      email: data.get("email") as string,
-      password: data.get("password") as string,
-      org_name: data.get("org_name") as string,
+    clearErrors();
+    const raw = Object.fromEntries(new FormData(e.currentTarget).entries()) as Record<
+      string,
+      string
+    >;
+    const payload = validate(signupSchema, {
+      full_name: raw.name,
+      email: raw.email,
+      password: raw.password,
+      org_name: raw.org_name,
     });
+    if (!payload) return;
+    signup(payload, { onError: handleApiError });
   }
 
   return (
@@ -90,6 +98,7 @@ export default function SignupPage() {
                 placeholder="Jane Doe"
                 icon={PersonStanding}
                 required
+                error={fieldErrors.full_name ?? fieldErrors.name}
               />
               <FormField
                 id="org_name"
@@ -98,6 +107,7 @@ export default function SignupPage() {
                 placeholder="Acme Inc."
                 icon={Building2}
                 required
+                error={fieldErrors.org_name}
               />
               <FormField
                 id="email"
@@ -106,8 +116,14 @@ export default function SignupPage() {
                 placeholder="name@company.com"
                 icon={Mails}
                 required
+                error={fieldErrors.email}
               />
-              <PasswordField id="password" label="Password" required />
+              <PasswordField
+                id="password"
+                label="Password"
+                required
+                error={fieldErrors.password}
+              />
             </div>
 
             <div className="flex items-start gap-3">

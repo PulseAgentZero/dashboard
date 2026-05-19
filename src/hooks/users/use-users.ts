@@ -1,6 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { usersApi } from "@/lib/api/users-api";
+import { ApiError } from "@/lib/api/client";
+import { shouldDeferMutationToast } from "@/lib/validation/parse";
 
 export function useUsers() {
   return useQuery({
@@ -29,7 +31,8 @@ export function useInviteUser() {
       toast.success(`Invitation sent to ${vars.email}`);
     },
     onError: (err: unknown) => {
-      const msg = err instanceof Error ? err.message : "Failed to send invitation";
+      if (shouldDeferMutationToast(err)) return;
+      const msg = err instanceof ApiError ? err.message : "Failed to send invitation";
       toast.error(msg);
     },
   });
@@ -80,7 +83,10 @@ export function useUpdateMe() {
       void qc.invalidateQueries({ queryKey: ["me"] });
       toast.success("Profile updated");
     },
-    onError: () => toast.error("Failed to update profile"),
+    onError: (err: unknown) => {
+      if (shouldDeferMutationToast(err)) return;
+      toast.error(err instanceof ApiError ? err.message : "Failed to update profile");
+    },
   });
 }
 
@@ -117,7 +123,8 @@ export function useUpdatePassword() {
       usersApi.updatePassword(body),
     onSuccess: () => toast.success("Password updated"),
     onError: (err: unknown) => {
-      const msg = err instanceof Error ? err.message : "Failed to update password";
+      if (shouldDeferMutationToast(err)) return;
+      const msg = err instanceof ApiError ? err.message : "Failed to update password";
       toast.error(msg);
     },
   });

@@ -5,20 +5,28 @@ import { useSearchParams } from "next/navigation";
 import AuthLayout from "@/components/auth/auth-layout";
 import PasswordField from "@/components/ui/password-field";
 import { useResetPassword } from "@/hooks/auth/use-reset-password";
+import { resetPasswordSchema, useFormValidation } from "@/lib/validation";
 
 export default function ResetPasswordContent() {
   const searchParams = useSearchParams();
   const token = searchParams.get("token") ?? "";
   const { mutate, isPending } = useResetPassword();
+  const { fieldErrors, clearErrors, validateFormData, handleApiError } =
+    useFormValidation();
 
   function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
     e.preventDefault();
     if (!token) return;
-    const data = new FormData(e.currentTarget);
-    mutate({
-      token,
-      new_password: data.get("password") as string,
-    });
+    clearErrors();
+    const data = validateFormData(
+      resetPasswordSchema,
+      new FormData(e.currentTarget),
+    );
+    if (!data) return;
+    mutate(
+      { token, new_password: data.password },
+      { onError: handleApiError },
+    );
   }
 
   if (!token) {
@@ -46,7 +54,12 @@ export default function ResetPasswordContent() {
       subtitle="Enter a strong password for your account"
     >
       <form className="space-y-6" onSubmit={handleSubmit}>
-        <PasswordField id="password" label="New password" required />
+        <PasswordField
+          id="password"
+          label="New password"
+          required
+          error={fieldErrors.password}
+        />
         <button
           type="submit"
           disabled={isPending}

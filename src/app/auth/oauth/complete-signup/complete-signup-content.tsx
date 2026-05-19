@@ -11,12 +11,16 @@ import { authApi } from "@/lib/api/auth";
 import { ApiError } from "@/lib/api/client";
 import { postAuthRedirect } from "@/lib/auth-redirect";
 import { tokens } from "@/lib/auth-tokens";
+import { completeGoogleSignupSchema, useFormValidation } from "@/lib/validation";
+import { shouldDeferMutationToast } from "@/lib/validation/parse";
 
 export default function CompleteSignupContent() {
   const params = useSearchParams();
   const router = useRouter();
   const qc = useQueryClient();
   const pendingToken = params.get("pending_token");
+
+  const { fieldErrors, clearErrors, validate, handleApiError } = useFormValidation();
 
   const signupMutation = useMutation({
     mutationFn: (body: { org_name: string; full_name: string }) => {
@@ -34,6 +38,7 @@ export default function CompleteSignupContent() {
       postAuthRedirect(data.org, router, data.user);
     },
     onError: (err) => {
+      if (shouldDeferMutationToast(err)) return;
       const message =
         err instanceof ApiError ? err.message : "Could not finish sign up.";
       toast.error(message);
@@ -65,11 +70,20 @@ export default function CompleteSignupContent() {
         className="space-y-6"
         onSubmit={(e) => {
           e.preventDefault();
-          const data = new FormData(e.currentTarget);
-          signupMutation.mutate({
-            org_name: data.get("org_name") as string,
-            full_name: (data.get("full_name") as string) || "",
+          clearErrors();
+          const raw = Object.fromEntries(new FormData(e.currentTarget).entries()) as Record<
+            string,
+            string
+          >;
+          const payload = validate(completeGoogleSignupSchema, {
+            org_name: raw.org_name,
+            full_name: raw.full_name || "",
           });
+          if (!payload) return;
+          signupMutation.mutate(
+            { org_name: payload.org_name, full_name: payload.full_name ?? "" },
+            { onError: handleApiError },
+          );
         }}
       >
         <div className="space-y-4">
@@ -80,6 +94,7 @@ export default function CompleteSignupContent() {
             placeholder="Acme Inc."
             icon={Building2}
             required
+            error={fieldErrors.org_name}
           />
           <FormField
             id="full_name"
@@ -87,6 +102,7 @@ export default function CompleteSignupContent() {
             type="text"
             placeholder="Jane Doe"
             icon={PersonStanding}
+            error={fieldErrors.full_name}
           />
         </div>
 

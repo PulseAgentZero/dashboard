@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { authApi } from "@/lib/api/auth";
 import { ApiError } from "@/lib/api/client";
+import { shouldDeferMutationToast } from "@/lib/validation/parse";
 import { postAuthRedirect } from "@/lib/auth-redirect";
 import { tokens } from "@/lib/auth-tokens";
 
@@ -21,6 +22,7 @@ export function useLogin() {
       postAuthRedirect(data.org, router, data.user);
     },
     onError(err) {
+      if (shouldDeferMutationToast(err)) return;
       const message =
         err instanceof ApiError ? err.message : "Something went wrong";
       toast.error(message);

@@ -9,17 +9,19 @@ import PasswordField from "@/components/ui/password-field";
 import { BladeFan } from "../../../../public/icon/bladeFan";
 import { useLogin } from "@/hooks/auth/use-login";
 import { initiateGoogleSignIn } from "@/lib/api/auth";
+import { loginSchema, useFormValidation } from "@/lib/validation";
 
 export default function LoginPage() {
   const { mutate: login, isPending } = useLogin();
+  const { fieldErrors, clearErrors, validateFormData, handleApiError } =
+    useFormValidation();
 
   function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
     e.preventDefault();
-    const data = new FormData(e.currentTarget);
-    login({
-      email: data.get("email") as string,
-      password: data.get("password") as string,
-    });
+    clearErrors();
+    const data = validateFormData(loginSchema, new FormData(e.currentTarget));
+    if (!data) return;
+    login(data, { onError: handleApiError });
   }
 
   return (
@@ -67,8 +69,14 @@ export default function LoginPage() {
                 placeholder="name@company.com"
                 icon={Mails}
                 required
+                error={fieldErrors.email}
               />
-              <PasswordField id="password" label="Password" required />
+              <PasswordField
+                id="password"
+                label="Password"
+                required
+                error={fieldErrors.password}
+              />
             </div>
 
             <div className="flex items-center justify-between">

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { authApi } from "@/lib/api/auth";
 import { ApiError } from "@/lib/api/client";
+import { shouldDeferMutationToast } from "@/lib/validation/parse";
 import { tokens } from "@/lib/auth-tokens";
 
 export function useSignup() {
@@ -20,6 +21,7 @@ export function useSignup() {
       router.push("/auth/verify-email?notice=1");
     },
     onError(err) {
+      if (shouldDeferMutationToast(err)) return;
       if (err instanceof ApiError && err.code === "INSTANCE_ORG_EXISTS") {
         toast.error(err.message);
         return;

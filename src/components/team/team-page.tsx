@@ -26,6 +26,8 @@ import {
 } from "@/hooks/users/use-users";
 import type { OrgUser } from "@/types/users";
 import { useDeleteConfirm } from "@/hooks/use-delete-confirm";
+import { inviteUserSchema, useFormValidation } from "@/lib/validation";
+import { FieldError } from "@/components/ui/field-error";
 
 const ROLES = ["admin", "manager", "analyst", "viewer"] as const;
 type Role = (typeof ROLES)[number];
@@ -162,11 +164,26 @@ function InviteForm({ onClose }: { onClose: () => void }) {
   const { mutate: invite, isPending } = useInviteUser();
   const [email, setEmail] = useState("");
   const [role, setRole] = useState<Role>("analyst");
+  const { fieldErrors, clearErrors, validate, handleApiError } = useFormValidation();
 
   function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
     e.preventDefault();
-    invite({ email, role }, { onSuccess: () => { setEmail(""); onClose(); } });
+    clearErrors();
+    const payload = validate(inviteUserSchema, { email, role });
+    if (!payload) return;
+    invite(payload, {
+      onSuccess: () => {
+        setEmail("");
+        onClose();
+      },
+      onError: handleApiError,
+    });
   }
+
+  const emailInputCls =
+    fieldErrors.email
+      ? "w-full rounded-lg border border-rose-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-rose-400 focus:ring-1 focus:ring-rose-400 placeholder:text-slate-400"
+      : "w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 placeholder:text-slate-400";
 
   return (
     <div className="rounded-xl border border-blue-200 bg-blue-50/40 p-5">
@@ -183,8 +200,10 @@ function InviteForm({ onClose }: { onClose: () => void }) {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="colleague@company.com"
-            className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 placeholder:text-slate-400"
+            className={emailInputCls}
+            aria-invalid={Boolean(fieldErrors.email)}
           />
+          <FieldError message={fieldErrors.email} />
         </div>
         <div>
           <label className="mb-1 block text-xs font-semibold text-slate-600">Role</label>

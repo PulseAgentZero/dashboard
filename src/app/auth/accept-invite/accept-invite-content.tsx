@@ -8,9 +8,14 @@ import { authApi } from "@/lib/api/auth";
 import { tokens } from "@/lib/auth-tokens";
 import { ApiError } from "@/lib/api/client";
 import { BladeFan } from "../../../../public/icon/bladeFan";
+import { acceptInviteSchema, useFormValidation } from "@/lib/validation";
+import { FieldError } from "@/components/ui/field-error";
 
 const inputCls =
   "w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-blue-500 focus:bg-white focus:ring-1 focus:ring-blue-500 placeholder:text-slate-400";
+
+const inputErrorCls =
+  "w-full rounded-xl border border-rose-300 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-rose-400 focus:bg-white focus:ring-1 focus:ring-rose-400 placeholder:text-slate-400";
 
 export function AcceptInviteContent() {
   const searchParams = useSearchParams();
@@ -22,6 +27,7 @@ export function AcceptInviteContent() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [done, setDone] = useState(false);
+  const { fieldErrors, clearErrors, validate, applyApiErrors } = useFormValidation();
 
   if (!token) {
     return (
@@ -48,27 +54,26 @@ export function AcceptInviteContent() {
   async function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
     e.preventDefault();
     setError("");
+    clearErrors();
 
-    if (form.password !== form.confirm) {
-      setError("Passwords don't match.");
-      return;
-    }
-    if (form.password.length < 8) {
-      setError("Password must be at least 8 characters.");
-      return;
-    }
+    const payload = validate(acceptInviteSchema, form);
+    if (!payload) return;
 
     setIsLoading(true);
     try {
       const res = await authApi.acceptInvite({
         token,
-        full_name: form.full_name,
-        password: form.password,
+        full_name: payload.full_name,
+        password: payload.password,
       });
       tokens.set(res.access_token, res.refresh_token);
       setDone(true);
       setTimeout(() => router.replace("/dashboard"), 1500);
     } catch (err) {
+      if (applyApiErrors(err)) {
+        setError(err instanceof ApiError ? err.message : "");
+        return;
+      }
       if (err instanceof ApiError) {
         const msg = err.message ?? "";
         const isExists =
@@ -121,13 +126,15 @@ export function AcceptInviteContent() {
             <div>
               <label className="mb-1.5 block text-xs font-semibold text-slate-700">Full name</label>
               <input
-                className={inputCls}
+                className={fieldErrors.full_name ? inputErrorCls : inputCls}
                 placeholder="Your full name"
                 value={form.full_name}
                 onChange={(e) => setForm((f) => ({ ...f, full_name: e.target.value }))}
                 required
                 autoFocus
+                aria-invalid={Boolean(fieldErrors.full_name)}
               />
+              <FieldError message={fieldErrors.full_name} />
             </div>
 
             <div>
@@ -135,13 +142,14 @@ export function AcceptInviteContent() {
               <div className="relative">
                 <input
                   type={showPwd ? "text" : "password"}
-                  className={`${inputCls} pr-10`}
+                  className={`${fieldErrors.password ? inputErrorCls : inputCls} pr-10`}
                   placeholder="At least 8 characters"
                   value={form.password}
                   onChange={(e) => setForm((f) => ({ ...f, password: e.target.value }))}
                   required
                   minLength={8}
                   autoComplete="new-password"
+                  aria-invalid={Boolean(fieldErrors.password)}
                 />
                 <button
                   type="button"
@@ -152,19 +160,22 @@ export function AcceptInviteContent() {
                   {showPwd ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
               </div>
+              <FieldError message={fieldErrors.password} />
             </div>
 
             <div>
               <label className="mb-1.5 block text-xs font-semibold text-slate-700">Confirm password</label>
               <input
                 type="password"
-                className={inputCls}
+                className={fieldErrors.confirm ? inputErrorCls : inputCls}
                 placeholder="Repeat your password"
                 value={form.confirm}
                 onChange={(e) => setForm((f) => ({ ...f, confirm: e.target.value }))}
                 required
                 autoComplete="new-password"
+                aria-invalid={Boolean(fieldErrors.confirm)}
               />
+              <FieldError message={fieldErrors.confirm} />
             </div>
 
             {error === "__exists__" ? (
