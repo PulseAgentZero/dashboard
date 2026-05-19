@@ -12,7 +12,7 @@ const FOOTER_LINKS: Record<string, string> = {
   "Self-hosted": "/docs/hosting/self-hosted",
   Connectors: "/docs/data-sources",
   Login: "/auth/login",
-  Platform: "/#features",
+  Platform: "/features",
   Pricing: "/pricing",
   Security: "/security",
   "Terms of Service": "/terms",

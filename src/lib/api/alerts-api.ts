@@ -33,6 +33,14 @@ export type AlertEvent = {
   severity: string | null;
   message: string | null;
   fired_at: string;
+  created_at?: string;
+};
+
+export type AlertEventsResponse = {
+  events: AlertEvent[];
+  total: number;
+  page: number;
+  limit: number;
 };
 
 export const alertsApi = {
@@ -58,6 +66,6 @@ export const alertsApi = {
     if (params?.page) qs.set("page", String(params.page));
     if (params?.limit) qs.set("limit", String(params.limit));
     const q = qs.toString();
-    return api.get<AlertEvent[]>(`/alerts/events${q ? `?${q}` : ""}`);
+    return api.get<AlertEventsResponse | AlertEvent[]>(`/alerts/events${q ? `?${q}` : ""}`);
   },
 };

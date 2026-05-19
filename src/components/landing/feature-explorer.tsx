@@ -65,9 +65,12 @@ export default function FeatureExplorer() {
             </p>
           </div>
           <div className="p-12 flex items-center gap-4">
-            <button className="bg-white/90 text-black px-6 py-2 rounded-full flex items-center gap-2 font-sans font-bold hover:bg-zinc-400 transition-colors">
+            <Link
+              href="/features"
+              className="bg-white/90 text-black px-6 py-2 rounded-full flex items-center gap-2 font-sans font-bold hover:bg-zinc-400 transition-colors"
+            >
               Explore all features
-            </button>
+            </Link>
             <Link
               href="/docs"
               className="border border-zinc-800 px-6 py-2 rounded-full font-sans font-medium hover:bg-zinc-900 transition-colors"

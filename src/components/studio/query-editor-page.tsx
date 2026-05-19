@@ -3,21 +3,20 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import {
-  Download,
-  History,
-  Loader2,
-  Play,
-  Save,
-  Sparkles,
-  Wand2,
-} from "lucide-react";
+import { History, Loader2, Pencil, Trash2 } from "lucide-react";
+import { AddToDashboardModal } from "@/components/studio/modals/add-to-dashboard-modal";
 import { ParamInputs } from "@/components/studio/core/param-inputs";
 import { ResultsTable } from "@/components/studio/core/results-table";
 import { RunStatusPoller } from "@/components/studio/core/run-status-poller";
 import { SchemaBrowser } from "@/components/studio/core/schema-browser";
 import { SQLEditor } from "@/components/studio/core/sql-editor";
 import { SaveQueryModal } from "@/components/studio/modals/save-query-modal";
+import { StudioEditorActions } from "@/components/studio/ui/studio-editor-actions";
+import {
+  pickDefaultStudioConnectionId,
+  StudioConnectionPicker,
+} from "@/components/studio/ui/studio-connection-picker";
+import { useConnections } from "@/hooks/connections/use-connections";
 import { VizEditorPanel } from "@/components/studio/modals/viz-editor-panel";
 import {
   useCreateQuery,
@@ -26,18 +25,22 @@ import {
   useGenerateSQL,
   useQueryRuns,
   useRecommendViz,
-  useRunQuery,
   useStudioQuery,
   useUpdateQuery,
 } from "@/hooks/studio/use-studio-queries";
 import { useRunPoller } from "@/hooks/studio/use-studio-runs";
 import { useRefreshStudioSchema, useStudioSchema } from "@/hooks/studio/use-studio-schema";
+import { useAddDashboardItem } from "@/hooks/studio/use-studio-dashboards";
 import {
   useCreateVisualization,
+  useDeleteVisualization,
+  useUpdateVisualization,
   useVisualizations,
 } from "@/hooks/studio/use-studio-visualizations";
+import { useDeleteConfirm } from "@/hooks/use-delete-confirm";
 import { studioApi } from "@/lib/api/studio-api";
 import { tokens } from "@/lib/auth-tokens";
+import { downloadQueryResultAsCsv } from "@/lib/studio/export-result-csv";
 import { sqlParamsToDefinitions } from "@/lib/studio/parse-sql-params";
 import { canCreateStudioContent, canEditQuery, canRefreshSchema } from "@/lib/studio/roles";
 import { useAuth } from "@/providers/auth-provider";
@@ -60,25 +63,34 @@ export function QueryEditorPage({ queryId }: Props) {
   const [saveOpen, setSaveOpen] = useState(false);
   const [vizOpen, setVizOpen] = useState(false);
   const [editViz, setEditViz] = useState<StudioVisualization | null>(null);
+  const [openVizAfterSave, setOpenVizAfterSave] = useState(false);
+  const [addToDashboardOpen, setAddToDashboardOpen] = useState(false);
+  const [lastSavedViz, setLastSavedViz] = useState<StudioVisualization | null>(null);
   const [aiGoal, setAiGoal] = useState("");
   const [showAi, setShowAi] = useState(false);
   const [explainText, setExplainText] = useState<string | null>(null);
   const [activeRunId, setActiveRunId] = useState<string | null>(null);
+  const [connectionId, setConnectionId] = useState<string | null>(null);
   const editorInsertRef = useRef<((text: string) => void) | null>(null);
 
+  const { data: connections } = useConnections();
   const { data: query, isLoading: queryLoading } = useStudioQuery(queryId);
-  const { data: schema, isLoading: schemaLoading } = useStudioSchema(query?.connection_id ?? undefined);
+  const effectiveConnectionId = query?.connection_id ?? connectionId;
+  const { data: schema, isLoading: schemaLoading } = useStudioSchema(effectiveConnectionId ?? undefined);
   const refreshSchema = useRefreshStudioSchema();
   const executeQuery = useExecuteQuery();
   const createQuery = useCreateQuery();
   const updateQuery = useUpdateQuery();
-  const runQuery = useRunQuery();
   const generateSQL = useGenerateSQL();
   const explainQuery = useExplainQuery();
   const recommendViz = useRecommendViz();
   const { data: runsData } = useQueryRuns(queryId);
   const { data: vizData } = useVisualizations(queryId);
   const createViz = useCreateVisualization();
+  const updateViz = useUpdateVisualization();
+  const deleteViz = useDeleteVisualization();
+  const addDashboardItem = useAddDashboardItem();
+  const { requestDeleteConfirm, deleteConfirmModal } = useDeleteConfirm();
   const { run: polledRun, isPolling } = useRunPoller(activeRunId);
 
   const canSave = isNew
@@ -88,6 +100,7 @@ export function QueryEditorPage({ queryId }: Props) {
   useEffect(() => {
     if (query) {
       setSql(query.sql_text);
+      if (query.connection_id) setConnectionId(query.connection_id);
       const pv: Record<string, string> = {};
       query.params?.forEach((p) => {
         pv[p.name] = paramValues[p.name] ?? p.default_value ?? "";
@@ -97,41 +110,74 @@ export function QueryEditorPage({ queryId }: Props) {
   }, [query]);
 
   useEffect(() => {
+    if (queryId || connectionId || !connections?.length) return;
+    const defaultId = pickDefaultStudioConnectionId(connections);
+    if (defaultId) setConnectionId(defaultId);
+  }, [connections, queryId, connectionId]);
+
+  useEffect(() => {
     if (polledRun?.status === "completed" && polledRun.result) {
       setResult(polledRun.result);
     }
   }, [polledRun]);
 
   const params = query?.params?.length ? query.params : sqlParamsToDefinitions(sql, query?.params);
+  const sqlDirty = Boolean(queryId && query && sql.trim() !== query.sql_text.trim());
 
+  /** Always run the SQL currently in the editor (saved queries must not require Save first). */
   const handleRun = useCallback(async () => {
+    if (!effectiveConnectionId) return;
+    setActiveRunId(null);
+    const res = await executeQuery.mutateAsync({
+      sql_text: sql,
+      connection_id: effectiveConnectionId,
+      param_values: paramValues,
+    });
+    setResult(res);
+  }, [sql, paramValues, executeQuery, effectiveConnectionId]);
+
+  async function handleConnectionChange(id: string) {
+    setConnectionId(id);
+    setResult(null);
     if (queryId) {
-      const run = await runQuery.mutateAsync({
-        id: queryId,
-        body: { param_values: paramValues },
-      });
-      setActiveRunId(run.id);
-    } else {
-      const res = await executeQuery.mutateAsync({
-        sql_text: sql,
-        param_values: paramValues,
-      });
-      setResult(res);
+      await updateQuery.mutateAsync({ id: queryId, body: { connection_id: id } });
     }
-  }, [queryId, sql, paramValues, runQuery, executeQuery]);
+  }
 
   async function handleSave(payload: Parameters<typeof createQuery.mutateAsync>[0]) {
     if (isNew) {
       const created = await createQuery.mutateAsync(payload);
-      router.replace(`/dashboard/studio/queries/${created.id}`);
+      if (openVizAfterSave) {
+        router.replace(`/dashboard/studio/queries/${created.id}?chart=1`);
+      } else {
+        router.replace(`/dashboard/studio/queries/${created.id}`);
+      }
     } else if (queryId) {
       await updateQuery.mutateAsync({ id: queryId, body: payload });
+      if (openVizAfterSave) {
+        setOpenVizAfterSave(false);
+        setEditViz(null);
+        setVizOpen(true);
+      }
     }
   }
 
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("chart") === "1" && queryId && result?.rows?.length) {
+      setEditViz(null);
+      setVizOpen(true);
+      router.replace(`/dashboard/studio/queries/${queryId}`, { scroll: false });
+    }
+  }, [queryId, result?.rows?.length, router]);
+
   async function handleGenerate() {
-    if (!aiGoal.trim()) return;
-    const res = await generateSQL.mutateAsync({ goal: aiGoal });
+    if (!aiGoal.trim() || !effectiveConnectionId) return;
+    const res = await generateSQL.mutateAsync({
+      goal: aiGoal,
+      connection_id: effectiveConnectionId,
+    });
     setSql(res.sql);
     setShowAi(false);
   }
@@ -143,6 +189,10 @@ export function QueryEditorPage({ queryId }: Props) {
   }
 
   function downloadCsv() {
+    if (result?.rows?.length) {
+      downloadQueryResultAsCsv(result, query?.name ? `${query.name}.csv` : "results.csv");
+      return;
+    }
     const runId = polledRun?.id ?? runsData?.runs?.[0]?.id;
     if (!runId) return;
     const url = studioApi.downloadRunUrl(runId, "csv");
@@ -165,84 +215,69 @@ export function QueryEditorPage({ queryId }: Props) {
     );
   }
 
+  const saveBlockedReason = !canSave
+    ? "Saving requires Analyst role or higher."
+    : !effectiveConnectionId
+      ? "Select a data source before saving."
+      : undefined;
+
   return (
-    <div className="flex h-[calc(100vh-8rem)] flex-col gap-4">
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <div>
-          <Link href="/dashboard/studio" className="text-sm text-slate-500 hover:text-indigo-600">
-            ← Studio
-          </Link>
-          <h1 className="text-lg font-semibold text-slate-900">
-            {isNew ? "New query" : query?.name}
-          </h1>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          <button
-            type="button"
-            onClick={() => setShowAi(!showAi)}
-            className="inline-flex items-center gap-1 rounded-lg border px-3 py-1.5 text-sm"
-          >
-            <Sparkles size={14} />
-            AI SQL
-          </button>
-          {queryId && (
-            <button
-              type="button"
-              onClick={() => void handleExplain()}
-              className="inline-flex items-center gap-1 rounded-lg border px-3 py-1.5 text-sm"
-            >
-              <Wand2 size={14} />
-              Explain
-            </button>
-          )}
-          <button
-            type="button"
-            onClick={() => void handleRun()}
-            disabled={executeQuery.isPending || runQuery.isPending}
-            className="inline-flex items-center gap-1 rounded-lg bg-indigo-600 px-3 py-1.5 text-sm font-semibold text-white"
-          >
-            {(executeQuery.isPending || runQuery.isPending) ? (
-              <Loader2 size={14} className="animate-spin" />
-            ) : (
-              <Play size={14} />
+    <div className="flex min-h-[calc(100vh-10rem)] flex-col gap-4">
+      <div className="space-y-3">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div className="min-w-0">
+            <Link href="/dashboard/studio" className="text-sm text-slate-500 hover:text-indigo-600">
+              ← Studio
+            </Link>
+            <h1 className="text-lg font-semibold text-slate-900">
+              {isNew ? "New query" : query?.name}
+            </h1>
+            <p className="mt-0.5 text-xs text-slate-500">
+              {isNew
+                ? "Pick a data source, write SQL, then Run or Save to keep this query."
+                : "Edit SQL and Run to preview — Save when you want dashboards and schedules to use the new SQL."}
+            </p>
+            {sqlDirty && (
+              <p className="mt-1 text-xs font-medium text-amber-700">
+                Unsaved SQL changes — Run uses your editor text; Save to persist.
+              </p>
             )}
-            Run
-          </button>
-          {canSave && (
-            <button
-              type="button"
-              onClick={() => setSaveOpen(true)}
-              className="inline-flex items-center gap-1 rounded-lg border px-3 py-1.5 text-sm font-semibold"
-            >
-              <Save size={14} />
-              Save
-            </button>
-          )}
-          {result && queryId && (
-            <button
-              type="button"
-              onClick={downloadCsv}
-              className="inline-flex items-center gap-1 rounded-lg border px-3 py-1.5 text-sm"
-            >
-              <Download size={14} />
-              CSV
-            </button>
-          )}
-          {result && queryId && (
-            <button
-              type="button"
-              onClick={() => {
+          </div>
+          <StudioEditorActions
+            onRun={() => void handleRun()}
+            runDisabled={!effectiveConnectionId}
+            runPending={executeQuery.isPending}
+            onSave={() => setSaveOpen(true)}
+            saveDisabled={!canSave || !effectiveConnectionId}
+            saveTitle={saveBlockedReason}
+            onAiSql={() => setShowAi(!showAi)}
+            aiSqlActive={showAi}
+            showExplain={Boolean(queryId)}
+            onExplain={() => void handleExplain()}
+            explainPending={explainQuery.isPending}
+            showDownload={Boolean(result?.rows?.length)}
+            onDownloadCsv={downloadCsv}
+            showChart={Boolean(result)}
+            onChart={() => {
+              if (queryId) {
                 setEditViz(null);
                 setVizOpen(true);
-              }}
-              className="inline-flex items-center gap-1 rounded-lg border border-indigo-200 bg-indigo-50 px-3 py-1.5 text-sm text-indigo-700"
-            >
-              Chart
-            </button>
-          )}
+              } else {
+                setOpenVizAfterSave(true);
+                setSaveOpen(true);
+              }
+            }}
+          />
+        </div>
+
+        <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+          <StudioConnectionPicker
+            variant="toolbar"
+            value={effectiveConnectionId}
+            onChange={(id) => void handleConnectionChange(id)}
+          />
         </div>
       </div>
-
       {showAi && (
         <div className="flex gap-2 rounded-lg border border-indigo-100 bg-indigo-50/50 p-3">
           <input
@@ -273,7 +308,7 @@ export function QueryEditorPage({ queryId }: Props) {
           <SchemaBrowser
             tables={schema?.tables ?? []}
             isLoading={schemaLoading || refreshSchema.isPending}
-            onRefresh={() => refreshSchema.mutate(query?.connection_id ?? undefined)}
+            onRefresh={() => refreshSchema.mutate(effectiveConnectionId ?? undefined)}
             canRefresh={canRefreshSchema(user?.role)}
             onInsert={(text) => setSql((s) => s + text)}
           />
@@ -310,8 +345,48 @@ export function QueryEditorPage({ queryId }: Props) {
               <>
                 <p className="mb-2 mt-4 text-xs font-semibold uppercase text-slate-500">Charts</p>
                 {vizData.visualizations.map((v) => (
-                  <div key={v.id} className="mb-1 text-xs text-slate-600">
-                    {v.name} ({v.chart_type})
+                  <div
+                    key={v.id}
+                    className="group mb-1 flex items-center justify-between gap-1 rounded px-1 py-0.5 hover:bg-slate-50"
+                  >
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setEditViz(v);
+                        setVizOpen(true);
+                      }}
+                      className="min-w-0 flex-1 truncate text-left text-xs text-slate-600 hover:text-indigo-700"
+                    >
+                      {v.name} ({v.chart_type})
+                    </button>
+                    <div className="flex shrink-0 opacity-0 group-hover:opacity-100">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setEditViz(v);
+                          setVizOpen(true);
+                        }}
+                        className="rounded p-0.5 text-slate-400 hover:text-indigo-600"
+                        aria-label="Edit chart"
+                      >
+                        <Pencil size={12} />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          requestDeleteConfirm({
+                            title: "Delete chart",
+                            description: `Delete "${v.name}"? Dashboard panels using it will appear empty.`,
+                            confirmLabel: "Delete",
+                            onConfirm: () => deleteViz.mutateAsync({ queryId: queryId!, vizId: v.id }),
+                          })
+                        }
+                        className="rounded p-0.5 text-slate-400 hover:text-rose-600"
+                        aria-label="Delete chart"
+                      >
+                        <Trash2 size={12} />
+                      </button>
+                    </div>
                   </div>
                 ))}
               </>
@@ -324,7 +399,12 @@ export function QueryEditorPage({ queryId }: Props) {
         open={saveOpen}
         sql={sql}
         initial={query ?? undefined}
-        onClose={() => setSaveOpen(false)}
+        connectionId={effectiveConnectionId}
+        onConnectionChange={(id) => void handleConnectionChange(id)}
+        onClose={() => {
+          setSaveOpen(false);
+          setOpenVizAfterSave(false);
+        }}
         onSave={handleSave}
       />
 
@@ -335,13 +415,40 @@ export function QueryEditorPage({ queryId }: Props) {
           result={result}
           columns={result?.columns ?? []}
           existing={editViz}
-          onClose={() => setVizOpen(false)}
+          onClose={() => {
+            setVizOpen(false);
+            setEditViz(null);
+          }}
           onSave={async (body) => {
-            await createViz.mutateAsync({ queryId, body });
+            if (editViz) {
+              await updateViz.mutateAsync({ queryId, vizId: editViz.id, body });
+            } else {
+              const created = await createViz.mutateAsync({ queryId, body });
+              setLastSavedViz(created);
+              setAddToDashboardOpen(true);
+            }
           }}
           onRecommend={() => recommendViz.mutateAsync(queryId)}
         />
       )}
+
+      <AddToDashboardModal
+        open={addToDashboardOpen}
+        vizName={lastSavedViz?.name ?? "Chart"}
+        onClose={() => setAddToDashboardOpen(false)}
+        onPick={async (dashboardId) => {
+          if (!lastSavedViz) return;
+          await addDashboardItem.mutateAsync({
+            dashboardId,
+            body: {
+              panel_type: "visualization",
+              visualization_id: lastSavedViz.id,
+            },
+          });
+        }}
+      />
+
+      {deleteConfirmModal}
     </div>
   );
 }

@@ -137,7 +137,7 @@ curl http://localhost/health
 
 1. Sign up an admin account at your `FRONTEND_URL`.
 2. Add a [data source](/docs/data-sources) under **Settings → Connections**.
-3. Complete onboarding and run your first pipeline.
+3. Add business context, connect your data source, and run your first pipeline.
 
 ## Architecture
 

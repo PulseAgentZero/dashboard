@@ -8,6 +8,7 @@ export type UsageSlot = {
 export type PlanUsage = {
   plan: string;
   limits: {
+    connections?: UsageSlot;
     api_keys: UsageSlot;
     webhook_channels: UsageSlot;
     users: UsageSlot;

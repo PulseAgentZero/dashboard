@@ -28,6 +28,8 @@ export function useCreateVisualization() {
     }) => studioApi.createVisualization(queryId, body),
     onSuccess: (_d, { queryId }) => {
       void qc.invalidateQueries({ queryKey: ["studio", "visualizations", queryId] });
+      void qc.invalidateQueries({ queryKey: ["studio", "visualizations", "org"] });
+      void qc.invalidateQueries({ queryKey: ["studio", "visualizations", "by-ids"] });
       toast.success("Visualization created");
     },
     onError: () => toast.error("Failed to create visualization"),
@@ -48,6 +50,8 @@ export function useUpdateVisualization() {
     }) => studioApi.updateVisualization(queryId, vizId, body),
     onSuccess: (_d, { queryId }) => {
       void qc.invalidateQueries({ queryKey: ["studio", "visualizations", queryId] });
+      void qc.invalidateQueries({ queryKey: ["studio", "visualizations", "org"] });
+      void qc.invalidateQueries({ queryKey: ["studio", "visualizations", "by-ids"] });
       toast.success("Visualization updated");
     },
     onError: () => toast.error("Failed to update visualization"),
@@ -61,6 +65,8 @@ export function useDeleteVisualization() {
       studioApi.deleteVisualization(queryId, vizId),
     onSuccess: (_d, { queryId }) => {
       void qc.invalidateQueries({ queryKey: ["studio", "visualizations", queryId] });
+      void qc.invalidateQueries({ queryKey: ["studio", "visualizations", "org"] });
+      void qc.invalidateQueries({ queryKey: ["studio", "visualizations", "by-ids"] });
       toast.success("Visualization deleted");
     },
     onError: () => toast.error("Failed to delete visualization"),

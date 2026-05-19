@@ -2,7 +2,9 @@
 
 import { useState, useTransition } from "react";
 import Link from "next/link";
-import { Search, ChevronLeft, ChevronRight } from "lucide-react";
+import { Search } from "lucide-react";
+import { Pagination } from "@/components/shared/pagination";
+import { DEFAULT_PAGE_SIZE } from "@/lib/pagination";
 import { RiskPill } from "@/components/shared/risk-pill";
 import { useEntities } from "@/hooks/entities/use-entities";
 import { useDashboardOverview } from "@/hooks/dashboard/use-dashboard-overview";
@@ -47,19 +49,17 @@ export function EntitiesPage() {
   const [page, setPage] = useState(1);
   const [, startTransition] = useTransition();
 
-  const LIMIT = 20;
-
   const { data, isLoading } = useEntities({
     search: debouncedSearch || undefined,
     risk_tier: riskTier === "All" ? undefined : riskTier,
     page,
-    limit: LIMIT,
+    limit: DEFAULT_PAGE_SIZE,
   });
 
   const { data: overview } = useDashboardOverview();
   const dist = overview?.risk_distribution;
 
-  const totalPages = data ? Math.ceil(data.total / LIMIT) : 1;
+  const total = data?.total ?? 0;
 
   function handleSearch(v: string) {
     setSearch(v);
@@ -205,29 +205,12 @@ export function EntitiesPage() {
           </table>
         </div>
 
-        {totalPages > 1 && (
-          <div className="flex items-center justify-between border-t border-slate-100 px-5 py-3">
-            <p className="text-xs text-slate-400">
-              Page {page} of {totalPages} · {data?.total.toLocaleString()} total
-            </p>
-            <div className="flex gap-2">
-              <button
-                disabled={page <= 1}
-                onClick={() => setPage((p) => p - 1)}
-                className="flex items-center gap-1 rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-50 disabled:opacity-40"
-              >
-                <ChevronLeft size={13} /> Prev
-              </button>
-              <button
-                disabled={page >= totalPages}
-                onClick={() => setPage((p) => p + 1)}
-                className="flex items-center gap-1 rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-50 disabled:opacity-40"
-              >
-                Next <ChevronRight size={13} />
-              </button>
-            </div>
-          </div>
-        )}
+                <Pagination
+          page={page}
+          pageSize={DEFAULT_PAGE_SIZE}
+          total={total}
+          onPageChange={setPage}
+        />
       </div>
     </div>
   );

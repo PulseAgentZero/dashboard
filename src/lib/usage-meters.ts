@@ -2,6 +2,7 @@ import type { LucideIcon } from "lucide-react";
 import {
   BarChart3,
   Bot,
+  Cable,
   Cpu,
   KeyRound,
   Users,
@@ -24,6 +25,16 @@ export type MeterDef = {
 };
 
 export const USAGE_METERS: MeterDef[] = [
+  {
+    key: "connections",
+    label: "Data connections",
+    shortLabel: "Connections",
+    period: "always",
+    group: "access",
+    icon: Cable,
+    color: "text-teal-600",
+    barColor: "#0d9488",
+  },
   {
     key: "api_keys",
     label: "API keys",
@@ -97,7 +108,11 @@ export const USAGE_METERS: MeterDef[] = [
 ];
 
 export const METER_GROUPS = [
-  { id: "access" as const, title: "Access & integrations", description: "Keys, webhooks, and seats" },
+  {
+    id: "access" as const,
+    title: "Access & integrations",
+    description: "Data connections, keys, webhooks, and seats",
+  },
   { id: "automation" as const, title: "Automation", description: "Resets on the 1st of each month" },
   { id: "studio" as const, title: "Pulse Studio", description: "Dashboards and query executions" },
 ];
@@ -139,6 +154,32 @@ export type ChartRow = {
   pct: number;
   fill: string;
 };
+
+export function summarizeMeterStatuses(limits: PlanUsage["limits"]) {
+  const counts = { unlimited: 0, healthy: 0, warning: 0, critical: 0 };
+  for (const m of USAGE_METERS) {
+    counts[getMeterStatus(limits[m.key])] += 1;
+  }
+  return counts;
+}
+
+const STATUS_SORT_ORDER: Record<MeterStatus, number> = {
+  critical: 0,
+  warning: 1,
+  healthy: 2,
+  unlimited: 3,
+};
+
+export function sortMetersBySeverity(
+  meters: MeterDef[],
+  limits: PlanUsage["limits"],
+): MeterDef[] {
+  return [...meters].sort(
+    (a, b) =>
+      STATUS_SORT_ORDER[getMeterStatus(limits[a.key])] -
+      STATUS_SORT_ORDER[getMeterStatus(limits[b.key])],
+  );
+}
 
 export function buildChartData(limits: PlanUsage["limits"]): ChartRow[] {
   return USAGE_METERS.map((m) => {

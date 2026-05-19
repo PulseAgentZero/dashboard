@@ -34,13 +34,13 @@ Pulse does not require you to ship a copy of your customer data to us for basic 
 
 1. Go to [Sign up](/auth/signup).
 2. Verify your email if prompted.
-3. Complete onboarding: describe your business so the AI pipeline can map your schema.
+3. Add business context and your first connection from the dashboard setup banner.
 
 ### 2. Connect your data
 
-1. Open **Settings → Connections**.
+1. Open **Data & pipeline → Connections** (or **Connect Data** in the header).
 2. Add a **read-only** [data source](/docs/data-sources) (PostgreSQL, MySQL, Snowflake, S3, and others).
-3. Test the connection, then run the pipeline from **Pipeline** or wait for the scheduled run.
+3. Complete **Data mapping** for SQL sources, then test the connection and run the pipeline from **Data & pipeline → Pipeline** (or wait for the scheduled run).
 
 ### 3. Invite your team
 
@@ -64,8 +64,10 @@ Those are operated by Pulse. Configuration you **do** control: connections, API 
 
 ## Integrations on Cloud
 
-- **Public API** — Create keys under **Developer → API Keys**; same `/api/public/v1` surface as self-hosted. See [API overview](/docs/api/overview).
+- **Public API** — Create keys under **Settings → API keys**; same `/api/public/v1` surface as self-hosted. See [API overview](/docs/api/overview).
 - **Playground** — Try endpoints at **Developer → Playground** after sign-in.
+
+See **[Product features](/docs/features)** for a full tour of the dashboard.
 
 ## Pulse Cloud vs self-hosted
 
@@ -79,5 +81,6 @@ Those are operated by Pulse. Configuration you **do** control: connections, API 
 ## Related
 
 - [Getting started](/docs/getting-started)
+- [Product features](/docs/features)
 - [Self-hosted](/docs/hosting/self-hosted)
 - [Public API overview](/docs/api/overview)

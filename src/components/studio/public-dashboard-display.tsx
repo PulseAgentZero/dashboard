@@ -81,7 +81,14 @@ export function PublicDashboardDisplay({
         loading={loading}
       />
 
-      <DashboardGrid items={items} layout={layout} vizById={vizById} loading={loading} />
+      <DashboardGrid
+        items={items}
+        layout={layout}
+        vizById={vizById}
+        loadingVizIds={
+          loading ? new Set(Object.keys(vizById)) : undefined
+        }
+      />
 
       {showFooter && (
         <footer className="mt-12 border-t border-slate-200 pt-6 text-center text-sm text-slate-500">

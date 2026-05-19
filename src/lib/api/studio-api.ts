@@ -120,6 +120,21 @@ export const studioApi = {
   listVisualizations: (queryId: string) =>
     api.get<VisualizationsListResponse>(`${STUDIO}/queries/${queryId}/visualizations`),
 
+  listOrgVisualizations: (params: {
+    ids?: string[];
+    query_id?: string;
+    page?: number;
+    limit?: number;
+  } = {}) => {
+    const sp = new URLSearchParams();
+    if (params.ids?.length) sp.set("ids", params.ids.join(","));
+    if (params.query_id) sp.set("query_id", params.query_id);
+    if (params.page) sp.set("page", String(params.page));
+    if (params.limit) sp.set("limit", String(params.limit));
+    const q = sp.toString();
+    return api.get<VisualizationsListResponse>(`${STUDIO}/visualizations${q ? `?${q}` : ""}`);
+  },
+
   createVisualization: (
     queryId: string,
     body: {

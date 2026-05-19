@@ -2,19 +2,12 @@
 
 import { useState } from "react";
 import { Loader2, ScrollText, Search } from "lucide-react";
+import { Pagination } from "@/components/shared/pagination";
+import { FeatureLockPanel } from "@/components/shared/feature-lock-panel";
 import { useAuditLogs } from "@/hooks/audit/use-audit";
+import { useAuditLogAccess } from "@/hooks/use-audit-log-access";
+import { AUDIT_LOGS_PAGE_SIZE } from "@/lib/pagination";
 import type { AuditLog } from "@/lib/api/audit-api";
-
-function toList(raw: unknown): AuditLog[] {
-  if (Array.isArray(raw)) return raw as AuditLog[];
-  if (raw && typeof raw === "object") {
-    const r = raw as Record<string, unknown>;
-    for (const k of ["logs", "data", "items", "results"]) {
-      if (Array.isArray(r[k])) return r[k] as AuditLog[];
-    }
-  }
-  return [];
-}
 
 function actionColor(action: string) {
   if (action.startsWith("delete") || action.includes("remove") || action.includes("revoke"))
@@ -27,18 +20,61 @@ function actionColor(action: string) {
 }
 
 export default function AuditLogsPage() {
-  const [search, setSearch] = useState("");
-  const { data: raw, isLoading } = useAuditLogs({ limit: 100 });
+  const {
+    hasAccess,
+    loading: accessLoading,
+    selfHosted,
+    upgradeHref,
+    upgradeLabel,
+  } = useAuditLogAccess();
 
-  const all = toList(raw);
-  const logs = search
-    ? all.filter(
-        (l) =>
-          l.action.toLowerCase().includes(search.toLowerCase()) ||
-          (l.user_email ?? "").toLowerCase().includes(search.toLowerCase()) ||
-          (l.resource_type ?? "").toLowerCase().includes(search.toLowerCase()),
-      )
-    : all;
+  const [actionFilter, setActionFilter] = useState("");
+  const [page, setPage] = useState(1);
+
+  const { data, isLoading } = useAuditLogs(
+    {
+      page,
+      limit: AUDIT_LOGS_PAGE_SIZE,
+      action: actionFilter.trim() || undefined,
+    },
+    hasAccess,
+  );
+
+  const logs: AuditLog[] = data?.logs ?? [];
+  const total = data?.total ?? 0;
+
+  if (accessLoading) {
+    return (
+      <div className="flex justify-center py-24">
+        <Loader2 size={28} className="animate-spin text-slate-300" />
+      </div>
+    );
+  }
+
+  if (!hasAccess) {
+    return (
+      <div className="mx-auto max-w-3xl space-y-5">
+        <div>
+          <h1 className="text-xl font-semibold text-slate-900">Audit logs</h1>
+          <p className="mt-0.5 text-sm text-slate-500">
+            Immutable record of actions in your organization.
+          </p>
+        </div>
+        <FeatureLockPanel
+          title="Audit logs are locked"
+          description={
+            selfHosted
+              ? "Activate a valid license key on this instance to record and view audit events. Open Settings → License, or purchase a self-hosted license if you do not have one yet."
+              : "Audit logs are included on the Pro plan. Upgrade to see who changed connections, API keys, team members, and other workspace settings."
+          }
+          upgradeHref={upgradeHref}
+          upgradeLabel={upgradeLabel}
+          secondaryHref={selfHosted ? "/pricing/self-hosted" : "/pricing"}
+          secondaryLabel={selfHosted ? "Purchase license" : "View pricing"}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="mx-auto max-w-8xl space-y-5">
@@ -53,9 +89,12 @@ export default function AuditLogsPage() {
           <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
           <input
             className="w-64 rounded-lg border border-slate-200 bg-white py-2 pl-9 pr-3 text-sm text-slate-900 outline-none focus:border-blue-500 placeholder:text-slate-400"
-            placeholder="Filter by action, user…"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Filter by action (exact)…"
+            value={actionFilter}
+            onChange={(e) => {
+              setActionFilter(e.target.value);
+              setPage(1);
+            }}
           />
         </div>
       </div>
@@ -65,7 +104,7 @@ export default function AuditLogsPage() {
           <p className="text-sm font-semibold text-slate-800">Events</p>
           {!isLoading && (
             <span className="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-0.5 text-xs text-slate-500">
-              {logs.length}
+              {total.toLocaleString()}
             </span>
           )}
         </div>
@@ -80,7 +119,7 @@ export default function AuditLogsPage() {
           <div className="flex flex-col items-center py-12 text-center">
             <ScrollText size={28} className="text-slate-200" />
             <p className="mt-2 text-sm font-medium text-slate-500">
-              {search ? "No matching events" : "No audit events yet"}
+              {actionFilter ? "No matching events" : "No audit events yet"}
             </p>
             <p className="mt-0.5 text-xs text-slate-400">
               Actions taken by team members will appear here.
@@ -93,7 +132,9 @@ export default function AuditLogsPage() {
             {logs.map((log) => (
               <div key={log.id} className="flex items-start gap-4 px-5 py-3">
                 <div className="mt-0.5 shrink-0">
-                  <span className={`inline-block rounded-md px-2 py-0.5 text-[11px] font-semibold ${actionColor(log.action)}`}>
+                  <span
+                    className={`inline-block rounded-md px-2 py-0.5 text-[11px] font-semibold ${actionColor(log.action)}`}
+                  >
                     {log.action}
                   </span>
                 </div>
@@ -104,7 +145,11 @@ export default function AuditLogsPage() {
                     </span>
                     {log.resource_type && (
                       <span className="text-xs text-slate-400">
-                        on <span className="font-mono">{log.resource_type}{log.resource_id ? ` #${log.resource_id.slice(0, 8)}` : ""}</span>
+                        on{" "}
+                        <span className="font-mono">
+                          {log.resource_type}
+                          {log.resource_id ? ` #${log.resource_id.slice(0, 8)}` : ""}
+                        </span>
                       </span>
                     )}
                   </div>
@@ -119,6 +164,13 @@ export default function AuditLogsPage() {
             ))}
           </div>
         )}
+
+        <Pagination
+          page={page}
+          pageSize={AUDIT_LOGS_PAGE_SIZE}
+          total={total}
+          onPageChange={setPage}
+        />
       </div>
     </div>
   );

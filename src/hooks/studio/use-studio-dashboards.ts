@@ -127,6 +127,7 @@ export function useDeleteDashboardItem() {
       studioApi.deleteDashboardItem(dashboardId, itemId),
     onSuccess: (_d, { dashboardId }) => {
       void qc.invalidateQueries({ queryKey: ["studio", "dashboard", dashboardId] });
+      toast.success("Panel removed");
     },
     onError: () => toast.error("Failed to remove panel"),
   });

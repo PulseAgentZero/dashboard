@@ -1,9 +1,8 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { Loader2, Plus, Save, Settings, Trash2 } from "lucide-react";
+import { Loader2, Plus, Save, Settings } from "lucide-react";
 import type { VizPanelData } from "@/components/studio/dashboard/dashboard-grid";
 import { DashboardGrid } from "@/components/studio/dashboard/dashboard-grid";
 import { EmbedCodeModal } from "@/components/studio/modals/embed-code-modal";
@@ -12,30 +11,43 @@ import { TagEditor } from "@/components/studio/ui/tag-editor";
 import {
   useAddDashboardItem,
   useCreateEmbedToken,
+  useDeleteDashboardItem,
+  useExecuteDashboard,
   useStudioDashboard,
   useUpdateDashboard,
 } from "@/hooks/studio/use-studio-dashboards";
-import { useQueryClient } from "@tanstack/react-query";
-import { useStudioQueries } from "@/hooks/studio/use-studio-queries";
-import { useVizCatalog } from "@/hooks/studio/use-viz-catalog";
-import { studioApi } from "@/lib/api/studio-api";
+import { useDeleteConfirm } from "@/hooks/use-delete-confirm";
+import { useOrgVisualizations } from "@/hooks/studio/use-org-visualizations";
+import { useVisualizationsByIds } from "@/hooks/studio/use-viz-catalog";
+import {
+  mergeDashboardLayout,
+  mergeExecuteResults,
+  resolveDashboardLayout,
+} from "@/lib/studio/dashboard-layout";
 import { canManageEmbed } from "@/lib/studio/roles";
 import { useAuth } from "@/providers/auth-provider";
-import type { DashboardLayoutItem, QueryParamDefinition, StudioVisualization } from "@/types/studio";
+import type {
+  DashboardExecuteResult,
+  DashboardLayoutItem,
+  QueryParamDefinition,
+  StudioDashboardItem,
+} from "@/types/studio";
+import { toast } from "sonner";
 
 type Props = {
   dashboardId: string;
 };
 
 export function DashboardBuilderPage({ dashboardId }: Props) {
-  const router = useRouter();
   const { user } = useAuth();
-  const qc = useQueryClient();
   const { data: dashboard, isLoading } = useStudioDashboard(dashboardId);
   const updateDashboard = useUpdateDashboard();
   const addItem = useAddDashboardItem();
+  const deleteItem = useDeleteDashboardItem();
+  const { requestDeleteConfirm, deleteConfirmModal } = useDeleteConfirm();
   const createEmbed = useCreateEmbedToken();
-  const { data: queriesData } = useStudioQueries({ limit: 100 });
+  const executeDashboard = useExecuteDashboard();
+  const { data: orgVizData } = useOrgVisualizations({ limit: 200 });
 
   const [layout, setLayout] = useState<DashboardLayoutItem[]>([]);
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -47,56 +59,125 @@ export function DashboardBuilderPage({ dashboardId }: Props) {
   const [isPublic, setIsPublic] = useState(false);
   const [dashboardParams, setDashboardParams] = useState<QueryParamDefinition[]>([]);
   const [textContent, setTextContent] = useState("## Section\n\nAdd notes here.");
-  const [allViz, setAllViz] = useState<StudioVisualization[]>([]);
   const [pickerOpen, setPickerOpen] = useState(false);
+  const [executeResults, setExecuteResults] = useState<DashboardExecuteResult[]>([]);
+  const [pendingVizIds, setPendingVizIds] = useState<Set<string>>(() => new Set());
 
   const vizIds = useMemo(
     () =>
       dashboard?.items
         .filter((i) => i.panel_type === "visualization" && i.visualization_id)
         .map((i) => i.visualization_id!) ?? [],
-    [dashboard],
+    [dashboard?.items],
   );
-  const { data: vizCatalog } = useVizCatalog(vizIds);
+  const { data: vizCatalog } = useVisualizationsByIds(vizIds);
+
+  const defaultParamValues = useMemo(() => {
+    const v: Record<string, string> = {};
+    dashboardParams.forEach((p) => {
+      v[p.name] = p.default_value ?? "";
+    });
+    return v;
+  }, [dashboardParams]);
+
+  const executeResultsRef = useRef(executeResults);
+  executeResultsRef.current = executeResults;
+
+  const runExecute = useCallback(
+    async (
+      paramValues: Record<string, string>,
+      opts?: { loadingVizIds?: string[] },
+    ) => {
+      const ids = opts?.loadingVizIds ?? vizIds;
+      if (ids.length === 0) return;
+
+      setPendingVizIds((prev) => {
+        const next = new Set(prev);
+        for (const id of ids) {
+          const existing = executeResultsRef.current.find((r) => r.visualization_id === id);
+          if (!existing?.result && !existing?.error) {
+            next.add(id);
+          }
+        }
+        return next;
+      });
+
+      try {
+        const res = await executeDashboard.mutateAsync({
+          id: dashboardId,
+          param_values: paramValues,
+        });
+        setExecuteResults((prev) => mergeExecuteResults(prev, res.results));
+        const rateLimited = res.results.find((r) =>
+          r.error?.toLowerCase().includes("execution budget"),
+        );
+        if (rateLimited?.error) {
+          toast.error(rateLimited.error);
+        }
+      } finally {
+        setPendingVizIds((prev) => {
+          const next = new Set(prev);
+          for (const id of ids) next.delete(id);
+          return next;
+        });
+      }
+    },
+    [dashboardId, executeDashboard, vizIds],
+  );
+
+  const runExecuteRef = useRef(runExecute);
+  runExecuteRef.current = runExecute;
+  const defaultParamValuesRef = useRef(defaultParamValues);
+  defaultParamValuesRef.current = defaultParamValues;
+  const autoExecutedKey = useRef<string | null>(null);
+
+  const itemsKey = useMemo(
+    () => dashboard?.items.map((i) => `${i.id}:${i.position}`).join("|") ?? "",
+    [dashboard?.items],
+  );
+  const layoutKey = useMemo(() => JSON.stringify(dashboard?.layout ?? []), [dashboard?.layout]);
 
   useEffect(() => {
     if (!dashboard) return;
-    setLayout(dashboard.layout ?? []);
+    setLayout((prev) => mergeDashboardLayout(dashboard.items, dashboard.layout, prev));
     setName(dashboard.name);
     setDescription(dashboard.description ?? "");
     setTags(dashboard.tags ?? []);
     setIsPublic(dashboard.is_public);
     setDashboardParams(dashboard.dashboard_params ?? []);
-  }, [dashboard]);
+  }, [dashboard, itemsKey, layoutKey]);
 
   useEffect(() => {
-    async function loadViz() {
-      if (!queriesData?.queries) return;
-      const list: StudioVisualization[] = [];
-      for (const q of queriesData.queries) {
-        const { visualizations } = await studioApi.listVisualizations(q.id);
-        list.push(...visualizations);
-      }
-      setAllViz(list);
-    }
-    void loadViz();
-  }, [queriesData]);
+    if (!dashboard?.id || vizIds.length === 0) return;
+    const key = `${dashboard.id}:${vizIds.join(",")}`;
+    if (autoExecutedKey.current === key) return;
+
+    const t = setTimeout(() => {
+      autoExecutedKey.current = key;
+      void runExecuteRef.current(defaultParamValuesRef.current);
+    }, 500);
+    return () => clearTimeout(t);
+  }, [dashboard?.id, vizIds.join(",")]);
+
+  const allViz = orgVizData?.visualizations ?? [];
 
   const vizById = useMemo(() => {
     const map: Record<string, VizPanelData> = {};
     for (const vid of vizIds) {
       const meta = vizCatalog?.[vid];
+      const er = executeResults.find((r) => r.visualization_id === vid);
       map[vid] = {
         visualizationId: vid,
         name: meta?.name ?? "Chart",
         chartType: meta?.chart_type ?? "table",
         config: meta?.config ?? {},
         columnFormats: meta?.column_formats,
-        result: null,
+        result: er?.result ?? null,
+        error: er?.error ?? null,
       };
     }
     return map;
-  }, [vizIds, vizCatalog]);
+  }, [vizIds, vizCatalog, executeResults]);
 
   async function saveLayout() {
     await updateDashboard.mutateAsync({
@@ -120,29 +201,56 @@ export function DashboardBuilderPage({ dashboardId }: Props) {
   }
 
   async function addVisualization(vizId: string) {
-    const item = await addItem.mutateAsync({
+    await addItem.mutateAsync({
       dashboardId,
       body: { panel_type: "visualization", visualization_id: vizId, position: dashboard?.items.length ?? 0 },
     });
-    setLayout((prev) => [
-      ...prev,
-      { item_id: item.id, x: 0, y: prev.length * 4, w: 6, h: 4 },
-    ]);
-    void qc.invalidateQueries({ queryKey: ["studio", "dashboard", dashboardId] });
     setPickerOpen(false);
   }
 
   async function addTextPanel() {
-    const item = await addItem.mutateAsync({
+    await addItem.mutateAsync({
       dashboardId,
       body: { panel_type: "text", content: textContent, position: dashboard?.items.length ?? 0 },
     });
-    setLayout((prev) => [
-      ...prev,
-      { item_id: item.id, x: 0, y: prev.length * 4, w: 12, h: 3 },
-    ]);
-    void qc.invalidateQueries({ queryKey: ["studio", "dashboard", dashboardId] });
   }
+
+  function requestRemovePanel(item: StudioDashboardItem) {
+    const panelName =
+      item.panel_type === "text"
+        ? (item.content ?? "")
+            .split("\n")
+            .map((line) => line.trim())
+            .find((line) => line.startsWith("#"))
+            ?.replace(/^#+\s*/, "")
+            .trim() || "Text panel"
+        : vizById[item.visualization_id ?? ""]?.name ?? "Chart";
+
+    requestDeleteConfirm({
+      title: "Remove panel",
+      description: `Remove "${panelName}" from this dashboard? The saved chart or query is not deleted.`,
+      confirmLabel: "Remove",
+      onConfirm: async () => {
+        await deleteItem.mutateAsync({ dashboardId, itemId: item.id });
+        setLayout((prev) => prev.filter((slot) => slot.item_id !== item.id));
+        if (item.visualization_id) {
+          setExecuteResults((prev) =>
+            prev.filter((r) => r.visualization_id !== item.visualization_id),
+          );
+          setPendingVizIds((prev) => {
+            const next = new Set(prev);
+            if (item.visualization_id) next.delete(item.visualization_id);
+            return next;
+          });
+        }
+      },
+    });
+  }
+
+  const displayLayout = useMemo(
+    () => (dashboard ? resolveDashboardLayout(dashboard.items, layout) : []),
+    [dashboard, layout],
+  );
 
   if (isLoading || !dashboard) {
     return (
@@ -169,7 +277,7 @@ export function DashboardBuilderPage({ dashboardId }: Props) {
           <button
             type="button"
             onClick={() => setPickerOpen(!pickerOpen)}
-            className="inline-flex items-center gap-1 rounded-lg border bg-white px-3 py-1.5 text-sm"
+            className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50"
           >
             <Plus size={14} />
             Add chart
@@ -177,7 +285,7 @@ export function DashboardBuilderPage({ dashboardId }: Props) {
           <button
             type="button"
             onClick={() => void addTextPanel()}
-            className="inline-flex items-center gap-1 rounded-lg border bg-white px-3 py-1.5 text-sm"
+            className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50"
           >
             Text panel
           </button>
@@ -193,7 +301,7 @@ export function DashboardBuilderPage({ dashboardId }: Props) {
           <button
             type="button"
             onClick={() => setSettingsOpen(true)}
-            className="inline-flex items-center gap-1 rounded-lg border bg-white px-3 py-1.5 text-sm"
+            className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50"
           >
             <Settings size={14} />
             Settings
@@ -225,11 +333,15 @@ export function DashboardBuilderPage({ dashboardId }: Props) {
 
       <DashboardGrid
         items={dashboard.items}
-        layout={layout}
+        layout={displayLayout}
         vizById={vizById}
         editable
+        loadingVizIds={pendingVizIds}
         onLayoutChange={setLayout}
+        onRemoveItem={requestRemovePanel}
       />
+
+      {deleteConfirmModal}
 
       {settingsOpen && (
         <div className="fixed inset-0 z-50 flex justify-end bg-black/30">

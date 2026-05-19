@@ -16,6 +16,7 @@ export const DOCS_NAV: DocNavSection[] = [
     items: [
       { title: "Introduction", slug: "", file: "introduction" },
       { title: "Getting started", slug: "getting-started", file: "getting-started" },
+      { title: "Product features", slug: "features", file: "features" },
       {
         title: "Supported data sources",
         slug: "data-sources",

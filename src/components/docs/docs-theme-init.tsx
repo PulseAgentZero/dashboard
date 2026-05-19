@@ -10,7 +10,8 @@ export function DocsThemeInit() {
       (stored !== "light" &&
         window.matchMedia("(prefers-color-scheme: dark)").matches);
     var root = document.documentElement;
-    root.classList.toggle("dark", dark);
+    root.classList.remove("dark");
+    root.classList.toggle("docs-dark", dark);
     root.style.colorScheme = dark ? "dark" : "light";
   } catch (e) {}
 })();

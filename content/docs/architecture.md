@@ -2,6 +2,8 @@
 
 Pulse is split into a **dashboard**, a **REST API**, background **workers**, and an optional **conversational agent** service.
 
+For user-facing capabilities—entities, pipeline, Studio, alerts, and workspace settings—see **[Product features](/docs/features)**. This page focuses on how those pieces are deployed and wired together.
+
 ## Deployment models
 
 | Model | Description |
@@ -76,6 +78,7 @@ See [Studio (public API)](/docs/api/studio).
 
 ## Related docs
 
+- [Product features](/docs/features)
 - [Pulse Cloud (SaaS)](/docs/hosting/cloud)
 - [Self-hosted](/docs/hosting/self-hosted)
 - [Public API overview](/docs/api/overview)

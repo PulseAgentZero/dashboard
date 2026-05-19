@@ -1,5 +1,12 @@
 import { api } from "./client";
 
+export type WebhookDeliveriesResponse = {
+  deliveries: WebhookDelivery[];
+  total: number;
+  page: number;
+  limit: number;
+};
+
 export type WebhookDelivery = {
   id: string;
   channel_id: string;
@@ -12,13 +19,19 @@ export type WebhookDelivery = {
 };
 
 export type LicenseInfo = {
-  id: string | null;
+  id?: string | null;
   plan: string;
+  effective_plan?: string;
   is_valid: boolean;
+  locked?: boolean;
+  lock_reason?: string | null;
   expires_at: string | null;
-  seats: number | null;
+  seats?: number | null;
+  seat_limit?: number | null;
+  seat_used?: number;
   features: string[];
-  issued_to: string | null;
+  effective_features?: string[];
+  issued_to?: string | null;
 };
 
 export const webhooksApi = {
@@ -28,7 +41,9 @@ export const webhooksApi = {
     if (params?.limit) qs.set("limit", String(params.limit));
     if (params?.status) qs.set("status", params.status);
     const q = qs.toString();
-    return api.get<WebhookDelivery[]>(`/webhooks/deliveries${q ? `?${q}` : ""}`);
+    return api.get<WebhookDeliveriesResponse | WebhookDelivery[]>(
+      `/webhooks/deliveries${q ? `?${q}` : ""}`,
+    );
   },
 
   retry: (id: string) =>

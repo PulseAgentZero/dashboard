@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Database } from "lucide-react";
 import SearchInput from "@/components/ui/search-input";
 import { NotificationBell } from "@/components/nav/notification-bell";
+import { RetakeTourButton } from "@/components/tour/retake-tour-button";
 
 const pageMeta: Record<string, { title: string; crumb: string }> = {
   "/dashboard": { title: "Dashboard", crumb: "Overview" },
@@ -16,7 +17,7 @@ const pageMeta: Record<string, { title: string; crumb: string }> = {
   "/dashboard/pipeline": { title: "Pipeline", crumb: "Pipeline" },
   "/dashboard/schema-mappings": { title: "Schema mappings", crumb: "Schema mappings" },
   "/dashboard/audit-logs": { title: "Audit logs", crumb: "Audit logs" },
-  "/dashboard/onboarding": { title: "Onboarding", crumb: "Onboarding" },
+  "/dashboard/notifications": { title: "Notifications", crumb: "Notifications" },
   "/dashboard/connections": { title: "Connections", crumb: "Connections" },
   "/dashboard/alerts": { title: "Alerts", crumb: "Alerts" },
   "/dashboard/team": { title: "Team & Roles", crumb: "Team & Roles" },
@@ -58,9 +59,12 @@ export default function Nav() {
 
         <NotificationBell />
 
+        <RetakeTourButton variant="icon" label="Product tour" />
+
         {/* Connect Data CTA */}
         <Link
           href="/dashboard/connections"
+          data-tour="connect-data"
           className="flex h-10 items-center gap-1 rounded-lg bg-blue-600 px-4 text-[13px] font-medium text-white transition-colors hover:bg-blue-700 active:bg-blue-800"
         >
           <Database size={12} />

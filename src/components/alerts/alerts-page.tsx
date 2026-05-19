@@ -10,7 +10,15 @@ import {
   useCreateAlertRule, useDeleteAlertRule,
   useCreateAlertChannel, useDeleteAlertChannel, useTestAlertChannel,
 } from "@/hooks/alerts/use-alerts";
-import type { AlertRule, AlertChannel, AlertEvent } from "@/lib/api/alerts-api";
+import type {
+  AlertRule,
+  AlertChannel,
+  AlertEvent,
+  AlertEventsResponse,
+} from "@/lib/api/alerts-api";
+import { Pagination } from "@/components/shared/pagination";
+import { ALERT_EVENTS_PAGE_SIZE } from "@/lib/pagination";
+import { useDeleteConfirm } from "@/hooks/use-delete-confirm";
 
 const CHANNEL_ICONS: Record<string, React.ElementType> = {
   email: Mail, slack: MessageSquare, webhook: Webhook, in_app: Bell,
@@ -238,16 +246,40 @@ const TABS = [
 ] as const;
 type Tab = (typeof TABS)[number]["id"];
 
+function parseAlertEvents(raw: unknown): { events: AlertEvent[]; total: number } {
+  if (Array.isArray(raw)) {
+    return { events: raw as AlertEvent[], total: raw.length };
+  }
+  if (raw && typeof raw === "object") {
+    const r = raw as Record<string, unknown>;
+    if (Array.isArray(r.events) && typeof r.total === "number") {
+      return { events: r.events as AlertEvent[], total: r.total };
+    }
+    for (const k of ["events", "data", "items"]) {
+      if (Array.isArray(r[k])) {
+        const events = r[k] as AlertEvent[];
+        return { events, total: events.length };
+      }
+    }
+  }
+  return { events: [], total: 0 };
+}
+
 export function AlertsPage() {
   const { data: rulesRaw, isLoading: loadingRules } = useAlertRules();
   const { data: channelsRaw, isLoading: loadingChannels } = useAlertChannels();
-  const { data: eventsRaw, isLoading: loadingEvents } = useAlertEvents();
+  const [eventsPage, setEventsPage] = useState(1);
+  const { data: eventsRaw, isLoading: loadingEvents } = useAlertEvents(undefined, {
+    page: eventsPage,
+    limit: ALERT_EVENTS_PAGE_SIZE,
+  });
   const { mutate: deleteRule, isPending: deletingRule, variables: deletingRuleId } = useDeleteAlertRule();
   const { mutate: deleteChannel, isPending: deletingChannel, variables: deletingChannelId } = useDeleteAlertChannel();
   const { mutate: testChannel, isPending: testingChannel, variables: testingChannelId } = useTestAlertChannel();
   const [showRule, setShowRule] = useState(false);
   const [showChannel, setShowChannel] = useState(false);
   const [tab, setTab] = useState<Tab>("rules");
+  const { requestDeleteConfirm, deleteConfirmModal } = useDeleteConfirm();
 
   function toArray<T>(raw: unknown, ...keys: string[]): T[] {
     if (Array.isArray(raw)) return raw as T[];
@@ -262,7 +294,7 @@ export function AlertsPage() {
 
   const rules = toArray<AlertRule>(rulesRaw, "rules", "data", "items");
   const channels = toArray<AlertChannel>(channelsRaw, "channels", "data", "items");
-  const eventList = toArray<AlertEvent>(eventsRaw, "events", "data", "items");
+  const { events: eventList, total: eventsTotal } = parseAlertEvents(eventsRaw);
 
   const counts: Record<Tab, number | null> = {
     rules: loadingRules ? null : rules.length,
@@ -341,7 +373,14 @@ export function AlertsPage() {
                 key={rule.id}
                 rule={rule}
                 deleting={deletingRule && deletingRuleId === rule.id}
-                onDelete={() => { if (confirm(`Delete "${rule.name}"?`)) deleteRule(rule.id); }}
+                onDelete={() =>
+                  requestDeleteConfirm({
+                    title: "Delete alert rule",
+                    description: `Delete "${rule.name}"? This rule will stop firing immediately.`,
+                    confirmLabel: "Delete",
+                    onConfirm: () => deleteRule(rule.id),
+                  })
+                }
               />
             ))}
           </div>
@@ -363,7 +402,14 @@ export function AlertsPage() {
                 channel={ch}
                 deleting={deletingChannel && deletingChannelId === ch.id}
                 testing={testingChannel && testingChannelId === ch.id}
-                onDelete={() => { if (confirm(`Remove "${ch.name}"?`)) deleteChannel(ch.id); }}
+                onDelete={() =>
+                  requestDeleteConfirm({
+                    title: "Remove channel",
+                    description: `Remove "${ch.name}"? Alerts will no longer be sent to this channel.`,
+                    confirmLabel: "Remove",
+                    onConfirm: () => deleteChannel(ch.id),
+                  })
+                }
                 onTest={() => testChannel(ch.id)}
               />
             ))}
@@ -387,7 +433,7 @@ export function AlertsPage() {
             )}
             {eventList.length > 0 && (
               <div className="divide-y divide-slate-100">
-                {eventList.slice(0, 20).map((ev) => (
+                {eventList.map((ev) => (
                   <div key={ev.id} className="flex items-start gap-3 px-5 py-3">
                     <div className="mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-md bg-rose-50">
                       <Zap size={12} className="text-rose-500" />
@@ -399,15 +445,23 @@ export function AlertsPage() {
                       {ev.entity_id && <p className="text-[10px] text-slate-400">Entity: {ev.entity_id}</p>}
                     </div>
                     <span className="shrink-0 text-[10px] text-slate-400">
-                      {new Date(ev.fired_at).toLocaleString()}
+                      {new Date(ev.fired_at ?? ev.created_at ?? Date.now()).toLocaleString()}
                     </span>
                   </div>
                 ))}
               </div>
             )}
+            <Pagination
+              page={eventsPage}
+              pageSize={ALERT_EVENTS_PAGE_SIZE}
+              total={eventsTotal}
+              onPageChange={setEventsPage}
+            />
           </>
         )}
       </div>
+
+      {deleteConfirmModal}
     </div>
   );
 }

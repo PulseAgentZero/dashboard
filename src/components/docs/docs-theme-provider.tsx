@@ -34,7 +34,8 @@ function readStoredTheme(): DocsTheme {
 function applyThemeToDocument(theme: DocsTheme) {
   const root = document.documentElement;
   const isDark = theme === "dark";
-  root.classList.toggle("dark", isDark);
+  root.classList.remove("dark");
+  root.classList.toggle("docs-dark", isDark);
   root.style.colorScheme = isDark ? "dark" : "light";
 }
 
@@ -57,7 +58,7 @@ export function DocsThemeProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     return () => {
-      document.documentElement.classList.remove("dark");
+      document.documentElement.classList.remove("dark", "docs-dark");
       document.documentElement.style.colorScheme = "";
     };
   }, []);

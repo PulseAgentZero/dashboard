@@ -25,6 +25,7 @@ import {
   useRevokeInvitation,
 } from "@/hooks/users/use-users";
 import type { OrgUser } from "@/types/users";
+import { useDeleteConfirm } from "@/hooks/use-delete-confirm";
 
 const ROLES = ["admin", "manager", "analyst", "viewer"] as const;
 type Role = (typeof ROLES)[number];
@@ -60,14 +61,14 @@ function UserRow({
   member,
   currentUserId,
   onRoleChange,
-  onDeactivate,
+  onDeactivateRequest,
   updatingRole,
   deactivating,
 }: {
   member: OrgUser;
   currentUserId: string | undefined;
   onRoleChange: (userId: string, role: string) => void;
-  onDeactivate: (userId: string) => void;
+  onDeactivateRequest: (member: OrgUser) => void;
   updatingRole: boolean;
   deactivating: boolean;
 }) {
@@ -141,7 +142,7 @@ function UserRow({
                   disabled={deactivating}
                   onClick={() => {
                     setMenuOpen(false);
-                    if (confirm(`Deactivate ${member.full_name}?`)) onDeactivate(member.id);
+                    onDeactivateRequest(member);
                   }}
                   className="flex w-full items-center gap-2 px-3 py-2 text-xs font-medium text-rose-600 hover:bg-rose-50 disabled:opacity-50"
                 >
@@ -230,6 +231,7 @@ export function TeamPage() {
   const { mutate: deactivate, isPending: deactivating, variables: deactivatingId } = useDeactivateUser();
   const { mutate: revokeInv, isPending: revoking, variables: revokingId } = useRevokeInvitation();
   const [showInvite, setShowInvite] = useState(false);
+  const { requestDeleteConfirm, deleteConfirmModal } = useDeleteConfirm();
 
   const invitations = invData?.invitations ?? (Array.isArray(invData) ? invData : []);
   const activeMembers = members?.filter((m) => m.is_active) ?? [];
@@ -301,7 +303,14 @@ export function TeamPage() {
                   updatingRole={updatingRole && updatingVars?.userId === member.id}
                   deactivating={deactivating && deactivatingId === member.id}
                   onRoleChange={(userId, role) => updateRole({ userId, role })}
-                  onDeactivate={(userId) => deactivate(userId)}
+                  onDeactivateRequest={(member) =>
+                    requestDeleteConfirm({
+                      title: "Deactivate user",
+                      description: `Deactivate ${member.full_name}? They will lose access to this organization immediately.`,
+                      confirmLabel: "Deactivate",
+                      onConfirm: () => deactivate(member.id),
+                    })
+                  }
                 />
               ))}
             </tbody>
@@ -357,9 +366,14 @@ export function TeamPage() {
                 <RoleBadge role={inv.role} />
                 <button
                   disabled={revoking && revokingId === inv.invitation_id}
-                  onClick={() => {
-                    if (confirm(`Revoke invitation for ${inv.email}?`)) revokeInv(inv.invitation_id);
-                  }}
+                  onClick={() =>
+                    requestDeleteConfirm({
+                      title: "Revoke invitation",
+                      description: `Revoke the invitation for ${inv.email}? They will not be able to join with the current link.`,
+                      confirmLabel: "Revoke",
+                      onConfirm: () => revokeInv(inv.invitation_id),
+                    })
+                  }
                   className="flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:border-rose-200 hover:bg-rose-50 hover:text-rose-600 disabled:opacity-50"
                 >
                   {revoking && revokingId === inv.invitation_id
@@ -399,6 +413,8 @@ export function TeamPage() {
           })}
         </div>
       </div>
+
+      {deleteConfirmModal}
     </div>
   );
 }

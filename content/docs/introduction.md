@@ -16,16 +16,15 @@ Pulse is a real-time intelligence platform that connects to your data, profiles 
 
 ## Supported data sources
 
-Pulse supports SQL databases, cloud warehouses, spreadsheets, object storage, and file uploads. Add connections from **Settings → Connections** in the dashboard.
+Pulse supports SQL databases, cloud warehouses, spreadsheets, object storage, and file uploads. Add connections from **Data & pipeline → Connections** in the dashboard (or use **Connect Data** in the header).
 
 See **[Supported data sources](/docs/data-sources)** for the full list, required credentials, and which features each connector supports.
 
 ## What Pulse includes
 
-- **Dashboard** — Web app for analysts and admins.
-- **Public API** — REST API for integrations (API keys). The dashboard uses a separate sign-in session.
-- **AI pipeline** — Autonomous agents on a schedule or on demand.
-- **Studio** — SQL dashboards, charts, and public/embed sharing.
+Pulse combines a **web dashboard** for analysts and admins with a **Public API** for integrations. The dashboard covers the full workflow: connect data, map entities, run an **AI pipeline** on a schedule or on demand, then explore **entities**, **recommendations**, and **analytics**. **Studio** adds SQL-based charts and dashboards with optional public or embed sharing. A conversational **Agent** answers questions in context, and **alerts** plus **webhooks** push signals to your stack.
+
+For a walkthrough of every area in the app, see **[Product features](/docs/features)**.
 
 ## Where to go next
 
@@ -33,6 +32,7 @@ See **[Supported data sources](/docs/data-sources)** for the full list, required
 |---------|------------|
 | Want to use Pulse as a customer (SaaS) | [Pulse Cloud](/docs/hosting/cloud) |
 | Need to install Pulse on your infrastructure | [Self-hosted](/docs/hosting/self-hosted) |
+| Want to understand dashboard capabilities | [Product features](/docs/features) |
 | Need to connect Postgres, Snowflake, S3, etc. | [Supported data sources](/docs/data-sources) |
 | Build against the REST API | [Public API overview](/docs/api/overview) |
 
@@ -41,6 +41,7 @@ See **[Supported data sources](/docs/data-sources)** for the full list, required
 | Section | Description |
 |---------|-------------|
 | [Getting started](/docs/getting-started) | Pulse Cloud signup and first connection |
+| [Product features](/docs/features) | Dashboard areas and core workflows |
 | [Supported data sources](/docs/data-sources) | Connectors, credentials, feature support |
 | [Architecture](/docs/architecture) | Product components and public API |
 | [Pulse Cloud](/docs/hosting/cloud) | SaaS product — accounts, plans, connections |

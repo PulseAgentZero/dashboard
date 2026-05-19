@@ -1,89 +1,14 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import {
-  Bell,
-  CheckCheck,
-  AlertTriangle,
-  TrendingUp,
-  Zap,
-  Info,
-  X,
-} from "lucide-react";
+import Link from "next/link";
+import { Bell, CheckCheck, X } from "lucide-react";
+import { NotificationItem } from "@/components/notifications/notification-item";
 import {
   useNotifications,
   useMarkNotificationRead,
   useMarkAllNotificationsRead,
 } from "@/hooks/notifications/use-notifications";
-import type { Notification } from "@/types/notifications";
-
-function typeIcon(type: string | null) {
-  if (!type) return <Info size={13} className="text-slate-400" />;
-  if (type.includes("risk") || type.includes("alert"))
-    return <AlertTriangle size={13} className="text-rose-500" />;
-  if (type.includes("pipeline") || type.includes("run"))
-    return <Zap size={13} className="text-blue-500" />;
-  if (type.includes("recommendation"))
-    return <TrendingUp size={13} className="text-emerald-500" />;
-  return <Info size={13} className="text-slate-400" />;
-}
-
-function timeAgo(dateStr: string) {
-  const diff = Date.now() - new Date(dateStr).getTime();
-  const mins = Math.floor(diff / 60_000);
-  if (mins < 1) return "just now";
-  if (mins < 60) return `${mins}m ago`;
-  const hrs = Math.floor(mins / 60);
-  if (hrs < 24) return `${hrs}h ago`;
-  return `${Math.floor(hrs / 24)}d ago`;
-}
-
-function NotificationItem({
-  n,
-  onRead,
-}: {
-  n: Notification;
-  onRead: (id: string) => void;
-}) {
-  return (
-    <button
-      onClick={() => !n.is_read && onRead(n.id)}
-      className={`w-full px-4 py-3 text-left transition-colors hover:bg-slate-50 ${
-        n.is_read ? "opacity-60" : ""
-      }`}
-    >
-      <div className="flex items-start gap-3">
-        <div
-          className={`mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg ${
-            n.is_read ? "bg-slate-100" : "bg-blue-50"
-          }`}
-        >
-          {typeIcon(n.type)}
-        </div>
-        <div className="min-w-0 flex-1">
-          <div className="flex items-start justify-between gap-2">
-            <p
-              className={`text-xs font-semibold leading-snug text-slate-800 ${
-                !n.is_read ? "font-semibold" : "font-medium"
-              }`}
-            >
-              {n.title ?? n.type ?? "Notification"}
-            </p>
-            {!n.is_read && (
-              <span className="mt-0.5 h-1.5 w-1.5 shrink-0 rounded-full bg-blue-500" />
-            )}
-          </div>
-          {n.message && (
-            <p className="mt-0.5 text-[11px] leading-relaxed text-slate-500 line-clamp-2">
-              {n.message}
-            </p>
-          )}
-          <p className="mt-1 text-[10px] text-slate-400">{timeAgo(n.created_at)}</p>
-        </div>
-      </div>
-    </button>
-  );
-}
 
 export function NotificationBell() {
   const [open, setOpen] = useState(false);
@@ -110,13 +35,15 @@ export function NotificationBell() {
   return (
     <div ref={ref} className="relative">
       <button
+        type="button"
         onClick={() => setOpen((o) => !o)}
         className="relative flex h-9 w-9 items-center justify-center rounded-lg text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-700"
         aria-label="Notifications"
+        data-tour="notifications-bell"
       >
         <Bell size={18} strokeWidth={1.75} />
         {unread > 0 && (
-          <span className="absolute right-1.5 top-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-rose-500 px-1 text-[9px] font-bold text-white leading-none">
+          <span className="absolute right-1.5 top-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-rose-500 px-1 text-[9px] font-bold leading-none text-white">
             {unread > 99 ? "99+" : unread}
           </span>
         )}
@@ -124,7 +51,6 @@ export function NotificationBell() {
 
       {open && (
         <div className="absolute right-0 top-11 z-50 w-80 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-lg shadow-slate-900/10">
-          {/* Header */}
           <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3">
             <div className="flex items-center gap-2">
               <p className="text-sm font-semibold text-slate-800">Notifications</p>
@@ -137,6 +63,7 @@ export function NotificationBell() {
             <div className="flex items-center gap-1">
               {unread > 0 && (
                 <button
+                  type="button"
                   onClick={() => markAll()}
                   disabled={markingAll}
                   className="flex items-center gap-1 rounded-lg px-2 py-1 text-[11px] font-medium text-slate-500 hover:bg-slate-100 hover:text-slate-700 disabled:opacity-50"
@@ -146,6 +73,7 @@ export function NotificationBell() {
                 </button>
               )}
               <button
+                type="button"
                 onClick={() => setOpen(false)}
                 className="flex h-6 w-6 items-center justify-center rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-600"
               >
@@ -154,7 +82,6 @@ export function NotificationBell() {
             </div>
           </div>
 
-          {/* Body */}
           <div className="max-h-96 overflow-y-auto">
             {isLoading && (
               <div className="space-y-0 divide-y divide-slate-100">
@@ -187,19 +114,22 @@ export function NotificationBell() {
                     key={n.id}
                     n={n}
                     onRead={(id) => markRead(id)}
+                    compact
                   />
                 ))}
               </div>
             )}
           </div>
 
-          {notifications.length > 0 && (
-            <div className="border-t border-slate-100 px-4 py-2.5 text-center">
-              <p className="text-[11px] text-slate-400">
-                {data?.total ?? 0} total · showing last {notifications.length}
-              </p>
-            </div>
-          )}
+          <div className="border-t border-slate-100 px-4 py-2.5 text-center">
+            <Link
+              href="/dashboard/notifications"
+              onClick={() => setOpen(false)}
+              className="text-[11px] font-semibold text-blue-600 hover:text-blue-700"
+            >
+              View all notifications
+            </Link>
+          </div>
         </div>
       )}
     </div>

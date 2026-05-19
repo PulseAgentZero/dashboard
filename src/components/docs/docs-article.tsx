@@ -5,6 +5,8 @@ import { DocsToc } from "./docs-toc";
 import { PrevNext } from "./prev-next";
 import { EnvVarTable } from "./env-var-table";
 import { ApiEndpoint } from "./api-endpoint";
+import { DataSourcesConnectorTables } from "./data-sources-connector-tables";
+import { splitDataSourcesMarkdown } from "@/lib/connectors/docs-catalog";
 import { ENV_VAR_GROUPS } from "@/lib/docs/env-variables";
 import {
   getCatalogGroupBySlug,
@@ -27,6 +29,10 @@ export function DocsArticle({ slug, content }: Props) {
   const apiGroupKey = API_SLUG_TO_GROUP[slug];
   const apiGroup = apiGroupKey ? getCatalogGroupBySlug(apiGroupKey) : null;
   const showEnvTables = slug === "configuration/environment-variables";
+  const isDataSources = slug === "data-sources";
+  const dataSourcesParts = isDataSources
+    ? splitDataSourcesMarkdown(content)
+    : null;
 
   return (
     <div className="flex w-full min-w-0 flex-col xl:flex-row">
@@ -38,7 +44,15 @@ export function DocsArticle({ slug, content }: Props) {
           <DocsToc containerId="docs-article" variant="mobile" />
         </div>
 
-        <DocsMarkdown content={content} />
+        {isDataSources && dataSourcesParts ? (
+          <>
+            <DocsMarkdown content={dataSourcesParts.intro} />
+            <DataSourcesConnectorTables />
+            <DocsMarkdown content={dataSourcesParts.tail} />
+          </>
+        ) : (
+          <DocsMarkdown content={content} />
+        )}
 
         {showEnvTables && (
           <div className="mt-8">

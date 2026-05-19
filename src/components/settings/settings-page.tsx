@@ -13,6 +13,7 @@ import {
   useUpdateOrganization,
   useUploadOrgLogo,
 } from "@/hooks/org/use-organization";
+import { usePatchMemberSettings } from "@/hooks/org/use-member-settings";
 import {
   useRemoveAvatar,
   useUpdateMe,
@@ -28,6 +29,8 @@ import { isCloudDeployment } from "@/lib/deployment";
 import { useLicense, useActivateLicense } from "@/hooks/webhooks/use-webhooks";
 import { WebhooksSettingsTab } from "@/components/settings/webhooks-settings-tab";
 import { api } from "@/lib/api/client";
+import { RetakeTourButton } from "@/components/tour/retake-tour-button";
+import { useDeleteConfirm } from "@/hooks/use-delete-confirm";
 
 const ALL_TABS = [
   { id: "org", label: "Organization", icon: Building2 },
@@ -69,7 +72,9 @@ const inputCls =
 function OrgTab() {
   const { data: org, isLoading } = useOrganization();
   const { user } = useAuth();
-  const { mutate: update, isPending } = useUpdateOrganization();
+  const { mutate: update, isPending: updating } = useUpdateOrganization();
+  const { mutate: patchMember, isPending: patching } = usePatchMemberSettings();
+  const isPending = updating || patching;
   const { mutate: uploadLogo, isPending: uploadingLogo } = useUploadOrgLogo();
   const { mutate: removeLogo, isPending: removingLogo } = useRemoveOrgLogo();
   const isAdmin = user?.role === "admin";
@@ -77,14 +82,21 @@ function OrgTab() {
   function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
     e.preventDefault();
     const d = new FormData(e.currentTarget);
-    update({
-      name: (d.get("name") as string) || undefined,
+    const contextFields = {
       industry: (d.get("industry") as string) || undefined,
       business_context: (d.get("business_context") as string) || undefined,
       entity_label: (d.get("entity_label") as string) || undefined,
       goal_label: (d.get("goal_label") as string) || undefined,
-      timezone: (d.get("timezone") as string) || undefined,
-    });
+    };
+    if (isAdmin) {
+      update({
+        name: (d.get("name") as string) || undefined,
+        ...contextFields,
+        timezone: (d.get("timezone") as string) || undefined,
+      });
+    } else {
+      patchMember(contextFields);
+    }
   }
 
   async function handleExport() {
@@ -135,7 +147,13 @@ function OrgTab() {
 
       <div className="grid gap-5 sm:grid-cols-2">
         <Field label="Organization name">
-          <input name="name" className={inputCls} defaultValue={org?.name ?? ""} placeholder="Acme Corp" />
+          <input
+            name="name"
+            className={inputCls}
+            defaultValue={org?.name ?? ""}
+            placeholder="Acme Corp"
+            disabled={!isAdmin}
+          />
         </Field>
         <Field label="Industry">
           <select name="industry" className={inputCls} defaultValue={org?.industry ?? ""}>
@@ -164,7 +182,13 @@ function OrgTab() {
       </div>
 
       <Field label="Timezone">
-        <input name="timezone" className={inputCls} defaultValue={org?.timezone ?? ""} placeholder="UTC" />
+        <input
+          name="timezone"
+          className={inputCls}
+          defaultValue={org?.timezone ?? ""}
+          placeholder="UTC"
+          disabled={!isAdmin}
+        />
       </Field>
 
       {org && (
@@ -176,13 +200,16 @@ function OrgTab() {
       )}
 
       <div className="flex items-center justify-between border-t border-slate-100 pt-4">
-        <button
-          type="button"
-          onClick={handleExport}
-          className="flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-50"
-        >
-          <Download size={13} /> Export org data
-        </button>
+        <div className="flex flex-wrap items-center gap-2">
+          <RetakeTourButton />
+          <button
+            type="button"
+            onClick={handleExport}
+            className="flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-50"
+          >
+            <Download size={13} /> Export org data
+          </button>
+        </div>
         <button
           type="submit"
           disabled={isPending}
@@ -270,6 +297,18 @@ function AccountTab() {
       </section>
 
       <section>
+        <p className="mb-4 text-xs font-semibold uppercase tracking-wide text-slate-400">Product tour</p>
+        <div className="rounded-lg border border-slate-200 bg-slate-50/80 px-4 py-4">
+          <p className="text-sm text-slate-600">
+            Walk through the dashboard layout, connections, and notifications again anytime.
+          </p>
+          <div className="mt-3">
+            <RetakeTourButton />
+          </div>
+        </div>
+      </section>
+
+      <section>
         <p className="mb-4 text-xs font-semibold uppercase tracking-wide text-slate-400">Change password</p>
         <form onSubmit={handlePassword} className="space-y-4">
           <Field label="Current password">
@@ -314,6 +353,7 @@ function ApiKeysTab() {
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({ name: "", scope: "read" });
   const [revealed, setRevealed] = useState<string | null>(null);
+  const { requestDeleteConfirm, deleteConfirmModal } = useDeleteConfirm();
 
   const slot = usage?.limits?.api_keys;
   const atLimit = slot ? slot.limit !== null && slot.used >= slot.limit : false;
@@ -408,7 +448,14 @@ function ApiKeysTab() {
                 </p>
               </div>
               <button disabled={revoking && revokingId === key.id}
-                onClick={() => { if (confirm(`Revoke key "${key.name}"?`)) revoke(key.id); }}
+                onClick={() =>
+                  requestDeleteConfirm({
+                    title: "Revoke API key",
+                    description: `Revoke "${key.name}"? Applications using this key will lose access immediately.`,
+                    confirmLabel: "Revoke",
+                    onConfirm: () => revoke(key.id),
+                  })
+                }
                 className="flex items-center gap-1 rounded-lg border border-rose-200 px-2.5 py-1.5 text-xs font-semibold text-rose-600 hover:bg-rose-50 disabled:opacity-50">
                 {revoking && revokingId === key.id ? <Loader2 size={11} className="animate-spin" /> : <Trash2 size={11} />}
                 Revoke
@@ -428,6 +475,8 @@ function ApiKeysTab() {
           </button>
         )}
       </section>
+
+      {deleteConfirmModal}
     </div>
   );
 }

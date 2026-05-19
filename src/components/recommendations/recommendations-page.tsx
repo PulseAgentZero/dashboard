@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ChevronLeft, ChevronRight, TrendingUp, Zap } from "lucide-react";
+import { TrendingUp, Zap } from "lucide-react";
+import { Pagination } from "@/components/shared/pagination";
 import { RiskPill } from "@/components/shared/risk-pill";
 import { useRecommendations } from "@/hooks/recommendations/use-recommendations";
 import { useActionRecommendation, useDismissRecommendation } from "@/hooks/recommendations/use-recommendation-actions";
@@ -54,7 +55,7 @@ export function RecommendationsPage() {
   const { mutate: dismiss, isPending: dismissing, variables: dismissingId } = useDismissRecommendation();
   const { mutate: escalate, isPending: escalating, variables: escalatingId } = useEscalateRecommendation();
 
-  const totalPages = data ? Math.ceil(data.total / LIMIT) : 1;
+  const total = data?.total ?? 0;
 
   function handleTabChange(t: StatusTab) {
     setStatus(t);
@@ -269,30 +270,12 @@ export function RecommendationsPage() {
           })}
         </div>
 
-        {/* Pagination */}
-        {totalPages > 1 && (
-          <div className="flex items-center justify-between border-t border-slate-100 px-5 py-3">
-            <p className="text-xs text-slate-400">
-              Page {page} of {totalPages} · {data?.total.toLocaleString()} total
-            </p>
-            <div className="flex gap-2">
-              <button
-                disabled={page <= 1}
-                onClick={() => setPage((p) => p - 1)}
-                className="flex items-center gap-1 rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-50 disabled:opacity-40"
-              >
-                <ChevronLeft size={13} /> Prev
-              </button>
-              <button
-                disabled={page >= totalPages}
-                onClick={() => setPage((p) => p + 1)}
-                className="flex items-center gap-1 rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-50 disabled:opacity-40"
-              >
-                Next <ChevronRight size={13} />
-              </button>
-            </div>
-          </div>
-        )}
+        <Pagination
+          page={page}
+          pageSize={LIMIT}
+          total={total}
+          onPageChange={setPage}
+        />
       </div>
     </div>
   );

@@ -1,8 +1,12 @@
 "use client";
 
+import { useState } from "react";
 import { RefreshCw, Webhook } from "lucide-react";
+import { Pagination } from "@/components/shared/pagination";
 import { useWebhookDeliveries, useRetryWebhook } from "@/hooks/webhooks/use-webhooks";
 import { useUsage } from "@/hooks/usage/use-usage";
+import { WEBHOOK_DELIVERIES_PAGE_SIZE } from "@/lib/pagination";
+import { parsePagedList } from "@/lib/parse-paged-list";
 import type { WebhookDelivery } from "@/lib/api/webhooks-api";
 
 const STATUS_STYLES: Record<string, string> = {
@@ -12,13 +16,15 @@ const STATUS_STYLES: Record<string, string> = {
 };
 
 export function WebhooksPage() {
-  const { data, isLoading } = useWebhookDeliveries();
+  const [page, setPage] = useState(1);
+  const { data, isLoading } = useWebhookDeliveries({
+    page,
+    limit: WEBHOOK_DELIVERIES_PAGE_SIZE,
+  });
   const { data: usage } = useUsage();
   const { mutate: retry, isPending: isRetrying } = useRetryWebhook();
 
-  const deliveries: WebhookDelivery[] =
-    (data as { deliveries?: WebhookDelivery[] })?.deliveries ??
-    (Array.isArray(data) ? (data as WebhookDelivery[]) : []);
+  const { items: deliveries, total } = parsePagedList<WebhookDelivery>(data, "deliveries");
 
   const slot = usage?.limits?.webhook_channels;
 
@@ -112,6 +118,12 @@ export function WebhooksPage() {
               ))}
             </tbody>
           </table>
+          <Pagination
+            page={page}
+            pageSize={WEBHOOK_DELIVERIES_PAGE_SIZE}
+            total={total}
+            onPageChange={setPage}
+          />
         </div>
       )}
     </div>

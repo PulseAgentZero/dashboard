@@ -26,11 +26,14 @@ export type TestConnectionResponse = {
 export type CatalogField = {
   key: string;
   label: string;
-  type: "string" | "integer" | "password" | "select" | "textarea";
+  type: "string" | "integer" | "password" | "select" | "textarea" | "file";
   required: boolean;
   placeholder?: string;
   default?: string | number;
   options?: string[];
+  /** Show this field only when form values match (e.g. auth method). */
+  when?: Record<string, string>;
+  help?: string;
 };
 
 export type ConnectorCatalogItem = {

@@ -6,8 +6,14 @@ export function usePipelineRuns(limit = 20) {
   return useQuery({
     queryKey: ["pipeline", "runs", limit],
     queryFn: () => pipelineApi.listRuns({ limit }),
-    staleTime: 15_000,
-    refetchInterval: 15_000,
+    staleTime: 10_000,
+    refetchInterval: (query) => {
+      const runs = query.state.data;
+      const active = runs?.some(
+        (r) => r.status === "running" || r.status === "pending",
+      );
+      return active ? 3_000 : 15_000;
+    },
     retry: 1,
   });
 }

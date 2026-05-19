@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { GitFork, Loader2, Pencil, Share2 } from "lucide-react";
@@ -16,7 +16,8 @@ import {
   useStarDashboard,
   useStudioDashboard,
 } from "@/hooks/studio/use-studio-dashboards";
-import { useVizCatalog } from "@/hooks/studio/use-viz-catalog";
+import { useVisualizationsByIds } from "@/hooks/studio/use-viz-catalog";
+import { mergeExecuteResults, resolveDashboardLayout } from "@/lib/studio/dashboard-layout";
 import { canCreateStudioContent } from "@/lib/studio/roles";
 import { useAuth } from "@/providers/auth-provider";
 import { toast } from "sonner";
@@ -35,17 +36,17 @@ export function DashboardViewPage({ dashboardId }: Props) {
   const starDashboard = useStarDashboard();
   const [forkOpen, setForkOpen] = useState(false);
   const [executeResults, setExecuteResults] = useState<DashboardExecuteResult[]>([]);
-  const [executed, setExecuted] = useState(false);
+  const [pendingVizIds, setPendingVizIds] = useState<Set<string>>(() => new Set());
 
   const vizIds = useMemo(
     () =>
       dashboard?.items
         .filter((i) => i.panel_type === "visualization" && i.visualization_id)
         .map((i) => i.visualization_id!) ?? [],
-    [dashboard],
+    [dashboard?.items],
   );
 
-  const { data: vizCatalog } = useVizCatalog(vizIds);
+  const { data: vizCatalog } = useVisualizationsByIds(vizIds);
 
   const defaultParams = useMemo(() => {
     const v: Record<string, string> = {};
@@ -53,26 +54,62 @@ export function DashboardViewPage({ dashboardId }: Props) {
       v[p.name] = p.default_value ?? "";
     });
     return v;
-  }, [dashboard]);
+  }, [dashboard?.dashboard_params]);
+
+  const executeResultsRef = useRef(executeResults);
+  executeResultsRef.current = executeResults;
 
   const runExecute = useCallback(
     async (paramValues: Record<string, string>) => {
-      const res = await executeDashboard.mutateAsync({
-        id: dashboardId,
-        param_values: paramValues,
+      if (vizIds.length === 0) return;
+
+      setPendingVizIds((prev) => {
+        const next = new Set(prev);
+        for (const id of vizIds) {
+          const existing = executeResultsRef.current.find((r) => r.visualization_id === id);
+          if (!existing?.result && !existing?.error) {
+            next.add(id);
+          }
+        }
+        return next;
       });
-      setExecuteResults(res.results);
-      setExecuted(true);
+
+      try {
+        const res = await executeDashboard.mutateAsync({
+          id: dashboardId,
+          param_values: paramValues,
+        });
+        setExecuteResults((prev) => mergeExecuteResults(prev, res.results));
+        const rateLimited = res.results.find((r) =>
+          r.error?.toLowerCase().includes("execution budget"),
+        );
+        if (rateLimited?.error) {
+          toast.error(rateLimited.error);
+        }
+      } finally {
+        setPendingVizIds(new Set());
+      }
     },
-    [dashboardId, executeDashboard],
+    [dashboardId, executeDashboard, vizIds],
   );
 
+  const runExecuteRef = useRef(runExecute);
+  runExecuteRef.current = runExecute;
+  const defaultParamsRef = useRef(defaultParams);
+  defaultParamsRef.current = defaultParams;
+  const autoExecutedKey = useRef<string | null>(null);
+
   useEffect(() => {
-    if (dashboard && !executed) {
-      void runExecute(defaultParams);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dashboard?.id]);
+    if (!dashboard?.id || vizIds.length === 0) return;
+    const key = `${dashboard.id}:${vizIds.join(",")}`;
+    if (autoExecutedKey.current === key) return;
+
+    const t = setTimeout(() => {
+      autoExecutedKey.current = key;
+      void runExecuteRef.current(defaultParamsRef.current);
+    }, 500);
+    return () => clearTimeout(t);
+  }, [dashboard?.id, vizIds.join(",")]);
 
   const vizById = useMemo(() => {
     const map: Record<string, VizPanelData> = {};
@@ -99,6 +136,8 @@ export function DashboardViewPage({ dashboardId }: Props) {
       </div>
     );
   }
+
+  const displayLayout = resolveDashboardLayout(dashboard.items, dashboard.layout);
 
   const shareUrl =
     dashboard.is_public && dashboard.slug && typeof window !== "undefined"
@@ -129,7 +168,7 @@ export function DashboardViewPage({ dashboardId }: Props) {
           />
           <Link
             href={`/dashboard/studio/dashboards/${dashboardId}/edit`}
-            className="inline-flex items-center gap-1 rounded-lg border bg-white px-3 py-1.5 text-sm hover:bg-slate-50"
+            className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50"
           >
             <Pencil size={14} />
             Edit
@@ -138,7 +177,7 @@ export function DashboardViewPage({ dashboardId }: Props) {
             <button
               type="button"
               onClick={() => setForkOpen(true)}
-              className="inline-flex items-center gap-1 rounded-lg border bg-white px-3 py-1.5 text-sm hover:bg-slate-50"
+              className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50"
             >
               <GitFork size={14} />
               Fork
@@ -151,7 +190,7 @@ export function DashboardViewPage({ dashboardId }: Props) {
                 void navigator.clipboard.writeText(shareUrl);
                 toast.success("Public link copied");
               }}
-              className="inline-flex items-center gap-1 rounded-lg border bg-white px-3 py-1.5 text-sm hover:bg-slate-50"
+              className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50"
             >
               <Share2 size={14} />
               Share
@@ -169,9 +208,9 @@ export function DashboardViewPage({ dashboardId }: Props) {
 
       <DashboardGrid
         items={dashboard.items}
-        layout={dashboard.layout ?? []}
+        layout={displayLayout}
         vizById={vizById}
-        loading={executeDashboard.isPending}
+        loadingVizIds={pendingVizIds}
       />
 
       <ForkDashboardModal

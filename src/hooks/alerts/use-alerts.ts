@@ -82,10 +82,18 @@ export function useTestAlertChannel() {
   });
 }
 
-export function useAlertEvents(ruleId?: string) {
+export function useAlertEvents(
+  ruleId?: string,
+  params?: { page?: number; limit?: number },
+) {
   return useQuery({
-    queryKey: ["alerts", "events", ruleId],
-    queryFn: () => alertsApi.listEvents({ rule_id: ruleId, limit: 50 }),
+    queryKey: ["alerts", "events", ruleId, params],
+    queryFn: () =>
+      alertsApi.listEvents({
+        rule_id: ruleId,
+        page: params?.page,
+        limit: params?.limit,
+      }),
     staleTime: 30_000,
     retry: 1,
   });

@@ -18,11 +18,7 @@ type Props = {
 
 export function UsageOverviewChart({ data }: Props) {
   if (data.length === 0) {
-    return (
-      <div className="flex h-64 items-center justify-center text-sm text-slate-400">
-        All limits are unlimited on your plan.
-      </div>
-    );
+    return null;
   }
 
   return (

@@ -12,7 +12,10 @@ export type ChartType =
   | "heatmap"
   | "gauge"
   | "waterfall"
-  | "trend";
+  | "trend"
+  | "stat"
+  | "bar_gauge"
+  | "histogram";
 
 export type QueryParamDefinition = {
   name: string;
@@ -30,6 +33,24 @@ export type ColumnFormatRule = {
   colors?: Record<string, string> | null;
 };
 
+export type LegendPosition = "top" | "bottom" | "left" | "right";
+
+export type ChartDisplayOptions = {
+  show_legend?: boolean;
+  legend_position?: LegendPosition;
+  show_grid?: boolean;
+  stacked?: boolean;
+  horizontal?: boolean;
+  x_label_rotate?: number;
+  x_label_max_chars?: number;
+  max_points?: number;
+};
+
+export type ChartAxesLabels = {
+  x_label?: string | null;
+  y_label?: string | null;
+};
+
 export type VisualizationConfig = {
   x_axis?: string | null;
   y_axis?: string | string[] | null;
@@ -37,6 +58,14 @@ export type VisualizationConfig = {
   title?: string | null;
   value_column?: string | null;
   label_column?: string | null;
+  min_value?: number | null;
+  max_value?: number | null;
+  unit?: string | null;
+  sparkline_column?: string | null;
+  colors?: string[] | null;
+  series_colors?: Record<string, string> | null;
+  display?: ChartDisplayOptions | null;
+  axes?: ChartAxesLabels | null;
 };
 
 export type DashboardLayoutItem = {

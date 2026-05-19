@@ -5,10 +5,11 @@ import { TrendsPanel } from "@/components/dashboard/trends-panel";
 import { EntityExplorerPreview } from "@/components/dashboard/entity-explorer-preview";
 import { RecommendationsPanel } from "@/components/dashboard/recommendations-panel";
 import { PipelineStatusCard } from "@/components/dashboard/pipeline-status-card";
+import { DashboardPageShell } from "@/components/layout/dashboard-page-shell";
 
 export default function DashboardPage() {
   return (
-    <div className="mx-auto max-w-[1400px] space-y-5">
+    <DashboardPageShell className="space-y-5">
       <DashboardHeader />
       <MetricsGrid />
 
@@ -23,6 +24,6 @@ export default function DashboardPage() {
       </div>
 
       <PipelineStatusCard />
-    </div>
+    </DashboardPageShell>
   );
 }

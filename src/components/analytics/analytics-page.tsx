@@ -42,28 +42,26 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
 export function AnalyticsPage() {
   const [period, setPeriod] = useState<Period>("30d");
   const { data: overview } = useDashboardOverview();
-  const { data: trend, isError: trendError } = useAnalyticsRiskTrend(period);
-  const { data: segments, isError: segError } = useAnalyticsSegments();
-  const { data: cohorts, isError: cohortError } = useAnalyticsCohorts(period);
-
-  const hasGate = trendError || segError || cohortError;
+  const { data: trend } = useAnalyticsRiskTrend(period);
+  const { data: segments } = useAnalyticsSegments();
+  const { data: cohorts } = useAnalyticsCohorts(period);
 
   const trendPoints: number[] = (() => {
-    if (trendError || !trend?.series?.length) return [];
+    if (!trend?.series?.length) return [];
     return trend.series.map((p) =>
       Math.round((p.avg_risk_score ?? 0) * 100),
     );
   })();
 
   const segList = (() => {
-    if (segError || !segments) return [];
+    if (!segments) return [];
     const raw = segments as Record<string, unknown>;
     const list = (raw.segments ?? raw.data ?? segments) as Array<Record<string, unknown>>;
     return Array.isArray(list) ? list : [];
   })();
 
   const cohortList = (() => {
-    if (cohortError || !cohorts) return [];
+    if (!cohorts) return [];
     const raw = cohorts as Record<string, unknown>;
     const list = (raw.cohorts ?? raw.data ?? cohorts) as Array<Record<string, unknown>>;
     return Array.isArray(list) ? list : [];
@@ -76,11 +74,6 @@ export function AnalyticsPage() {
           <h1 className="text-xl font-semibold text-slate-900">Analytics</h1>
           <p className="mt-0.5 text-sm text-slate-500">
             Risk trends, segment breakdown, and cohort movement.
-            {hasGate && (
-              <span className="ml-2 rounded-full bg-amber-50 px-2 py-px text-[10px] font-semibold text-amber-600">
-                Requires advanced analytics plan
-              </span>
-            )}
           </p>
         </div>
         <div className="flex gap-1">
@@ -113,12 +106,7 @@ export function AnalyticsPage() {
       <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_280px]">
         <div className="rounded-xl border border-slate-200 bg-white p-5">
           <SectionLabel>Risk score trend · {period}</SectionLabel>
-          {trendError ? (
-            <div className="flex flex-col items-center justify-center py-10 text-center">
-              <p className="text-sm font-medium text-slate-500">Advanced analytics not available on this plan.</p>
-              <p className="mt-1 text-xs text-slate-400">Upgrade to unlock trend data.</p>
-            </div>
-          ) : trendPoints.length > 0 ? (
+          {trendPoints.length > 0 ? (
             <BarChart data={trendPoints} height={180} />
           ) : (
             <p className="py-10 text-center text-xs text-slate-400">Run a pipeline to generate trend data.</p>
@@ -156,9 +144,7 @@ export function AnalyticsPage() {
       <div className="grid gap-5 xl:grid-cols-2">
         <div className="rounded-xl border border-slate-200 bg-white p-5">
           <SectionLabel>Segments</SectionLabel>
-          {segError ? (
-            <p className="py-6 text-center text-xs text-slate-400">Segment breakdown requires advanced analytics.</p>
-          ) : segList.length === 0 ? (
+          {segList.length === 0 ? (
             <p className="py-6 text-center text-xs text-slate-400">No segment data available. Run a pipeline first.</p>
           ) : (
             <div className="space-y-3">
@@ -185,9 +171,7 @@ export function AnalyticsPage() {
 
         <div className="rounded-xl border border-slate-200 bg-white p-5">
           <SectionLabel>Cohorts · {period}</SectionLabel>
-          {cohortError ? (
-            <p className="py-6 text-center text-xs text-slate-400">Cohort data requires advanced analytics.</p>
-          ) : cohortList.length === 0 ? (
+          {cohortList.length === 0 ? (
             <p className="py-6 text-center text-xs text-slate-400">No cohort data available.</p>
           ) : (
             <div className="space-y-2">

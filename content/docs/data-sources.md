@@ -2,7 +2,7 @@
 
 Pulse connects to your existing data through **connections**. Each connection uses a **connector type** with the credentials and fields required for that system.
 
-In the dashboard: **Settings → Connections → Add connection**. Pick a connector from the list and fill in the required fields.
+In the dashboard: **Data & pipeline → Connections → Add connection** (or **Connect Data** in the header). Pick a connector from the list and fill in the required fields.
 
 Credentials are encrypted at rest. Use **read-only** database users whenever your source supports them.
 
@@ -65,9 +65,21 @@ Not every connector is used the same way inside Pulse:
 |----------|------------------------------|-----------------|
 | SQL databases (Postgres, MySQL, MSSQL, Redshift, SQLite) | Yes | Yes |
 | Cloud warehouses (Snowflake, BigQuery, Databricks, ClickHouse) | Yes (via SQL) | Yes where SQL introspection is available |
-| Spreadsheets, object storage, MongoDB, CSV | Ingestion / API-style workflows | Limited — not a substitute for a SQL warehouse |
+| CSV upload, Google Sheets, S3 (CSV objects) | Pipeline ingestion | **Yes in Studio** — in-memory SQL over files/sheets (see below) |
+| Airtable, MongoDB | API / document workflows | No — use a SQL warehouse for Studio |
 
-If you configure an API or object-store connector where the pipeline expects live SQL entity mapping, you may see an error directing you to use a SQL database or CSV upload instead.
+### Studio and file-based connections
+
+In **Pulse Studio**, you can pick any supported connection as the query data source:
+
+- **SQL databases and warehouses** — live `SELECT` against the remote database (read-only).
+- **CSV upload** — query the uploaded file using SQL (table name matches the file name).
+- **Google Sheets** — each sheet is exposed as a table.
+- **Amazon S3** — each `.csv` object in the bucket (optional `prefix` in connection config) is a table.
+
+Use the **Data source** dropdown in the query editor to switch connections. Saved queries store the chosen `connection_id`.
+
+If you configure Airtable or MongoDB where the pipeline expects live SQL entity mapping, you may see an error directing you to use a SQL database or a Studio-supported file source instead.
 
 ## Security recommendations
 

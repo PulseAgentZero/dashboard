@@ -1,11 +1,17 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { webhooksApi, licenseApi } from "@/lib/api/webhooks-api";
+import { isSelfHostedDeployment } from "@/lib/deployment";
+import { useAuthEnabled } from "@/hooks/use-auth-enabled";
 
-export function useWebhookDeliveries(params?: { status?: string }) {
+export function useWebhookDeliveries(params?: {
+  status?: string;
+  page?: number;
+  limit?: number;
+}) {
   return useQuery({
     queryKey: ["webhooks", "deliveries", params],
-    queryFn: () => webhooksApi.listDeliveries({ limit: 50, ...params }),
+    queryFn: () => webhooksApi.listDeliveries(params),
     staleTime: 30_000,
     retry: 1,
   });
@@ -24,9 +30,11 @@ export function useRetryWebhook() {
 }
 
 export function useLicense() {
+  const enabled = useAuthEnabled() && isSelfHostedDeployment();
   return useQuery({
     queryKey: ["license"],
     queryFn: licenseApi.get,
+    enabled,
     staleTime: 300_000,
     retry: false,
   });

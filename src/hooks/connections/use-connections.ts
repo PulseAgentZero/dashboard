@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { connectionsFullApi } from "@/lib/api/connections-api";
+import { enrichConnectorCatalog } from "@/lib/connectors/catalog-enrich";
 
 export function useConnections() {
   return useQuery({
@@ -14,7 +15,7 @@ export function useConnections() {
 export function useConnectionCatalog() {
   return useQuery({
     queryKey: ["connections", "catalog"],
-    queryFn: connectionsFullApi.catalog,
+    queryFn: async () => enrichConnectorCatalog(await connectionsFullApi.catalog()),
     staleTime: Infinity,
   });
 }
@@ -32,6 +33,23 @@ export function useCreateConnection() {
     onError: (err: unknown) => {
       const msg =
         err instanceof Error ? err.message : "Connection failed";
+      toast.error(msg);
+    },
+  });
+}
+
+export function useUploadConnection() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: connectionsFullApi.upload,
+    onSuccess: () => {
+      void qc.invalidateQueries({ queryKey: ["connections"] });
+      void qc.invalidateQueries({ queryKey: ["dashboard"] });
+      toast.success("File uploaded and connection created");
+    },
+    onError: (err: unknown) => {
+      const msg =
+        err instanceof Error ? err.message : "Upload failed";
       toast.error(msg);
     },
   });

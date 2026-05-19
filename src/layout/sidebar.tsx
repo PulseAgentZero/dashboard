@@ -15,8 +15,9 @@ import {
   Gauge,
   Layers,
   LayoutDashboard,
-  ListChecks,
+  Inbox,
   Loader2,
+  Lock,
   LogOut,
   ScrollText,
   Settings,
@@ -30,6 +31,8 @@ import { useSidebar } from "@/lib/sidebar-context";
 import { useAuth } from "@/providers/auth-provider";
 import { useLogout } from "@/hooks/auth/use-logout";
 import { useConnections } from "@/hooks/connections/use-connections";
+import { useAuditLogAccess } from "@/hooks/use-audit-log-access";
+import { isDocsHref } from "@/components/dashboard/docs-link";
 import { BladeFan } from "../../public/icon/bladeFan";
 
 type NavItem = {
@@ -63,7 +66,7 @@ const navGroups: NavGroup[] = [
     items: [
       { label: "Connections", href: "/dashboard/connections", icon: Cable },
       { label: "Pipeline", href: "/dashboard/pipeline", icon: Cpu },
-      { label: "Schema mappings", href: "/dashboard/schema-mappings", icon: Layers },
+      { label: "Data mapping", href: "/dashboard/schema-mappings", icon: Layers },
     ],
   },
   {
@@ -76,7 +79,7 @@ const navGroups: NavGroup[] = [
   {
     label: "Workspace",
     items: [
-      { label: "Onboarding", href: "/dashboard/onboarding", icon: ListChecks },
+      { label: "Notifications", href: "/dashboard/notifications", icon: Inbox },
       { label: "Usage", href: "/dashboard/usage", icon: Gauge },
       { label: "Plan & billing", href: "/dashboard/plan", icon: CreditCard },
       { label: "Team & roles", href: "/dashboard/team", icon: UserCog },
@@ -169,6 +172,7 @@ export default function Sidebar() {
   const { user, org } = useAuth();
   const { mutate: logout, isPending: isLoggingOut } = useLogout();
   const { data: connections } = useConnections();
+  const { hasAccess: auditLogsUnlocked } = useAuditLogAccess();
 
   const connectionDot =
     connections == null
@@ -218,7 +222,10 @@ export default function Sidebar() {
         )}
       </Link>
 
-      <nav className="flex-1 overflow-y-auto py-3 [&::-webkit-scrollbar]:hidden">
+      <nav
+        data-tour="sidebar-nav"
+        className="flex-1 overflow-y-auto py-3 [&::-webkit-scrollbar]:hidden"
+      >
         <div className="space-y-4 px-2">
           {navGroups.map((group) => (
             <div key={group.label}>
@@ -230,11 +237,22 @@ export default function Sidebar() {
               <ul className="space-y-0.5">
                 {group.items.map(({ label, href, icon: Icon }) => {
                   const active = isActive(href, pathname);
+                  const opensDocs = isDocsHref(href);
                   return (
                     <li key={href}>
                       <Link
                         href={href}
+                        data-tour={
+                          href === "/dashboard"
+                            ? "nav-dashboard"
+                            : href === "/dashboard/connections"
+                              ? "nav-connections"
+                              : undefined
+                        }
                         title={collapsed ? label : undefined}
+                        {...(opensDocs
+                          ? { target: "_blank", rel: "noopener noreferrer" }
+                          : {})}
                         className={`flex items-center gap-3 rounded-lg px-3 py-2 text-[13px] transition-colors ${
                           active
                             ? "bg-blue-50 text-blue-600"
@@ -253,7 +271,16 @@ export default function Sidebar() {
                           )}
                         </div>
                         {!collapsed && (
-                          <span className="truncate font-medium">{label}</span>
+                          <span className="flex min-w-0 flex-1 items-center gap-1.5 truncate font-medium">
+                            {label}
+                            {href === "/dashboard/audit-logs" && !auditLogsUnlocked && (
+                              <Lock
+                                size={12}
+                                className="shrink-0 text-slate-400"
+                                aria-hidden
+                              />
+                            )}
+                          </span>
                         )}
                       </Link>
                     </li>

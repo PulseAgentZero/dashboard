@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Loader2, X } from "lucide-react";
 import { CronBuilder } from "@/components/studio/ui/cron-builder";
 import { TagEditor } from "@/components/studio/ui/tag-editor";
+import { StudioConnectionPicker } from "@/components/studio/ui/studio-connection-picker";
 import { sqlParamsToDefinitions } from "@/lib/studio/parse-sql-params";
 import type { QueryParamDefinition } from "@/types/studio";
 
@@ -13,16 +14,20 @@ type Props = {
   initial?: {
     name?: string;
     description?: string | null;
+    connection_id?: string | null;
     tags?: string[];
     params?: QueryParamDefinition[];
     refresh_cron?: string | null;
     refresh_enabled?: boolean;
   };
+  connectionId: string | null;
+  onConnectionChange: (id: string) => void;
   onClose: () => void;
   onSave: (payload: {
     name: string;
     description: string | null;
     sql_text: string;
+    connection_id: string | null;
     params: QueryParamDefinition[];
     tags: string[];
     refresh_cron: string | null;
@@ -30,7 +35,15 @@ type Props = {
   }) => Promise<void>;
 };
 
-export function SaveQueryModal({ open, sql, initial, onClose, onSave }: Props) {
+export function SaveQueryModal({
+  open,
+  sql,
+  initial,
+  connectionId,
+  onConnectionChange,
+  onClose,
+  onSave,
+}: Props) {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [tags, setTags] = useState<string[]>([]);
@@ -64,6 +77,7 @@ export function SaveQueryModal({ open, sql, initial, onClose, onSave }: Props) {
         name: name.trim(),
         description: description.trim() || null,
         sql_text: sql,
+        connection_id: connectionId,
         params,
         tags,
         refresh_cron: cronEnabled ? cron : null,
@@ -94,6 +108,11 @@ export function SaveQueryModal({ open, sql, initial, onClose, onSave }: Props) {
               className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2"
             />
           </label>
+          <StudioConnectionPicker
+            value={connectionId}
+            onChange={onConnectionChange}
+            disabled={pending}
+          />
           <label className="block text-sm">
             <span className="font-medium">Description</span>
             <textarea

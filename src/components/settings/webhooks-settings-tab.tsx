@@ -28,6 +28,10 @@ import {
   type WebhookEventId,
 } from "@/lib/webhook-events";
 import type { AlertChannel } from "@/lib/api/alerts-api";
+import { useDeleteConfirm } from "@/hooks/use-delete-confirm";
+import { Pagination } from "@/components/shared/pagination";
+import { WEBHOOK_DELIVERIES_PAGE_SIZE } from "@/lib/pagination";
+import { parsePagedList } from "@/lib/parse-paged-list";
 import type { WebhookDelivery } from "@/lib/api/webhooks-api";
 
 const inputCls =
@@ -42,10 +46,6 @@ function toArray<T>(raw: unknown, ...keys: string[]): T[] {
     }
   }
   return [];
-}
-
-function toDeliveries(raw: unknown): WebhookDelivery[] {
-  return toArray<WebhookDelivery>(raw, "deliveries", "data", "items");
 }
 
 type WebhookChannel = AlertChannel & {
@@ -239,21 +239,29 @@ function WebhookChannelRow({
 }
 
 export function WebhooksSettingsTab() {
+  const [deliveriesPage, setDeliveriesPage] = useState(1);
   const { data: channelsRaw, isLoading: loadingChannels } = useAlertChannels();
-  const { data: deliveriesRaw, isLoading: loadingDeliveries } = useWebhookDeliveries();
+  const { data: deliveriesRaw, isLoading: loadingDeliveries } = useWebhookDeliveries({
+    page: deliveriesPage,
+    limit: WEBHOOK_DELIVERIES_PAGE_SIZE,
+  });
   const { data: usage } = useUsage();
   const { mutate: deleteChannel, isPending: deleting, variables: deletingId } =
     useDeleteAlertChannel();
   const { mutate: testChannel, isPending: testing, variables: testingId } = useTestAlertChannel();
   const { mutate: retry, isPending: retrying, variables: retryingId } = useRetryWebhook();
   const [showForm, setShowForm] = useState(false);
+  const { requestDeleteConfirm, deleteConfirmModal } = useDeleteConfirm();
 
   const slot = usage?.limits?.webhook_channels;
   const atLimit = slot ? slot.limit !== null && slot.used >= slot.limit : false;
 
   const allChannels = toArray<WebhookChannel>(channelsRaw, "channels", "data", "items");
   const webhooks = allChannels.filter((c) => c.type === "webhook");
-  const deliveries = toDeliveries(deliveriesRaw);
+  const { items: deliveries, total: deliveriesTotal } = parsePagedList<WebhookDelivery>(
+    deliveriesRaw,
+    "deliveries",
+  );
 
   return (
     <div className="space-y-8">
@@ -308,9 +316,14 @@ export function WebhooksSettingsTab() {
               channel={ch}
               deleting={deleting && deletingId === ch.id}
               testing={testing && testingId === ch.id}
-              onDelete={() => {
-                if (confirm(`Remove webhook "${ch.name}"?`)) deleteChannel(ch.id);
-              }}
+              onDelete={() =>
+                requestDeleteConfirm({
+                  title: "Remove webhook",
+                  description: `Remove "${ch.name}"? Pulse will stop sending events to this endpoint.`,
+                  confirmLabel: "Remove",
+                  onConfirm: () => deleteChannel(ch.id),
+                })
+              }
               onTest={() => testChannel(ch.id)}
             />
           ))}
@@ -400,7 +413,16 @@ export function WebhooksSettingsTab() {
             ))}
           </div>
         )}
+
+        <Pagination
+          page={deliveriesPage}
+          pageSize={WEBHOOK_DELIVERIES_PAGE_SIZE}
+          total={deliveriesTotal}
+          onPageChange={setDeliveriesPage}
+        />
       </section>
+
+      {deleteConfirmModal}
     </div>
   );
 }
