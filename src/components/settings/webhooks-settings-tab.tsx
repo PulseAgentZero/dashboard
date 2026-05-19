@@ -270,7 +270,7 @@ export function WebhooksSettingsTab() {
           Webhook endpoints
         </p>
         <p className="mt-1 text-xs text-slate-500">
-          Register HTTPS endpoints and choose which Pulse events they receive.
+          Register HTTPS endpoints and choose which Entivia events they receive.
         </p>
 
         {slot && (
@@ -319,7 +319,7 @@ export function WebhooksSettingsTab() {
               onDelete={() =>
                 requestDeleteConfirm({
                   title: "Remove webhook",
-                  description: `Remove "${ch.name}"? Pulse will stop sending events to this endpoint.`,
+                  description: `Remove "${ch.name}"? Entivia will stop sending events to this endpoint.`,
                   confirmLabel: "Remove",
                   onConfirm: () => deleteChannel(ch.id),
                 })

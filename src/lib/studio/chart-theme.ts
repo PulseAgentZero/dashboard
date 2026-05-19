@@ -4,7 +4,7 @@ import type { VisualizationConfig } from "@/types/studio";
 export const CHART_PALETTES: { id: string; label: string; colors: string[] }[] = [
   {
     id: "pulse",
-    label: "Pulse",
+    label: "Entivia",
     colors: ["#6366f1", "#8b5cf6", "#06b6d4", "#10b981", "#f59e0b", "#ef4444", "#ec4899", "#14b8a6"],
   },
   {

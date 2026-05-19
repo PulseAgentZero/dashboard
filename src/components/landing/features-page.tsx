@@ -64,13 +64,13 @@ export function FeaturesPage() {
           />
           <div className="relative mx-auto max-w-4xl text-center">
             <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-indigo-400">
-              Why Pulse
+              Why Entivia
             </p>
             <h1 className="mt-4 text-4xl font-bold tracking-tight md:text-6xl">
               Intelligence from the data you already have
             </h1>
             <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-zinc-400">
-              Pulse connects to your live systems, scores risk on every entity, and
+              Entivia connects to your live systems, scores risk on every entity, and
               tells your team what to do next—without a warehouse project, a BI team,
               or months of setup.
             </p>
@@ -121,7 +121,7 @@ export function FeaturesPage() {
         <section className="border-b border-zinc-900 px-6 py-16 md:px-16">
           <div className="mx-auto max-w-6xl">
             <h2 className="text-2xl font-bold tracking-tight md:text-3xl">
-              What Pulse does for your team
+              What Entivia does for your team
             </h2>
             <p className="mt-2 max-w-2xl text-sm text-zinc-500">
               Outcomes operators care about—not another tool to learn screen by screen.
@@ -163,7 +163,7 @@ export function FeaturesPage() {
           >
             {cloud && (
               <div className="rounded-2xl border border-white/[0.06] bg-[#131625] p-8">
-                <h3 className="text-xl font-bold text-white">Pulse Cloud</h3>
+                <h3 className="text-xl font-bold text-white">Entivia Cloud</h3>
                 <p className="mt-3 text-sm leading-relaxed text-zinc-400">
                   Sign up, connect your database, and go. We run the infrastructure;
                   you keep control of credentials and access.

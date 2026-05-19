@@ -18,7 +18,7 @@ const OAUTH_ERROR_MESSAGES: Record<string, string> = {
   REDIS_REQUIRED: "Google sign-in is temporarily unavailable.",
   INVALID_STATE: "Your sign-in session expired. Please try again.",
   instance_org_exists:
-    "This Pulse instance already has an organization. Sign in or ask your admin for an invite.",
+    "This Entivia instance already has an organization. Sign in or ask your admin for an invite.",
 };
 
 export default function OAuthCallbackContent() {

@@ -207,13 +207,13 @@ export default function Sidebar() {
       >
         <BrandMark
           logoUrl={org?.logo_url}
-          label={org?.name ?? "Pulse"}
+          label={org?.name ?? "Entivia"}
           collapsed={collapsed}
         />
         {!collapsed && (
           <div className="min-w-0 overflow-hidden">
             <p className="truncate text-[13px] font-semibold text-slate-800">
-              {org?.name ?? "Pulse"}
+              {org?.name ?? "Entivia"}
             </p>
             <p className="truncate text-[11px] text-slate-500">
               {org?.name ? "Workspace" : "Intelligence Platform"}

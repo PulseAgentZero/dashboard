@@ -1,6 +1,6 @@
 # Public API overview
 
-The Pulse **Public API** lets external systems read entities, recommendations, analytics, and pipeline status—and trigger pipeline runs—with API keys.
+The Entivia **Public API** lets external systems read entities, recommendations, analytics, and pipeline status—and trigger pipeline runs—with API keys.
 
 ## Base URL
 
@@ -8,7 +8,7 @@ The Pulse **Public API** lets external systems read entities, recommendations, a
 https://api.yourdomain.com/api/public/v1
 ```
 
-Replace `api.yourdomain.com` with the API host for your Pulse Cloud workspace or self-hosted deployment.
+Replace `api.yourdomain.com` with the API host for your Entivia Cloud workspace or self-hosted deployment.
 
 ## Authentication
 

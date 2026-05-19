@@ -30,7 +30,7 @@ export default function CompleteSignupContent() {
     onSuccess: async (data) => {
       tokens.set(data.access_token, data.refresh_token);
       await qc.invalidateQueries({ queryKey: ["me"] });
-      toast.success("Welcome to Pulse!");
+      toast.success("Welcome to Entivia!");
       postAuthRedirect(data.org, router, data.user);
     },
     onError: (err) => {

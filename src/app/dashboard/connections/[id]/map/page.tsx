@@ -77,7 +77,7 @@ export default function ConnectionMapPage() {
                 {existingMapping ? "Edit data mapping" : "Set up data mapping"}
               </h1>
               <p className="mt-0.5 text-sm text-slate-500">
-                Configure how Pulse reads entities from this connection
+                Configure how Entivia reads entities from this connection
               </p>
             </div>
           </div>

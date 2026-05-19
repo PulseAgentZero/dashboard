@@ -84,7 +84,7 @@ export function PricingSelfHostedPage() {
         {cloud && (
           <div className="mx-auto mb-8 max-w-3xl px-6">
             <div className="rounded-xl border border-indigo-500/30 bg-indigo-500/10 px-5 py-4 text-sm text-indigo-100">
-              Looking for hosted Pulse Cloud?{" "}
+              Looking for hosted Entivia Cloud?{" "}
               <Link href="/pricing" className="font-semibold underline hover:text-white">
                 View cloud pricing
               </Link>
@@ -105,7 +105,7 @@ export function PricingSelfHostedPage() {
             Self-hosted
           </p>
           <h1 className="mt-3 text-4xl font-bold tracking-tight md:text-5xl">
-            Run Pulse on your infrastructure
+            Run Entivia on your infrastructure
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-lg text-zinc-400">
             One-time license purchase. Deploy behind your firewall with Pro-equivalent
@@ -163,7 +163,7 @@ export function PricingSelfHostedPage() {
                 />
               </div>
               <p className="text-xs text-zinc-500">
-                Price is shown at Paystack checkout (configured on your Pulse server).
+                Price is shown at Paystack checkout (configured on your Entivia server).
               </p>
               <button
                 type="submit"
@@ -180,7 +180,7 @@ export function PricingSelfHostedPage() {
         <p className="mx-auto mt-10 max-w-2xl text-center text-sm text-zinc-500">
           Prefer managed hosting?{" "}
           <Link href="/pricing" className="text-zinc-300 underline hover:text-white">
-            Pulse Cloud from {process.env.NEXT_PUBLIC_PRO_PRICE_DISPLAY ?? "₦40,000/month"}
+            Entivia Cloud from {process.env.NEXT_PUBLIC_PRO_PRICE_DISPLAY ?? "₦40,000/month"}
           </Link>
           .
         </p>

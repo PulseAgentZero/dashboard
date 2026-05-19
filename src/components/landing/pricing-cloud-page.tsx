@@ -85,7 +85,7 @@ export function PricingCloudPage() {
 
         <div className="mx-auto max-w-5xl px-6 text-center">
           <p className="text-xs font-semibold uppercase tracking-widest text-zinc-500">
-            Pulse Cloud
+            Entivia Cloud
           </p>
           <h1 className="mt-3 text-4xl font-bold tracking-tight md:text-5xl">
             Simple pricing for growing teams
@@ -201,7 +201,7 @@ export function PricingCloudPage() {
 function SelfHostedBanner() {
   return (
     <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 px-5 py-4 text-sm text-amber-100">
-      You are running a self-hosted deployment. Cloud subscriptions apply to Pulse Cloud
+      You are running a self-hosted deployment. Cloud subscriptions apply to Entivia Cloud
       only.{" "}
       <Link href="/pricing/self-hosted" className="font-semibold underline hover:text-white">
         Purchase a self-hosted license

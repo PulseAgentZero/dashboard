@@ -1,10 +1,10 @@
 # Self-hosted
 
-**Self-hosted** Pulse runs on **your** infrastructure (VPC, on-prem, private cloud). You do not need the Pulse source code—the published **`pulseai/pulse`** image on [Docker Hub](https://hub.docker.com/r/pulseai/pulse) includes everything in one container.
+**Self-hosted** Entivia runs on **your** infrastructure (VPC, on-prem, private cloud). You do not need the Entivia source code—the published **`entivia/entivia`** image on [Docker Hub](https://hub.docker.com/r/entivia/entivia) includes everything in one container.
 
 ## What you get
 
-| Component | Included in `pulseai/pulse` |
+| Component | Included in `entivia/entivia` |
 |-----------|----------------------------|
 | Dashboard (Next.js) | Yes — served by nginx |
 | API (FastAPI) | Yes |
@@ -15,16 +15,16 @@
 
 Nginx listens on a **single port** (default **80**) and routes browser traffic to the dashboard and `/api` to the backend. You do not deploy a separate frontend image.
 
-> Pulse application source is private. Self-hosters pull the pre-built image from Docker Hub and configure it with `.env` plus the compose file below.
+> Entivia application source is private. Self-hosters pull the pre-built image from Docker Hub and configure it with `.env` plus the compose file below.
 
-## Pulse Cloud vs self-hosted
+## Entivia Cloud vs self-hosted
 
-| | Pulse Cloud (SaaS) | Self-hosted |
+| | Entivia Cloud (SaaS) | Self-hosted |
 |---|-------------------|-------------|
-| Operated by | Pulse | You |
+| Operated by | Entivia | You |
 | Sign up at | Our hosted app | Your server after `docker compose up` |
 | Pro access | [Subscription](/pricing) | [License key](/pricing/self-hosted) |
-| Docker | Not required | `pulseai/pulse` + Postgres |
+| Docker | Not required | `entivia/entivia` + Postgres |
 
 ## Prerequisites
 
@@ -37,7 +37,7 @@ Nginx listens on a **single port** (default **80**) and routes browser traffic t
 
 ### 1. Create a deployment directory
 
-On your server, create a folder for Pulse (for example `~/pulse`) and add two files: `docker-compose.yml` and `.env`.
+On your server, create a folder for Entivia (for example `~/entivia`) and add two files: `docker-compose.yml` and `.env`.
 
 ### 2. `docker-compose.yml`
 
@@ -63,7 +63,7 @@ services:
       start_period: 10s
 
   pulse:
-    image: pulseai/pulse:${PULSE_VERSION:-latest}
+    image: entivia/entivia:${PULSE_VERSION:-latest}
     env_file: .env
     ports:
       - "${PORT:-80}:80"
@@ -118,7 +118,7 @@ PORT=80
 
 See [Environment variables](/docs/configuration/environment-variables) for the full self-hosted reference (email, Redis tuning, storage, license, and more).
 
-### 4. Start Pulse
+### 4. Start Entivia
 
 ```bash
 docker compose pull
@@ -144,8 +144,8 @@ curl http://localhost/health
 ```mermaid
 flowchart TB
   User[Browser] --> Port["Host port PORT default 80"]
-  Port --> Pulse["pulseai/pulse image"]
-  subgraph Pulse
+  Port --> Image["entivia/entivia image"]
+  subgraph stack [Entivia container]
     Nginx[nginx]
     UI[Dashboard]
     API[API + worker + agent + scheduler]
@@ -154,7 +154,8 @@ flowchart TB
     Nginx --> API
     API --> Redis
   end
-  Pulse --> PG[(Postgres db service)]
+  Image --> stack
+  stack --> PG[(Postgres db service)]
   License[PULSE_LICENSE_KEY] --> API
 ```
 
@@ -203,4 +204,4 @@ To use managed Postgres instead of the bundled `db` service:
 
 - [Environment variables](/docs/configuration/environment-variables)
 - [Redis, email & storage](/docs/configuration/redis-email-storage)
-- [Pulse Cloud](/docs/hosting/cloud)
+- [Entivia Cloud](/docs/hosting/cloud)

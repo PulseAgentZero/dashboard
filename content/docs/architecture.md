@@ -1,6 +1,6 @@
 # Architecture overview
 
-Pulse is split into a **dashboard**, a **REST API**, background **workers**, and an optional **conversational agent** service.
+Entivia is split into a **dashboard**, a **REST API**, background **workers**, and an optional **conversational agent** service.
 
 For user-facing capabilities—entities, pipeline, Studio, alerts, and workspace settings—see **[Product features](/docs/features)**. This page focuses on how those pieces are deployed and wired together.
 
@@ -8,12 +8,12 @@ For user-facing capabilities—entities, pipeline, Studio, alerts, and workspace
 
 | Model | Description |
 |-------|-------------|
-| **[Pulse Cloud](/docs/hosting/cloud)** | SaaS — Pulse operates the stack; customers sign in and connect their databases |
+| **[Entivia Cloud](/docs/hosting/cloud)** | SaaS — Entivia operates the stack; customers sign in and connect their databases |
 | **[Self-hosted](/docs/hosting/self-hosted)** | Customer operates the stack (Docker) inside their environment |
 
 The same application components exist in both; only **who runs the servers** and **how Pro is billed** differ.
 
-On **self-hosted**, the published **`pulseai/pulse`** Docker image bundles the dashboard, API, workers, agent, scheduler, and embedded Redis behind one nginx port. Postgres runs as a separate container (or external database). See [Self-hosted](/docs/hosting/self-hosted).
+On **self-hosted**, the published **`entivia/entivia`** Docker image bundles the dashboard, API, workers, agent, scheduler, and embedded Redis behind one nginx port. Postgres runs as a separate container (or external database). See [Self-hosted](/docs/hosting/self-hosted).
 
 ## System components
 
@@ -79,6 +79,6 @@ See [Studio (public API)](/docs/api/studio).
 ## Related docs
 
 - [Product features](/docs/features)
-- [Pulse Cloud (SaaS)](/docs/hosting/cloud)
+- [Entivia Cloud (SaaS)](/docs/hosting/cloud)
 - [Self-hosted](/docs/hosting/self-hosted)
 - [Public API overview](/docs/api/overview)

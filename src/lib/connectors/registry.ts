@@ -14,7 +14,7 @@ export type ConnectorMeta = {
 };
 
 const DEFAULT_SECURITY_TIPS = [
-  "Create a dedicated read-only user or role for Pulse.",
+  "Create a dedicated read-only user or role for Entivia.",
   "Restrict network access (IP allowlist, VPC peering, or private link).",
   "Rotate credentials immediately if a key is exposed.",
 ];
@@ -39,7 +39,7 @@ export const CONNECTOR_REGISTRY: Record<string, ConnectorMeta> = {
   postgresql: meta("postgresql", {
     docHref: "/docs/data-sources",
     prerequisites: [
-      "PostgreSQL 12+ reachable from Pulse (host/port or socket).",
+      "PostgreSQL 12+ reachable from Entivia (host/port or socket).",
       "A database user with CONNECT on the database and SELECT on schemas you want to analyze.",
     ],
     steps: [
@@ -55,7 +55,7 @@ ALTER DEFAULT PRIVILEGES IN SCHEMA public
       },
       {
         title: "Allow network access",
-        body: "Update pg_hba.conf and security groups so Pulse (or your self-hosted host) can reach the server on the configured port.",
+        body: "Update pg_hba.conf and security groups so Entivia (or your self-hosted host) can reach the server on the configured port.",
       },
       {
         title: "Enter connection details",
@@ -67,7 +67,7 @@ ALTER DEFAULT PRIVILEGES IN SCHEMA public
 
   mysql: meta("mysql", {
     prerequisites: [
-      "MySQL 5.7+ or MariaDB 10.3+ reachable from Pulse.",
+      "MySQL 5.7+ or MariaDB 10.3+ reachable from Entivia.",
       "A user with SELECT on target databases and SHOW VIEW if you use views.",
     ],
     steps: [
@@ -80,7 +80,7 @@ FLUSH PRIVILEGES;`,
       },
       {
         title: "Configure firewall",
-        body: "Open port 3306 (or your custom port) only to Pulse Cloud egress IPs or your self-hosted VPC.",
+        body: "Open port 3306 (or your custom port) only to Entivia Cloud egress IPs or your self-hosted VPC.",
       },
       {
         title: "Fill in the connection form",
@@ -109,7 +109,7 @@ ALTER ROLE db_datareader ADD MEMBER pulse_readonly;`,
         body: "Ensure SQL Server Browser and firewall rules allow inbound TCP on your port (default 1433).",
       },
       {
-        title: "Enter credentials in Pulse",
+        title: "Enter credentials in Entivia",
         body: "Use host, port, database name, username, and password in the configuration form.",
       },
     ],
@@ -118,17 +118,17 @@ ALTER ROLE db_datareader ADD MEMBER pulse_readonly;`,
 
   sqlite: meta("sqlite", {
     prerequisites: [
-      "SQLite database file accessible on the Pulse API host (self-hosted single-node).",
-      "File path must be readable by the Pulse process user.",
+      "SQLite database file accessible on the Entivia API host (self-hosted single-node).",
+      "File path must be readable by the Entivia process user.",
     ],
     steps: [
       {
         title: "Place the database file",
-        body: "Copy or mount the .db file on the server running Pulse. Note the absolute path.",
+        body: "Copy or mount the .db file on the server running Entivia. Note the absolute path.",
       },
       {
         title: "Set permissions",
-        body: "chmod 640 on the file and ensure only the Pulse service account can read it.",
+        body: "chmod 640 on the file and ensure only the Entivia service account can read it.",
       },
       {
         title: "Provide the file path",
@@ -148,11 +148,11 @@ ALTER ROLE db_datareader ADD MEMBER pulse_readonly;`,
     steps: [
       {
         title: "Prepare your file",
-        body: "Use UTF-8 encoding, a header row, and consistent column types. Remove sensitive columns you do not need in Pulse.",
+        body: "Use UTF-8 encoding, a header row, and consistent column types. Remove sensitive columns you do not need in Entivia.",
       },
       {
         title: "Upload in the dashboard",
-        body: "Use the file upload field in the connection form. Pulse stores the file for pipeline ingestion.",
+        body: "Use the file upload field in the connection form. Entivia stores the file for pipeline ingestion.",
       },
       {
         title: "Map entities",
@@ -183,7 +183,7 @@ GRANT SELECT ON ALL TABLES IN DATABASE your_db TO ROLE pulse_role;`,
       },
       {
         title: "Build the connection URL",
-        body: "Format: account.region.snowflakecomputing.com with warehouse and role in the connection URL field as required by Pulse.",
+        body: "Format: account.region.snowflakecomputing.com with warehouse and role in the connection URL field as required by Entivia.",
       },
       {
         title: "Enter URL and credentials",
@@ -213,7 +213,7 @@ GRANT SELECT ON ALL TABLES IN DATABASE your_db TO ROLE pulse_role;`,
       },
     ],
     securityTips: [
-      "Store the JSON key only in Pulse—never commit it to git.",
+      "Store the JSON key only in Entivia—never commit it to git.",
       ...DEFAULT_SECURITY_TIPS,
     ],
   }),
@@ -234,7 +234,7 @@ GRANT SELECT ON ALL TABLES IN DATABASE your_db TO ROLE pulse_role;`,
       },
       {
         title: "Enter connection URL and token",
-        body: "Paste the Databricks SQL connection URL and token in the Pulse form.",
+        body: "Paste the Databricks SQL connection URL and token in the Entivia form.",
       },
     ],
     securityTips: DEFAULT_SECURITY_TIPS,
@@ -255,7 +255,7 @@ GRANT SELECT ON ALL TABLES IN SCHEMA public TO pulse_readonly;`,
       },
       {
         title: "Configure security group",
-        body: "Allow inbound TCP 5439 from Pulse Cloud IPs or your self-hosted security group.",
+        body: "Allow inbound TCP 5439 from Entivia Cloud IPs or your self-hosted security group.",
       },
       {
         title: "Enter host and credentials",
@@ -267,7 +267,7 @@ GRANT SELECT ON ALL TABLES IN SCHEMA public TO pulse_readonly;`,
 
   clickhouse: meta("clickhouse", {
     prerequisites: [
-      "ClickHouse server with HTTP or native interface reachable from Pulse.",
+      "ClickHouse server with HTTP or native interface reachable from Entivia.",
       "User with SELECT on target databases/tables.",
     ],
     steps: [
@@ -301,7 +301,7 @@ GRANT SELECT ON your_db.* TO pulse_readonly;`,
       },
       {
         title: "Allow network access",
-        body: "Add Pulse egress IPs (Cloud) or your VPC CIDR (self-hosted) to the IP access list.",
+        body: "Add Entivia egress IPs (Cloud) or your VPC CIDR (self-hosted) to the IP access list.",
       },
       {
         title: "Paste the connection URI",
@@ -327,7 +327,7 @@ GRANT SELECT ON your_db.* TO pulse_readonly;`,
       },
       {
         title: "Enter token and base ID",
-        body: "Paste the token and optional base ID in the Pulse connection form.",
+        body: "Paste the token and optional base ID in the Entivia connection form.",
       },
     ],
     securityTips: [

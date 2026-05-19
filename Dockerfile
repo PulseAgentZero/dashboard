@@ -1,23 +1,23 @@
 # ─────────────────────────────────────────────────────────────────────────────
-# Pulse — Frontend (Cloud)
+# Entivia — Frontend (Cloud)
 #
-# Standalone Next.js image. Requires the Pulse API to be running separately.
+# Standalone Next.js image. Requires the Entivia API to be running separately.
 # NEXT_PUBLIC_API_URL must be set to your API's public URL at build time.
 #
 # Build:
 #   docker build \
 #     --build-arg NEXT_PUBLIC_API_URL=https://api.yourpulse.io \
-#     -t pulseai/pulse-frontend:latest .
+#     -t entivia/entivia-frontend:latest .
 #
 # Run:
-#   docker run -p 3000:3000 pulseai/pulse-frontend:latest
+#   docker run -p 3000:3000 entivia/entivia-frontend:latest
 #
 # Push to Docker Hub:
 #   docker buildx build \
 #     --build-arg NEXT_PUBLIC_API_URL=https://api.yourpulse.io \
 #     --platform linux/amd64,linux/arm64 \
 #     --push \
-#     -t pulseai/pulse-frontend:latest .
+#     -t entivia/entivia-frontend:latest .
 # ─────────────────────────────────────────────────────────────────────────────
 
 
@@ -27,16 +27,9 @@ FROM node:20-alpine AS builder
 WORKDIR /app
 
 # Install deps first — cached unless package files change.
-# Prefer npm (package-lock.json); pnpm 10+ needs Node 22, so pin 9.x if used.
-COPY package.json package-lock.json* pnpm-lock.yaml* ./
-RUN \
-  if [ -f package-lock.json ]; then \
-    npm ci; \
-  elif [ -f pnpm-lock.yaml ]; then \
-    corepack enable && corepack prepare pnpm@9.15.9 --activate && pnpm install --frozen-lockfile; \
-  else \
-    npm install; \
-  fi
+# Use npm via package-lock.json. pnpm-lock.yaml is in .dockerignore so Next build does not require pnpm.
+COPY package.json package-lock.json* ./
+RUN npm ci
 
 COPY . .
 
@@ -56,7 +49,7 @@ RUN npm run build
 # ── Stage 2: Runtime ─────────────────────────────────────────────────────────
 FROM node:20-alpine AS runner
 
-LABEL org.opencontainers.image.title="Pulse Frontend"
+LABEL org.opencontainers.image.title="Entivia Frontend"
 LABEL org.opencontainers.image.vendor="AgentZero"
 
 WORKDIR /app

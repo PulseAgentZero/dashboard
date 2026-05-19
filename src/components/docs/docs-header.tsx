@@ -29,7 +29,7 @@ export function DocsHeader({ mobileOpen, onToggleMobile }: Props) {
             href="/"
             className="shrink-0 font-black tracking-tighter text-zinc-900 uppercase italic dark:text-white"
           >
-            Pulse
+            Entivia
           </Link>
           <span className="hidden shrink-0 text-zinc-300 sm:inline dark:text-zinc-600">
             /

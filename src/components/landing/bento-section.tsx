@@ -116,7 +116,7 @@ export default function BentoSection() {
       {/* Heading */}
       <div className="mb-12 max-w-xl">
         <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-blue-400">
-          Why Pulse
+          Why Entivia
         </span>
         <h2 className="mt-3 text-4xl font-black leading-tight tracking-tight text-white md:text-5xl">
           Built for operators,

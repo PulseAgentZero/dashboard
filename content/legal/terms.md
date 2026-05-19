@@ -4,17 +4,17 @@ lastUpdated: 2026-05-18
 
 # Terms of Service
 
-These Terms of Service ("**Terms**") govern your access to and use of the Pulse Intelligence Engine platform, websites, APIs, and related services (collectively, the "**Services**") offered by Pulse ("**we**," "**us**," or "**our**"). By creating an account, accessing the dashboard, using our APIs, or deploying a self-hosted instance, you agree to these Terms.
+These Terms of Service ("**Terms**") govern your access to and use of the Entivia Intelligence Engine platform, websites, APIs, and related services (collectively, the "**Services**") offered by Entivia ("**we**," "**us**," or "**our**"). By creating an account, accessing the dashboard, using our APIs, or deploying a self-hosted instance, you agree to these Terms.
 
 If you are using the Services on behalf of an organization, you represent that you have authority to bind that organization, and "**you**" refers to that organization.
 
 ## 1. Definitions
 
-- **Pulse** or **Pulse Intelligence Engine** — The real-time intelligence platform that connects to your data sources, profiles behavior, scores risk, and surfaces recommendations.
-- **Pulse Cloud** — The hosted software-as-a-service offering operated by us at our infrastructure.
-- **Self-hosted** — A deployment of the Pulse software that you install and operate on your own servers, VPC, or private cloud.
+- **Entivia** or **Entivia Intelligence Engine** — The real-time intelligence platform that connects to your data sources, profiles behavior, scores risk, and surfaces recommendations.
+- **Entivia Cloud** — The hosted software-as-a-service offering operated by us at our infrastructure.
+- **Self-hosted** — A deployment of the Entivia software that you install and operate on your own servers, VPC, or private cloud.
 - **Customer Data** — Data you or your users submit to the Services, including connection credentials, configuration, queries, dashboards, and outputs derived from your connected systems.
-- **Connected Systems** — Databases, warehouses, files, and other data sources you authorize Pulse to access using credentials you provide.
+- **Connected Systems** — Databases, warehouses, files, and other data sources you authorize Entivia to access using credentials you provide.
 
 ## 2. Eligibility and accounts
 
@@ -26,7 +26,7 @@ Organization accounts may invite team members. You are responsible for permissio
 
 Subject to these Terms and payment of applicable fees, we grant you a limited, non-exclusive, non-transferable, revocable license to access and use the Services for your internal business purposes.
 
-For **Pulse Cloud**, this license covers use of our hosted environment. For **self-hosted** deployments, use is subject to your license tier (including any valid `PULSE_LICENSE_KEY` for Pro features). You may not sublicense, resell, or make the Services available to third parties as a managed service without our prior written consent.
+For **Entivia Cloud**, this license covers use of our hosted environment. For **self-hosted** deployments, use is subject to your license tier (including any valid `PULSE_LICENSE_KEY` for Pro features). You may not sublicense, resell, or make the Services available to third parties as a managed service without our prior written consent.
 
 You retain all rights in your Customer Data. We do not claim ownership of data in your Connected Systems.
 
@@ -34,7 +34,7 @@ You retain all rights in your Customer Data. We do not claim ownership of data i
 
 You control which Connected Systems you attach and what credentials you provide. We process Customer Data only to provide, secure, maintain, and improve the Services, as described in our [Privacy Policy](/privacy) and [Security](/security) pages.
 
-You represent that you have all rights and lawful bases necessary to connect each data source and to allow Pulse to process data from it, including any personal data subject to applicable privacy laws.
+You represent that you have all rights and lawful bases necessary to connect each data source and to allow Entivia to process data from it, including any personal data subject to applicable privacy laws.
 
 We do not sell Customer Data. We do not use Customer Data from your Connected Systems to train generalized models for unrelated third parties.
 
@@ -53,7 +53,7 @@ We may suspend or terminate access if we reasonably believe you have violated th
 
 ## 6. Plans, billing, and refunds
 
-**Pulse Cloud** offers Free and Pro plans as described on our [pricing](/pricing) page. Paid subscriptions renew according to the billing cycle you select until cancelled. Fees are non-refundable except where required by law or explicitly stated at purchase.
+**Entivia Cloud** offers Free and Pro plans as described on our [pricing](/pricing) page. Paid subscriptions renew according to the billing cycle you select until cancelled. Fees are non-refundable except where required by law or explicitly stated at purchase.
 
 **Self-hosted** Pro features may require a license key purchased at [self-hosted pricing](/pricing/self-hosted). License terms, including duration and seat or deployment limits, are stated at checkout.
 
@@ -72,7 +72,7 @@ Your use of third-party services is subject to their terms. We are not responsib
 
 ## 8. Intellectual property
 
-The Services, including software, documentation, branding, and visual design, are owned by us or our licensors and protected by intellectual property laws. These Terms do not grant you any rights to our trademarks except as needed to describe your lawful use of Pulse.
+The Services, including software, documentation, branding, and visual design, are owned by us or our licensors and protected by intellectual property laws. These Terms do not grant you any rights to our trademarks except as needed to describe your lawful use of Entivia.
 
 Feedback you provide may be used by us without restriction or compensation to improve the Services.
 
@@ -106,11 +106,11 @@ You may stop using the Services at any time. We may suspend or terminate your ac
 
 Upon termination, your right to access the Services ends. Provisions that by nature should survive (including confidentiality, disclaimers, limitation of liability, and governing law) will survive.
 
-For Pulse Cloud, you may export data available through the dashboard before closure where the product supports it. For self-hosted, you retain data in your own infrastructure.
+For Entivia Cloud, you may export data available through the dashboard before closure where the product supports it. For self-hosted, you retain data in your own infrastructure.
 
 ## 14. Changes to these Terms
 
-We may update these Terms from time to time. We will post the revised version with an updated "Last updated" date and, for material changes to Pulse Cloud, provide notice through the dashboard or email where appropriate. Continued use after the effective date constitutes acceptance.
+We may update these Terms from time to time. We will post the revised version with an updated "Last updated" date and, for material changes to Entivia Cloud, provide notice through the dashboard or email where appropriate. Continued use after the effective date constitutes acceptance.
 
 ## 15. Governing law and disputes
 
@@ -122,4 +122,4 @@ Before filing suit, the parties agree to attempt good-faith resolution by contac
 
 Questions about these Terms: **legal@pulsedata.io**
 
-Pulse Intelligence Engine — Built in Lagos for the world.
+Entivia Intelligence Engine — Built in Lagos for the world.

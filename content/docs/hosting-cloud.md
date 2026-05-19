@@ -1,6 +1,6 @@
-# Pulse Cloud
+# Entivia Cloud
 
-**Pulse Cloud** is our hosted SaaS product. Your business signs up, works inside the Pulse environment we operate, and connects **your** database—without installing or maintaining servers yourself.
+**Entivia Cloud** is our hosted SaaS product. Your business signs up, works inside the Entivia environment we operate, and connects **your** database—without installing or maintaining servers yourself.
 
 We run the platform; you bring your [data connection](/docs/data-sources) and your team.
 
@@ -10,25 +10,25 @@ We run the platform; you bring your [data connection](/docs/data-sources) and yo
 - Businesses that prefer subscription billing and automatic updates
 - Faster evaluation: create an account and connect data in minutes
 
-If you need Pulse entirely inside your own network, use [Self-hosted](/docs/hosting/self-hosted) instead.
+If you need Entivia entirely inside your own network, use [Self-hosted](/docs/hosting/self-hosted) instead.
 
 ## How it works
 
 ```mermaid
 flowchart LR
-  Team[Your team] --> App[Pulse Cloud app]
-  App --> PulseStack[Pulse hosted stack]
-  PulseStack --> YourDB[(Your database)]
-  YourDB -.->|read-only connection| PulseStack
+  Team[Your team] --> App[Entivia Cloud app]
+  App --> EntiviaStack[Entivia hosted stack]
+  EntiviaStack --> YourDB[(Your database)]
+  YourDB -.->|read-only connection| EntiviaStack
 ```
 
 1. **You** use the dashboard at our public URL (e.g. `app.pulseai.io`).
 2. **We** host the API, workers, agents, scheduler, and operational data stores.
-3. **Your database** stays where it is; Pulse connects with credentials you provide (read-only recommended).
+3. **Your database** stays where it is; Entivia connects with credentials you provide (read-only recommended).
 
-Pulse does not require you to ship a copy of your customer data to us for basic pipeline operation—the platform queries your live schema according to your connection settings and plan.
+Entivia does not require you to ship a copy of your customer data to us for basic pipeline operation—the platform queries your live schema according to your connection settings and plan.
 
-## Get started on Pulse Cloud
+## Get started on Entivia Cloud
 
 ### 1. Create an organization
 
@@ -52,7 +52,7 @@ Admins can invite users with roles (`admin`, `manager`, `analyst`, `viewer`) und
 - Upgrade to Pro from [Pricing](/pricing) or **Plan & billing** in the dashboard.
 - Pro unlocks higher limits, advanced analytics, Studio features, and more—see your plan page for current entitlements.
 
-## What you do not manage on Pulse Cloud
+## What you do not manage on Entivia Cloud
 
 As a Cloud customer you typically **do not**:
 
@@ -60,7 +60,7 @@ As a Cloud customer you typically **do not**:
 - Deploy Docker images or run `docker compose`
 - Purchase a self-hosted `PULSE_LICENSE_KEY`
 
-Those are operated by Pulse. Configuration you **do** control: connections, API keys, webhooks, Studio content, and team settings.
+Those are operated by Entivia. Configuration you **do** control: connections, API keys, webhooks, Studio content, and team settings.
 
 ## Integrations on Cloud
 
@@ -69,11 +69,11 @@ Those are operated by Pulse. Configuration you **do** control: connections, API 
 
 See **[Product features](/docs/features)** for a full tour of the dashboard.
 
-## Pulse Cloud vs self-hosted
+## Entivia Cloud vs self-hosted
 
-| Topic | Pulse Cloud | Self-hosted |
+| Topic | Entivia Cloud | Self-hosted |
 |-------|-------------|-------------|
-| Hosting | Pulse | You |
+| Hosting | Entivia | You |
 | Pro billing | Subscription via dashboard | License key |
 | License settings in UI | No | Yes |
 | LLM keys in Settings | Uses platform defaults | You can bring your own (e.g. Ollama) |

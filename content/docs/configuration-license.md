@@ -1,6 +1,6 @@
 # License activation
 
-**Self-hosted** installations use a license key to unlock Pro. **[Pulse Cloud](/docs/hosting/cloud)** (SaaS) uses dashboard subscriptions instead—no `PULSE_LICENSE_KEY` on your side.
+**Self-hosted** installations use a license key to unlock Pro. **[Entivia Cloud](/docs/hosting/cloud)** (SaaS) uses dashboard subscriptions instead—no `PULSE_LICENSE_KEY` on your side.
 
 ## Purchase a license
 
@@ -24,7 +24,7 @@ docker compose up -d
 
 ## Activate via dashboard
 
-1. Deploy with the [self-hosted compose](/docs/hosting/self-hosted) (`pulseai/pulse`).
+1. Deploy with the [self-hosted compose](/docs/hosting/self-hosted) (`entivia/entivia`).
 2. Sign in as an **admin**.
 3. Open **Settings → License**.
 4. Paste the key and submit.
@@ -37,7 +37,7 @@ docker compose up -d
 | `LICENSE_OFFLINE_GRACE_DAYS` | `7` | Run without phone-home |
 | `LICENSE_REVALIDATION_INTERVAL_HOURS` | `24` | Re-check interval |
 
-If the license server is unreachable, Pulse continues within the grace period, then restricts Pro features.
+If the license server is unreachable, Entivia continues within the grace period, then restricts Pro features.
 
 ## Related
 

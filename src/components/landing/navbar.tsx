@@ -106,7 +106,7 @@ export default function Navbar() {
             ].join(" ")}
           >
             <BladeFan strokeWidth={3} size={18} />
-            Pulse
+            Entivia
           </Link>
 
           {/* Desktop/Tablet Navigation (Center) */}

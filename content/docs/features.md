@@ -1,16 +1,16 @@
 # Product features
 
-Pulse is a dashboard-first intelligence platform. After you connect your data and run the pipeline, you explore entities, act on recommendations, build analytics in Studio, and automate alerts—all from the web app.
+Entivia is a dashboard-first intelligence platform. After you connect your data and run the pipeline, you explore entities, act on recommendations, build analytics in Studio, and automate alerts—all from the web app.
 
 This guide describes **what each area does** and **where to find it** in the dashboard sidebar.
 
-## How Pulse works
+## How Entivia works
 
 Most teams follow this path:
 
 1. **Business context** — Describe your business so agents and recommendations stay relevant.
 2. **Connections** — Add databases, warehouses, spreadsheets, or files.
-3. **Data mapping** — Tell Pulse which table and columns represent your entities (SQL sources).
+3. **Data mapping** — Tell Entivia which table and columns represent your entities (SQL sources).
 4. **Pipeline** — Profile entities, score risk, and generate recommendations on a schedule or on demand.
 5. **Intelligence** — Review entities, recommendations, analytics, Studio, and the conversational agent.
 6. **Operations** — Configure alerts and (on Pro) audit logs.
@@ -70,7 +70,7 @@ Self-serve analytics on your connected data:
 - **Saved queries** — Write SQL, run against a chosen connection, export results.
 - **Visualizations** — Turn query results into charts (bar, line, pie, and others).
 - **Dashboards** — Arrange visualizations on a grid; star, tag, and share internally.
-- **Public sharing** — Publish dashboards by slug or embed token for viewers without a Pulse login.
+- **Public sharing** — Publish dashboards by slug or embed token for viewers without a Entivia login.
 
 Studio works with SQL databases, warehouses, and [file-based sources](/docs/data-sources#studio-and-file-based-connections) (CSV upload, Google Sheets, S3 CSV objects). For public URL formats, see [Studio (public API)](/docs/api/studio).
 
@@ -103,7 +103,7 @@ Required for SQL-capable connections before the pipeline can profile entities. T
 3. **Signals** — Columns used for risk scoring.
 4. **Review** — Confirm and save.
 
-Pulse can infer mappings from your schema where possible. File-only or document connectors may skip mapping; see [feature support by connector](/docs/data-sources#feature-support-by-connector-category).
+Entivia can infer mappings from your schema where possible. File-only or document connectors may skip mapping; see [feature support by connector](/docs/data-sources#feature-support-by-connector-category).
 
 ### Pipeline
 
@@ -125,13 +125,13 @@ Pipeline output powers Entities, Recommendations, Analytics, and notifications. 
 
 **Sidebar:** Operations → **Alerts**
 
-Define rules on metrics such as risk score. When a rule fires, Pulse notifies through configured channels—including email-style delivery and **webhooks** you create under Settings. Attach webhook channels to specific alert rules.
+Define rules on metrics such as risk score. When a rule fires, Entivia notifies through configured channels—including email-style delivery and **webhooks** you create under Settings. Attach webhook channels to specific alert rules.
 
 ### Audit logs
 
 **Sidebar:** Operations → **Audit logs**
 
-Searchable history of workspace activity (sign-ins, settings changes, API key actions, and more). Available on **Pro** (Pulse Cloud) or with a valid **Pro-equivalent license** (self-hosted). Free plans see an upgrade prompt.
+Searchable history of workspace activity (sign-ins, settings changes, API key actions, and more). Available on **Pro** (Entivia Cloud) or with a valid **Pro-equivalent license** (self-hosted). Free plans see an upgrade prompt.
 
 ---
 
@@ -153,7 +153,7 @@ Meters for connections, pipeline runs, agent queries, Studio dashboards, API key
 
 **Sidebar:** Workspace → **Plan & billing**
 
-Current plan, entitlements, and upgrade path (Pulse Cloud). Self-hosted operators manage licenses under Settings instead.
+Current plan, entitlements, and upgrade path (Entivia Cloud). Self-hosted operators manage licenses under Settings instead.
 
 ### Team & roles
 
@@ -237,5 +237,5 @@ Free includes core intelligence; Pro removes most quotas and unlocks audit logs.
 - [Getting started](/docs/getting-started) — Signup and first connection
 - [Supported data sources](/docs/data-sources) — Connectors and credentials
 - [Architecture](/docs/architecture) — Technical components and deployment
-- [Pulse Cloud](/docs/hosting/cloud) — SaaS operations
+- [Entivia Cloud](/docs/hosting/cloud) — SaaS operations
 - [Public API overview](/docs/api/overview) — Integrations

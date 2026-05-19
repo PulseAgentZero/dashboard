@@ -150,7 +150,7 @@ export function PublicDashboardDisplay({
       />
 
       {showFooter && (
-        <footer className="mt-8 text-center text-xs text-slate-400">Powered by Pulse</footer>
+        <footer className="mt-8 text-center text-xs text-slate-400">Powered by Entivia</footer>
       )}
     </div>
   );

@@ -96,7 +96,7 @@ export function AcceptInviteContent() {
           <div className="mx-auto mb-4 grid h-12 w-12 place-items-center rounded-xl bg-emerald-50">
             <CheckCircle2 size={22} className="text-emerald-500" />
           </div>
-          <h1 className="text-lg font-semibold text-slate-900">Welcome to Pulse!</h1>
+          <h1 className="text-lg font-semibold text-slate-900">Welcome to Entivia!</h1>
           <p className="mt-2 text-sm text-slate-500">Account created. Taking you to the dashboard…</p>
         </div>
       </div>
@@ -112,7 +112,7 @@ export function AcceptInviteContent() {
           </div>
           <h1 className="text-2xl font-bold text-slate-900">Accept your invitation</h1>
           <p className="mt-1.5 text-sm text-slate-500">
-            Set up your account to join your team on Pulse.
+            Set up your account to join your team on Entivia.
           </p>
         </div>
 

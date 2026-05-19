@@ -1,5 +1,5 @@
 # ─────────────────────────────────────────────────────────────────────────────
-# Pulse Frontend — standalone compose
+# Entivia Frontend — standalone compose
 #
 # Use this to run only the frontend while pointing at an existing API instance.
 #
@@ -19,14 +19,14 @@ services:
       context: .
       dockerfile: Dockerfile
       args:
-        # URL of the Pulse API — baked into the JS bundle at build time.
+        # URL of the Entivia API — baked into the JS bundle at build time.
         # For local dev pointing at the cloud compose API: http://localhost:8000
         # For production: https://api.yourpulse.io
         NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8000}
         NEXT_PUBLIC_DEPLOYMENT_MODE: cloud
-    image: pulseai/pulse-frontend:${IMAGE_TAG:-latest}
+    image: entivia/entivia-frontend:${IMAGE_TAG:-latest}
     ports:
-      - "${FRONTEND_PORT:-3000}:3000"
+      - "${FRONTEND_PORT:-3096}:3000"
     environment:
       NODE_ENV: production
     restart: unless-stopped

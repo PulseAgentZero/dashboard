@@ -1,10 +1,10 @@
 # Environment variables
 
-This reference is for **[self-hosted](/docs/hosting/self-hosted)** operators who configure the `pulseai/pulse` image via `.env`.
+This reference is for **[self-hosted](/docs/hosting/self-hosted)** operators who configure the `entivia/entivia` image via `.env`.
 
-**[Pulse Cloud](/docs/hosting/cloud)** customers do not set these variables—Pulse operates the hosted environment. Manage your workspace from the dashboard (connections, API keys, billing, team).
+**[Entivia Cloud](/docs/hosting/cloud)** customers do not set these variables—Entivia operates the hosted environment. Manage your workspace from the dashboard (connections, API keys, billing, team).
 
-> These variables apply to the all-in-one `pulseai/pulse` image and the [recommended self-hosted compose](/docs/hosting/self-hosted).
+> These variables apply to the all-in-one `entivia/entivia` image and the [recommended self-hosted compose](/docs/hosting/self-hosted).
 
 ## Required for self-hosted
 

@@ -10,21 +10,21 @@ export const LEGAL_PAGES: LegalPageMeta[] = [
     slug: "terms",
     title: "Terms of Service",
     description:
-      "Terms governing your use of Pulse Cloud, self-hosted deployments, and related services.",
+      "Terms governing your use of Entivia Cloud, self-hosted deployments, and related services.",
     file: "terms",
   },
   {
     slug: "privacy",
     title: "Privacy Policy",
     description:
-      "How Pulse collects, uses, stores, and protects personal data on Pulse Cloud and self-hosted.",
+      "How Entivia collects, uses, stores, and protects personal data on Entivia Cloud and self-hosted.",
     file: "privacy",
   },
   {
     slug: "security",
     title: "Security",
     description:
-      "Security practices, shared responsibility, encryption, and vulnerability disclosure for Pulse.",
+      "Security practices, shared responsibility, encryption, and vulnerability disclosure for Entivia.",
     file: "security",
   },
 ];

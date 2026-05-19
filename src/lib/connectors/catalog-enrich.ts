@@ -17,7 +17,7 @@ const FIELD_PATCHES: Record<string, CatalogField[]> = {
       type: "textarea",
       required: false,
       placeholder: '{"type": "service_account", "project_id": "...", ...}',
-      help: "Paste the full JSON key from GCP. Required unless ADC is configured on the Pulse host.",
+      help: "Paste the full JSON key from GCP. Required unless ADC is configured on the Entivia host.",
     },
   ],
   google_sheets: [

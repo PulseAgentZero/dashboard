@@ -83,7 +83,7 @@ export function ConnectorSetupGuide({ catalogItem }: Props) {
         <ul className="list-disc space-y-1 pl-5 text-sm text-slate-600">
           {(guide?.securityTips ?? [
             "Use read-only credentials where possible.",
-            "Restrict network access to Pulse only.",
+            "Restrict network access to Entivia only.",
           ]).map((tip) => (
             <li key={tip}>{tip}</li>
           ))}

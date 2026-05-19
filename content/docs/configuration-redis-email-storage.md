@@ -14,7 +14,7 @@
 | Dashboard embed tokens | **Not available** |
 | Auto-refresh schedules | Disabled |
 
-**Recommendation:** Always run Redis in production. For self-hosted, the default `pulse` image includes embedded Redis.
+**Recommendation:** Always run Redis in production. For self-hosted, the default `entivia/entivia` image includes embedded Redis.
 
 ```bash
 REDIS_URL=redis://localhost:6379/0
@@ -23,7 +23,7 @@ REDIS_MAX_MEMORY=512mb
 
 ## Email
 
-Pulse sends verification, password reset, and invite emails when configured.
+Entivia sends verification, password reset, and invite emails when configured.
 
 **Resend:**
 

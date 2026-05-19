@@ -50,7 +50,7 @@ export default function SchemaMappingsPage() {
             Data mapping
           </h1>
           <p className="mt-1 max-w-2xl text-sm text-slate-500">
-            Tell Pulse which table holds your users or customers and which columns to use
+            Tell Entivia which table holds your users or customers and which columns to use
             for identity and risk signals. The pipeline uses this on every run.
           </p>
         </div>

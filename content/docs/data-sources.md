@@ -1,6 +1,6 @@
 # Supported data sources
 
-Pulse connects to your existing data through **connections**. Each connection uses a **connector type** with the credentials and fields required for that system.
+Entivia connects to your existing data through **connections**. Each connection uses a **connector type** with the credentials and fields required for that system.
 
 In the dashboard: **Data & pipeline → Connections → Add connection** (or **Connect Data** in the header). Pick a connector from the list and fill in the required fields.
 
@@ -18,7 +18,7 @@ Best for the core **pipeline** (entity profiling, risk scoring) and **Studio** S
 | Amazon Redshift | `redshift` | Postgres-compatible wire protocol |
 | SQLite | `sqlite` | File path on the API host (single-node self-hosted) |
 
-These support **read-only** session mode for live queries: Pulse does not mutate your source data through the connection.
+These support **read-only** session mode for live queries: Entivia does not mutate your source data through the connection.
 
 ## Cloud warehouses & analytical databases
 
@@ -59,7 +59,7 @@ For buckets containing **CSV or Parquet** files:
 
 ## Feature support by connector category
 
-Not every connector is used the same way inside Pulse:
+Not every connector is used the same way inside Entivia:
 
 | Category | Pipeline & entity SQL mapping | Studio live SQL |
 |----------|------------------------------|-----------------|
@@ -70,7 +70,7 @@ Not every connector is used the same way inside Pulse:
 
 ### Studio and file-based connections
 
-In **Pulse Studio**, you can pick any supported connection as the query data source:
+In **Entivia Studio**, you can pick any supported connection as the query data source:
 
 - **SQL databases and warehouses** — live `SELECT` against the remote database (read-only).
 - **CSV upload** — query the uploaded file using SQL (table name matches the file name).
@@ -83,9 +83,9 @@ If you configure Airtable or MongoDB where the pipeline expects live SQL entity 
 
 ## Security recommendations
 
-1. Create a dedicated **read-only** user for Pulse.
-2. Restrict network access (IP allowlist, VPC peering, or private link) so only Pulse can reach the host.
-3. On **self-hosted**, keep the connection inside your network; Pulse Cloud reaches your source over the network path you allow.
+1. Create a dedicated **read-only** user for Entivia.
+2. Restrict network access (IP allowlist, VPC peering, or private link) so only Entivia can reach the host.
+3. On **self-hosted**, keep the connection inside your network; Entivia Cloud reaches your source over the network path you allow.
 4. Rotate credentials if a key is exposed; delete and recreate the connection in the dashboard.
 
 ## Testing a connection
@@ -95,5 +95,5 @@ After saving a connection, click **Test** on the connection card in the dashboar
 ## Related
 
 - [Getting started](/docs/getting-started) — first connection after signup
-- [Pulse Cloud](/docs/hosting/cloud) — SaaS signup flow
+- [Entivia Cloud](/docs/hosting/cloud) — SaaS signup flow
 - [Self-hosted](/docs/hosting/self-hosted) — connections inside your VPC

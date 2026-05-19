@@ -28,8 +28,8 @@ export async function generateMetadata({
   const doc = getDocBySlug(slug);
   const title = doc?.title ?? nav?.title ?? "Documentation";
   return {
-    title: `${title} | Pulse Docs`,
-    description: `Pulse documentation — ${title}`,
+    title: `${title} | Entivia Docs`,
+    description: `Entivia documentation — ${title}`,
   };
 }
 

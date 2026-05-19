@@ -30,7 +30,7 @@ const TRUST_CARDS = [
   },
   {
     title: "Terms of Service",
-    description: "Terms governing use of Pulse Cloud, APIs, and licenses.",
+    description: "Terms governing use of Entivia Cloud, APIs, and licenses.",
     href: "/terms",
     icon: FileText,
   },
@@ -68,7 +68,7 @@ export function TrustCenterPage() {
             Security, privacy, and compliance resources
           </h1>
           <p className="mt-4 max-w-2xl text-sm leading-7 text-zinc-400 sm:text-[15px]">
-            Pulse is built for regulated and operationally sensitive environments.
+            Entivia is built for regulated and operationally sensitive environments.
             Use the resources below to understand how we protect your data and how
             you stay in control—especially on self-hosted deployments.
           </p>

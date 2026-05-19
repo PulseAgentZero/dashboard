@@ -7,7 +7,7 @@ import { getLegalPageMeta } from "@/lib/legal/pages";
 export function generateMetadata(): Metadata {
   const meta = getLegalPageMeta("privacy");
   return {
-    title: `${meta?.title ?? "Privacy Policy"} | Pulse`,
+    title: `${meta?.title ?? "Privacy Policy"} | Entivia`,
     description: meta?.description,
   };
 }

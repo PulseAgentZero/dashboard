@@ -103,7 +103,7 @@ export default function MainFooter() {
             
             <div className="relative h-full flex flex-col items-center justify-center p-12 py-20">
               <h2 className="text-white font-black text-6xl tracking-tighter uppercase text-center leading-[0.8] select-none italic">
-                PULSE
+                ENTIVIA
               </h2>
               <p className="text-[9px] text-zinc-600 font-mono tracking-[0.5em] mt-4 uppercase">
                 Intelligence Engine
@@ -127,7 +127,7 @@ export default function MainFooter() {
         <div className="py-12 border-t border-zinc-900 bg-zinc-950/30">
           <div className="flex flex-col items-center gap-4">
             <p className="text-[11px] text-zinc-600 font-medium tracking-wide">
-              © 2026 Pulse Intelligence Engine. Built in Lagos for the World.
+              © 2026 Entivia Intelligence Engine. Built in Lagos for the World.
             </p>
             <div className="flex gap-6 text-[10px] text-zinc-700 uppercase tracking-widest font-bold">
               <Link href="/privacy" className="hover:text-zinc-400 transition-colors">

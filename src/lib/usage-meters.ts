@@ -114,7 +114,7 @@ export const METER_GROUPS = [
     description: "Data connections, keys, webhooks, and seats",
   },
   { id: "automation" as const, title: "Automation", description: "Resets on the 1st of each month" },
-  { id: "studio" as const, title: "Pulse Studio", description: "Dashboards and query executions" },
+  { id: "studio" as const, title: "Entivia Studio", description: "Dashboards and query executions" },
 ];
 
 export type MeterStatus = "unlimited" | "healthy" | "warning" | "critical";

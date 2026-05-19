@@ -63,7 +63,7 @@ export function DataSourcesConnectorTables() {
           </div>
           {section.id === "sql-databases" && (
             <p className="mt-4 text-sm leading-7 text-zinc-600 sm:text-[15px] dark:text-zinc-400">
-              These support <strong>read-only</strong> session mode for live queries: Pulse does
+              These support <strong>read-only</strong> session mode for live queries: Entivia does
               not mutate your source data through the connection.
             </p>
           )}

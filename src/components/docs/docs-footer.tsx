@@ -4,7 +4,7 @@ export function DocsFooter() {
   return (
     <footer className="border-t border-zinc-200 bg-white py-8 dark:border-zinc-800 dark:bg-zinc-900">
       <div className="mx-auto flex max-w-7xl flex-col items-center gap-3 px-4 text-center text-sm text-zinc-500 sm:px-6 dark:text-zinc-400">
-        <p>© {new Date().getFullYear()} Pulse Intelligence Engine</p>
+        <p>© {new Date().getFullYear()} Entivia Intelligence Engine</p>
         <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-xs uppercase tracking-wider">
           <Link
             href="/docs"

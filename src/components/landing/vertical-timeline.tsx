@@ -10,7 +10,7 @@ const steps = [
   { 
     label: '[ Connection ]', 
     Icon: FileText, 
-    bold: 'How does Pulse connect to my data?', 
+    bold: 'How does Entivia connect to my data?', 
     rest: '', 
     action: true  
   },
@@ -127,7 +127,7 @@ export default function VerticalTimeline() {
   </div>
 
   <div className="pl-4 space-y-1.5">
-    <div className="text-zinc-700">.pulse/schema-metadata/</div>
+    <div className="text-zinc-700">.entivia/schema-metadata/</div>
     {['users_table.json', 'transactions.json', 'logs.json'].map(f => (
       <div key={f} className="flex items-center gap-2.5">
         <span className="bg-indigo-500/20 text-indigo-400 px-1.5 py-px rounded-sm text-[9px] font-bold tracking-wide">INDEX</span>
@@ -139,7 +139,7 @@ export default function VerticalTimeline() {
   <div className="pt-1 space-y-1.5">
     <div className="flex items-center gap-2 text-zinc-500">
       <span className="text-zinc-700">❯</span>
-      <span>pulse analyze --goal churn</span>
+      <span>entivia analyze --goal churn</span>
     </div>
     <div className="flex items-center gap-2.5">
       <span className="bg-purple-500/20 text-purple-400 px-1.5 py-px rounded-sm text-[9px] font-bold tracking-wide">QUERY</span>
@@ -154,7 +154,7 @@ export default function VerticalTimeline() {
   <div className="pt-1 space-y-1.5">
     <div className="flex items-center gap-2 text-zinc-500">
       <span className="text-zinc-700">❯</span>
-      <span>pulse push alerts --channel slack</span>
+      <span>entivia push alerts --channel slack</span>
     </div>
     <div className="flex items-center gap-2.5">
       <span className="bg-cyan-500/20 text-cyan-400 px-1.5 py-px rounded-sm text-[9px] font-bold tracking-wide">NOTIFY</span>

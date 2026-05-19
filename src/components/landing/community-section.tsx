@@ -8,7 +8,7 @@ export default function TeamSection() {
       role: "SYSTEMS ARCHITECTURE",
       bio: "Awwal is a software engineer focused on building ",
       highlight: "high-performance intelligence layers",
-      suffix: " and clean, scalable architecture. He led the design of the Pulse multi-agent pipeline.",
+      suffix: " and clean, scalable architecture. He led the design of the Entivia multi-agent pipeline.",
       name: "Awwal Anileleye",
       title: "Lead Software Engineer",
       image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Awwal"
@@ -17,7 +17,7 @@ export default function TeamSection() {
       role: "AI & REASONING",
       bio: "Roqeeb specializes in large language model ",
       highlight: "optimization and grounded reasoning",
-      suffix: ". He ensures that Pulse delivers precise insights without the enterprise hallucination risk.",
+      suffix: ". He ensures that Entivia delivers precise insights without the enterprise hallucination risk.",
       name: "Roqeeb",
       title: "AI Engineer",
       image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Roqeeb"
@@ -26,7 +26,7 @@ export default function TeamSection() {
       role: "DATA PIPELINES",
       bio: "Joy engineers the resilient ",
       highlight: "real-time data connectors",
-      suffix: " that allow Pulse to introspect complex enterprise databases with zero latency.",
+      suffix: " that allow Entivia to introspect complex enterprise databases with zero latency.",
       name: "Joy",
       title: "Data Engineer",
       image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Joy"
@@ -35,7 +35,7 @@ export default function TeamSection() {
       role: "INFRASTRUCTURE",
       bio: "Chidera focuses on the ",
       highlight: "secure data orchestration",
-      suffix: " and schema mapping that forms the backbone of the Pulse intelligence engine.",
+      suffix: " and schema mapping that forms the backbone of the Entivia intelligence engine.",
       name: "Chidera",
       title: "Data Engineer",
       image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Chidera"

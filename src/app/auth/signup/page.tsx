@@ -27,7 +27,7 @@ export default function SignupPage() {
   }
 
   const closedMessage = isSelfHostedDeployment()
-    ? "This Pulse instance is already set up. Sign in with your account or ask an admin for an invite."
+    ? "This Entivia instance is already set up. Sign in with your account or ask an admin for an invite."
     : "New organization registration is not available on this instance.";
 
   function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
@@ -48,7 +48,7 @@ export default function SignupPage() {
       <div className="hidden lg:flex w-1/2 relative overflow-hidden bg-black">
         <Image
           src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=2070&auto=format&fit=crop"
-          alt="Pulse Intelligence Network"
+          alt="Entivia Intelligence Network"
           fill
           priority
           className="object-cover opacity-60"
@@ -61,7 +61,7 @@ export default function SignupPage() {
           <BladeFan color="white" size={64} />
         </div>
         <div className="absolute bottom-12 left-12 z-20">
-          <h1 className="text-white text-4xl font-black italic tracking-tighter">PULSE</h1>
+          <h1 className="text-white text-4xl font-black italic tracking-tighter">ENTIVIA</h1>
           <p className="text-zinc-500 font-mono text-[10px] uppercase tracking-[0.4em] mt-2">
             Intelligence Layer v1.0
           </p>
@@ -73,7 +73,7 @@ export default function SignupPage() {
         <div className="w-full max-w-md space-y-8">
           <div className="text-center lg:text-left">
             <h2 className="text-3xl font-bold text-slate-900">Create an account</h2>
-            <p className="mt-2 text-slate-600">Get started with Pulse in minutes.</p>
+            <p className="mt-2 text-slate-600">Get started with Entivia in minutes.</p>
           </div>
 
           {isLoading ? (

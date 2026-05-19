@@ -69,7 +69,7 @@ export default function FinalCTA() {
         {/* Actions */}
         <div className="flex flex-wrap justify-center gap-4 mb-8">
           <div className="flex items-center gap-3 bg-indigo-600 hover:bg-indigo-500 px-6 py-3 rounded-full font-mono text-sm transition-all cursor-pointer group shadow-lg shadow-indigo-500/20">
-            <span className="text-white font-bold tracking-tighter">Get started with pulse</span>
+            <span className="text-white font-bold tracking-tighter">Get started with Entivia</span>
 
           </div>
           <Link

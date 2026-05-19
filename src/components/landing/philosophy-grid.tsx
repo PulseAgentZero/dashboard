@@ -23,7 +23,7 @@ export default function PhilosophyGrid() {
             </div>
             <div className="space-y-4">
               <p className="text-zinc-400 leading-relaxed max-w-sm">
-                <span className="text-white font-bold">/ Generic. Static. Irrelevant.</span> Standard LLMs don&apos;t know your business logic. Pulse learns your specific operational context to provide reasoning that actually aligns with your KPIs.
+                <span className="text-white font-bold">/ Generic. Static. Irrelevant.</span> Standard LLMs don&apos;t know your business logic. Entivia learns your specific operational context to provide reasoning that actually aligns with your KPIs.
               </p>
             </div>
           </div>
@@ -37,7 +37,7 @@ export default function PhilosophyGrid() {
             </div>
             <div className="space-y-4">
               <p className="text-zinc-400 leading-relaxed max-w-sm">
-                <span className="text-white font-bold">/ &quot;AI can&apos;t handle complex DBs.&quot;</span> It can&apos;t, but our harness can. Pulse sits between the model and your data, ensuring every insight is grounded in live, validated SQL queries.
+                <span className="text-white font-bold">/ &quot;AI can&apos;t handle complex DBs.&quot;</span> It can&apos;t, but our harness can. Entivia sits between the model and your data, ensuring every insight is grounded in live, validated SQL queries.
               </p>
             </div>
           </div>
@@ -46,7 +46,7 @@ export default function PhilosophyGrid() {
         {/* Bottom Headline Section */}
         <div className="p-16 lg:p-24 border-b border-zinc-900 flex justify-center text-center">
           <h3 className="text-3xl md:text-4xl font-sans text-zinc-500 max-w-3xl leading-tight">
-            <span className="text-white">Hello, Pulse.</span> The industry-agnostic intelligence layer that pairs enterprise LLMs with your <span className="text-white underline decoration-zinc-700 underline-offset-8">live operational data</span>.
+            <span className="text-white">Hello, Entivia.</span> The industry-agnostic intelligence layer that pairs enterprise LLMs with your <span className="text-white underline decoration-zinc-700 underline-offset-8">live operational data</span>.
           </h3>
         </div>
 

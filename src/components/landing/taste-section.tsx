@@ -56,10 +56,10 @@ export default function ModelingSection() {
           </div>
         </div>
 
-        {/* Column 2: Pulse Modeling */}
+        {/* Column 2: Entivia Modeling */}
         <div className="p-8 lg:p-12 bg-zinc-950/20">
           <div className="mb-12">
-            <h3 className="text-white text-[20px] italic font-sans font-bold uppercase tracking-tighter">Pulse Modeling</h3>
+            <h3 className="text-white text-[20px] italic font-sans font-bold uppercase tracking-tighter">Entivia Modeling</h3>
             <p className="text-zinc-500 font-sans italic text-sm">Behavioral DNA. Predictive. Adaptive.</p>
           </div>
 
@@ -103,7 +103,7 @@ export default function ModelingSection() {
           </div>
         </div>
 
-        {/* Right Sidebar Labels - The "Pulse" Advantage */}
+        {/* Right Sidebar Labels - The "Entivia" Advantage */}
         <div className="border-l border-zinc-900 flex flex-col pt-20 gap-16 items-center text-[10px] uppercase tracking-tighter">
           <span className="text-zinc-600">[ Input ]</span>
           

@@ -23,7 +23,7 @@ const aeonik = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Pulse | Real-Time Intelligence",
+  title: "Entivia | Real-Time Intelligence",
   description:
     "Open-source user modeling and recommendation intelligence for operational teams.",
 };

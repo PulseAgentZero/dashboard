@@ -28,7 +28,7 @@ export const DOCS_NAV: DocNavSection[] = [
   {
     title: "Hosting",
     items: [
-      { title: "Pulse Cloud (SaaS)", slug: "hosting/cloud", file: "hosting-cloud" },
+      { title: "Entivia Cloud (SaaS)", slug: "hosting/cloud", file: "hosting-cloud" },
       {
         title: "Self-hosted",
         slug: "hosting/self-hosted",

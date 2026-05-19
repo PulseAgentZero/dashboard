@@ -7,7 +7,7 @@ import { getLegalPageMeta } from "@/lib/legal/pages";
 export function generateMetadata(): Metadata {
   const meta = getLegalPageMeta("terms");
   return {
-    title: `${meta?.title ?? "Terms of Service"} | Pulse`,
+    title: `${meta?.title ?? "Terms of Service"} | Entivia`,
     description: meta?.description,
   };
 }

@@ -288,7 +288,7 @@ export function SchemaMappingWizard({
           </h1>
           <p className="mt-2 text-sm leading-relaxed text-slate-600">
             Choose which table represents one {entityLabel} per row, then pick ID and signal
-            columns. Pulse uses this on every pipeline run and in recommendations.
+            columns. Entivia uses this on every pipeline run and in recommendations.
           </p>
         </header>
 
@@ -414,7 +414,7 @@ export function SchemaMappingWizard({
             {step === "signals" && selectedTable && (
               <div className="space-y-4">
                 <p className="text-sm text-slate-600">
-                  Select metrics Pulse should weigh for risk. You can skip this and add signals
+                  Select metrics Entivia should weigh for risk. You can skip this and add signals
                   later.
                 </p>
                 <div className="flex flex-wrap gap-2">

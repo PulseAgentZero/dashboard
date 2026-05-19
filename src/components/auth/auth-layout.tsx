@@ -15,7 +15,7 @@ export default function AuthLayout({
       <div className="hidden lg:flex w-1/2 relative overflow-hidden bg-black">
         <Image
           src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=2070&auto=format&fit=crop"
-          alt="Pulse Intelligence Network"
+          alt="Entivia Intelligence Network"
           fill
           priority
           className="object-cover opacity-60"
@@ -29,7 +29,7 @@ export default function AuthLayout({
         </div>
         <div className="absolute bottom-12 left-12 z-20">
           <h1 className="text-white text-4xl font-black italic tracking-tighter">
-            PULSE
+            ENTIVIA
           </h1>
           <p className="text-zinc-500 font-mono text-[10px] uppercase tracking-[0.4em] mt-2">
             Intelligence Layer v1.0

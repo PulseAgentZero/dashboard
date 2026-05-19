@@ -4,26 +4,26 @@ lastUpdated: 2026-05-18
 
 # Privacy Policy
 
-This Privacy Policy explains how Pulse ("**we**," "**us**," or "**our**") collects, uses, discloses, and protects personal data when you use the Pulse Intelligence Engine website, **Pulse Cloud**, **self-hosted** deployments, and related services (the "**Services**").
+This Privacy Policy explains how Entivia ("**we**," "**us**," or "**our**") collects, uses, discloses, and protects personal data when you use the Entivia Intelligence Engine website, **Entivia Cloud**, **self-hosted** deployments, and related services (the "**Services**").
 
 We are committed to transparency and to practices aligned with the Nigeria Data Protection Regulation (NDPR) and, where applicable, the EU General Data Protection Regulation (GDPR).
 
 ## 1. Who we are
 
-**Pulse Intelligence Engine** provides a real-time intelligence platform for operational teams. Depending on how you use Pulse, we may act as a **data controller** (for example, for your account and billing on Pulse Cloud) or as a **data processor** on your instructions (for example, when you connect customer databases and run pipelines).
+**Entivia Intelligence Engine** provides a real-time intelligence platform for operational teams. Depending on how you use Entivia, we may act as a **data controller** (for example, for your account and billing on Entivia Cloud) or as a **data processor** on your instructions (for example, when you connect customer databases and run pipelines).
 
 Contact: **privacy@pulsedata.io**
 
-## 2. Pulse Cloud vs self-hosted
+## 2. Entivia Cloud vs self-hosted
 
-| Topic | Pulse Cloud | Self-hosted |
+| Topic | Entivia Cloud | Self-hosted |
 |-------|-------------|-------------|
-| **Who operates infrastructure** | Pulse | Your organization |
+| **Who operates infrastructure** | Entivia | Your organization |
 | **Account & billing data** | We are typically the controller | We process license and support data; you control deployment access |
 | **Pipeline & warehouse data** | Processed in our hosted environment per your configuration | Stays in your network; you are typically the controller |
 | **Connection credentials** | Encrypted at rest in our environment | Encrypted at rest in your deployment |
 
-If you deploy self-hosted Pulse in your VPC, your organization determines purposes and means of processing for data inside your environment. This policy still applies to personal data we collect directly from you (for example, when you purchase a license or contact support).
+If you deploy self-hosted Entivia in your VPC, your organization determines purposes and means of processing for data inside your environment. This policy still applies to personal data we collect directly from you (for example, when you purchase a license or contact support).
 
 ## 3. Personal data we collect
 
@@ -58,13 +58,13 @@ We use personal data to:
 
 ## 5. Customer database credentials
 
-When you add a data source, you provide credentials so Pulse can connect on your behalf. Credentials are **encrypted at rest** using industry-standard symmetric encryption (Fernet). We use them only to perform connection tests, scheduled pipelines, Studio queries, and related features you enable.
+When you add a data source, you provide credentials so Entivia can connect on your behalf. Credentials are **encrypted at rest** using industry-standard symmetric encryption (Fernet). We use them only to perform connection tests, scheduled pipelines, Studio queries, and related features you enable.
 
 We strongly recommend **read-only** database users where your systems support it. See [Supported data sources](/docs/data-sources) and [Security recommendations](/docs/data-sources#security-recommendations).
 
 ## 6. AI and large language models
 
-Pulse may send prompts, schema snippets, sample rows, or query context to LLM providers you configure (such as **Anthropic** or **Groq**) to power the AI pipeline and Studio natural-language features.
+Entivia may send prompts, schema snippets, sample rows, or query context to LLM providers you configure (such as **Anthropic** or **Groq**) to power the AI pipeline and Studio natural-language features.
 
 On **self-hosted** deployments, you may use **Ollama** or other local models so that AI processing does not leave your network. See [Self-hosted hosting](/docs/hosting/self-hosted#data-privacy).
 
@@ -74,7 +74,7 @@ We configure providers for API use only and do not authorize them to use your da
 
 We do not sell personal data. We may share data with:
 
-- **Infrastructure and hosting providers** that operate Pulse Cloud.
+- **Infrastructure and hosting providers** that operate Entivia Cloud.
 - **Payment processors** to complete transactions.
 - **Email delivery providers** for transactional messages.
 - **LLM and OAuth providers** you connect or authenticate with.

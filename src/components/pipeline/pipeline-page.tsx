@@ -308,7 +308,7 @@ export function PipelinePage() {
             </li>
           </ul>
           <p className="mt-5 rounded-lg bg-slate-50 px-3 py-2.5 text-xs leading-relaxed text-slate-500">
-            After you save your first data mapping, Pulse queues the first pipeline automatically.
+            After you save your first data mapping, Entivia queues the first pipeline automatically.
             Use <strong className="font-medium text-slate-700">Run now</strong> anytime you need
             fresh scores before the next scheduled run.
           </p>

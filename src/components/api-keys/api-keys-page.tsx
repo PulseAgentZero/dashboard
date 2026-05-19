@@ -123,7 +123,7 @@ export function ApiKeysPage() {
         <div>
           <h1 className="text-xl font-semibold text-slate-900">API Keys</h1>
           <p className="mt-1 text-sm text-slate-500">
-            Authenticate requests to the Pulse public API using these keys.
+            Authenticate requests to the Entivia public API using these keys.
           </p>
         </div>
         <button
@@ -151,7 +151,7 @@ export function ApiKeysPage() {
           <Key size={24} className="mx-auto mb-2 text-slate-300" />
           <p className="text-sm text-slate-500">No API keys yet</p>
           <p className="mt-1 text-xs text-slate-400">
-            Create a key to start using the Pulse public API.
+            Create a key to start using the Entivia public API.
           </p>
         </div>
       ) : (

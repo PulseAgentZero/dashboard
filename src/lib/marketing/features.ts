@@ -25,7 +25,7 @@ export const MARKETING_CAPABILITIES: MarketingCapability[] = [
     id: "risk-scoring",
     title: "Live risk scoring on every entity",
     description:
-      "Pulse profiles customers, patients, accounts, or any unit you care about—then scores risk from signals already in your database.",
+      "Entivia profiles customers, patients, accounts, or any unit you care about—then scores risk from signals already in your database.",
     highlights: [
       "Industry-agnostic: describe your business in plain English",
       "High, medium, low, and healthy tiers out of the box",
@@ -37,7 +37,7 @@ export const MARKETING_CAPABILITIES: MarketingCapability[] = [
     id: "recommendations",
     title: "Recommendations you can act on today",
     description:
-      "Stop staring at dashboards. Pulse surfaces prioritized interventions—retention offers, reallocations, follow-ups—grounded in real behavior.",
+      "Stop staring at dashboards. Entivia surfaces prioritized interventions—retention offers, reallocations, follow-ups—grounded in real behavior.",
     highlights: [
       "Critical items ranked first",
       "Draft messages and operational next steps",
@@ -49,7 +49,7 @@ export const MARKETING_CAPABILITIES: MarketingCapability[] = [
     id: "agent",
     title: "Ask your data in plain English",
     description:
-      "No SQL required. Operators and managers ask questions; Pulse translates them into live queries against your connected sources.",
+      "No SQL required. Operators and managers ask questions; Entivia translates them into live queries against your connected sources.",
     highlights: [
       "Grounded answers from your schema—not generic AI",
       "Explore risk, cohorts, and outliers in conversation",
@@ -109,7 +109,7 @@ export const MARKETING_CAPABILITIES: MarketingCapability[] = [
     id: "sovereignty",
     title: "Built for teams that can’t ship data out",
     description:
-      "Run Pulse Cloud for speed, or deploy entirely in your VPC with Docker. Self-hosted teams bring their own models and keep pipeline traffic internal.",
+      "Run Entivia Cloud for speed, or deploy entirely in your VPC with Docker. Self-hosted teams bring their own models and keep pipeline traffic internal.",
     highlights: [
       "Read-only database users supported",
       "Self-hosted with optional Pro license",
@@ -122,7 +122,7 @@ export const MARKETING_CAPABILITIES: MarketingCapability[] = [
 export const HOW_IT_WORKS_STEPS = [
   {
     step: "01",
-    title: "Tell Pulse your business",
+    title: "Tell Entivia your business",
     description:
       "A short description of what you sell, who you serve, and what “at risk” means—so models stay on-domain.",
   },
@@ -134,7 +134,7 @@ export const HOW_IT_WORKS_STEPS = [
   },
   {
     step: "03",
-    title: "Pulse profiles and scores",
+    title: "Entivia profiles and scores",
     description:
       "The pipeline reads your schema, identifies entities, and produces risk scores and recommendations.",
   },

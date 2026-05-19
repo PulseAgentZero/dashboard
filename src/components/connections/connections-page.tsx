@@ -445,7 +445,7 @@ export function ConnectionsPage() {
                   onDelete={() =>
                     requestDeleteConfirm({
                       title: "Remove connection",
-                      description: `Remove "${conn.name}"? Pulse will stop profiling data from this source. This cannot be undone.`,
+                      description: `Remove "${conn.name}"? Entivia will stop profiling data from this source. This cannot be undone.`,
                       confirmLabel: "Remove",
                       onConfirm: () => deleteConn(conn.id),
                     })

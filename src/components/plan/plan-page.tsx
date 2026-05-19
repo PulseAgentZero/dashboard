@@ -162,7 +162,7 @@ export function PlanPage() {
         <div className="grid gap-5 lg:grid-cols-3">
           <TierCard
             name="Free"
-            tagline="Get started with core Pulse features"
+            tagline="Get started with core Entivia features"
             price="₦0"
             priceSub="forever"
             features={FREE_PLAN_FEATURES}
@@ -306,7 +306,7 @@ export function PlanPage() {
 
       {selfHosted && cloud && (
         <p className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600">
-          Cloud billing applies to hosted Pulse. For on-prem licenses, see{" "}
+          Cloud billing applies to hosted Entivia. For on-prem licenses, see{" "}
           <Link
             href="/pricing/self-hosted"
             className="font-semibold text-indigo-600 hover:underline"
@@ -320,7 +320,7 @@ export function PlanPage() {
       <p className="text-center text-xs text-slate-400">
         Marketing details and FAQs on{" "}
         <Link href="/pricing" className="font-medium text-indigo-600 hover:underline">
-          pulse pricing
+          Entivia pricing
         </Link>
         .
       </p>

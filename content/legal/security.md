@@ -4,7 +4,7 @@ lastUpdated: 2026-05-18
 
 # Security
 
-Pulse is built for teams that connect sensitive operational data. This page describes how we protect the Pulse Intelligence Engine on **Pulse Cloud** and what you control when you run **self-hosted** deployments.
+Entivia is built for teams that connect sensitive operational data. This page describes how we protect the Entivia Intelligence Engine on **Entivia Cloud** and what you control when you run **self-hosted** deployments.
 
 For legal terms, see our [Privacy Policy](/privacy) and [Terms of Service](/terms).
 
@@ -12,13 +12,13 @@ For legal terms, see our [Privacy Policy](/privacy) and [Terms of Service](/term
 
 Security is a partnership:
 
-| Responsibility | Pulse Cloud | Self-hosted |
+| Responsibility | Entivia Cloud | Self-hosted |
 |----------------|-------------|-------------|
-| Application security patches | Pulse | You (via image upgrades) |
-| Network perimeter & VPC | Pulse (hosted) | You |
+| Application security patches | Entivia | You (via image upgrades) |
+| Network perimeter & VPC | Entivia (hosted) | You |
 | Database credentials & least privilege | You | You |
 | API keys & team access | You | You |
-| Encryption keys (`JWT_SECRET`, `ENCRYPTION_KEY`) | Pulse (managed) | You |
+| Encryption keys (`JWT_SECRET`, `ENCRYPTION_KEY`) | Entivia (managed) | You |
 | LLM data residency | Your provider choice | You (e.g. local Ollama) |
 
 ## Encryption
@@ -46,9 +46,9 @@ See [Environment variables — Security](/docs/configuration/environment-variabl
 
 ## Network and deployment
 
-**Self-hosted** — Deploy inside your VPC or private network so pipeline traffic to Connected Systems does not traverse the public internet unnecessarily. Pulse connects **outbound** to your databases; you do not need to expose your warehouse to the internet for Pulse to work.
+**Self-hosted** — Deploy inside your VPC or private network so pipeline traffic to Connected Systems does not traverse the public internet unnecessarily. Entivia connects **outbound** to your databases; you do not need to expose your warehouse to the internet for Entivia to work.
 
-**Pulse Cloud** — Tenant workloads are logically separated. We operate hosted infrastructure with standard cloud security controls; details are available on request for enterprise customers.
+**Entivia Cloud** — Tenant workloads are logically separated. We operate hosted infrastructure with standard cloud security controls; details are available on request for enterprise customers.
 
 Set `FRONTEND_URL` to the exact URL users type in the browser so CORS, email links, and redirects remain correct.
 
@@ -86,13 +86,13 @@ Please do not publicly disclose issues until we have had a reasonable time to in
 
 ## Incident response
 
-If we confirm a security incident affecting Pulse Cloud customer data, we will investigate promptly, take containment steps, and notify affected customers and regulators where required by law.
+If we confirm a security incident affecting Entivia Cloud customer data, we will investigate promptly, take containment steps, and notify affected customers and regulators where required by law.
 
 Self-hosted operators are responsible for incident response within their own environments; we provide security updates through published container images and documentation.
 
 ## Compliance posture
 
-Pulse is designed with privacy regulations such as **NDPR** in mind, especially for teams that need operational control through self-hosted deployment. We do not claim third-party certifications (such as SOC 2 or ISO 27001) unless explicitly published on this page.
+Entivia is designed with privacy regulations such as **NDPR** in mind, especially for teams that need operational control through self-hosted deployment. We do not claim third-party certifications (such as SOC 2 or ISO 27001) unless explicitly published on this page.
 
 Your compliance obligations depend on your industry, data types, and deployment model. Use our [Trust Center](/trust) and documentation to support your assessments.
 

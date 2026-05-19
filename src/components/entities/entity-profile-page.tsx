@@ -225,7 +225,7 @@ export function EntityProfilePage() {
                 <ShieldCheck size={16} />
               </div>
               <p className="text-xs leading-relaxed text-slate-600">
-                Entity data is read from connected sources on demand. Pulse stores recommendation metadata only — not raw records.
+                Entity data is read from connected sources on demand. Entivia stores recommendation metadata only — not raw records.
               </p>
             </div>
           </div>

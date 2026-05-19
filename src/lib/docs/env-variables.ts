@@ -158,20 +158,56 @@ export const ENV_VAR_GROUPS: EnvVarGroup[] = [
       {
         name: "STORAGE_BACKEND",
         default: "local",
-        description: "s3 | minio | local — avatars, logos, CSV uploads.",
+        description: "local | s3 | minio — avatars, logos, CSV uploads. Auto-detects from MINIO_ENDPOINT_URL or ASSETS_S3_BUCKET if unset.",
       },
       {
         name: "LOCAL_STORAGE_PATH",
         default: "/app/uploads",
-        description: "Local filesystem path when STORAGE_BACKEND=local.",
+        description: "Local filesystem path when STORAGE_BACKEND=local (compose volume uploads_data).",
       },
       {
         name: "ASSETS_S3_BUCKET",
-        description: "S3 bucket for cloud asset storage.",
+        description: "S3 bucket name when using AWS S3.",
+      },
+      {
+        name: "ASSETS_S3_PREFIX",
+        default: "pulse/assets",
+        description: "Key prefix inside the bucket.",
+      },
+      {
+        name: "AWS_REGION",
+        default: "us-east-1",
+        description: "AWS region for the S3 bucket.",
+      },
+      {
+        name: "AWS_ACCESS_KEY_ID",
+        description:
+          "AWS access key for S3 uploads. Standard boto3 env var (not a Settings field). Omit on ECS/EC2 if the task has an IAM role.",
+      },
+      {
+        name: "AWS_SECRET_ACCESS_KEY",
+        description: "AWS secret key paired with AWS_ACCESS_KEY_ID. Never commit real values.",
+      },
+      {
+        name: "ASSETS_PUBLIC_BASE_URL",
+        description: "Optional public base URL for uploaded files (e.g. CloudFront). Defaults to bucket URL.",
       },
       {
         name: "MINIO_ENDPOINT_URL",
-        description: "MinIO or S3-compatible endpoint (R2, DO Spaces, etc.).",
+        description: "MinIO or S3-compatible endpoint (R2, DO Spaces, etc.) when STORAGE_BACKEND=minio.",
+      },
+      {
+        name: "MINIO_ACCESS_KEY",
+        description: "Access key for MinIO / S3-compatible storage.",
+      },
+      {
+        name: "MINIO_SECRET_KEY",
+        description: "Secret key for MinIO / S3-compatible storage.",
+      },
+      {
+        name: "MINIO_BUCKET",
+        default: "pulse-assets",
+        description: "Bucket name for MinIO backend.",
       },
     ],
   },
@@ -200,23 +236,14 @@ export const ENV_VAR_GROUPS: EnvVarGroup[] = [
   {
     id: "license",
     title: "License (self-hosted)",
+    description:
+      "Standard Docker Hub installs do not use license env vars. Enter your plc_… key under Settings → License after sign-in.",
     vars: [
       {
         name: "PULSE_LICENSE_KEY",
         selfHostedOnly: true,
-        description: "Pro license JWT (plc_…). Set in .env or activate via dashboard.",
-      },
-      {
-        name: "LICENSE_SERVER_URL",
-        default: "https://license.pulseai.io",
-        selfHostedOnly: true,
-        description: "Pulse license validation server.",
-      },
-      {
-        name: "LICENSE_OFFLINE_GRACE_DAYS",
-        default: "7",
-        selfHostedOnly: true,
-        description: "Days the instance can run offline without revalidation.",
+        description:
+          "Optional: preload a Pro license (plc_…) via env. Most users activate in the dashboard instead.",
       },
     ],
   },
@@ -224,17 +251,17 @@ export const ENV_VAR_GROUPS: EnvVarGroup[] = [
     id: "runtime",
     title: "Runtime & image",
     description:
-      "Used by the all-in-one `pulseai/pulse` image. Set in `.env` alongside the compose file.",
+      "Used by the all-in-one `entivia/entivia` image. Set in `.env` alongside the compose file.",
     vars: [
       {
         name: "PULSE_VERSION",
         default: "latest",
-        description: "Docker image tag for `pulseai/pulse` (e.g. `latest` or a release tag).",
+        description: "Docker image tag for `entivia/entivia` (e.g. `latest` or a release tag).",
       },
       {
         name: "PORT",
         default: "80",
-        description: "Host port mapped to nginx inside the Pulse container (`HOST:80`).",
+        description: "Host port mapped to nginx inside the Entivia container (`HOST:80`).",
       },
     ],
   },

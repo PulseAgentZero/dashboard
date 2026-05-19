@@ -33,7 +33,7 @@ export const FREE_PLAN_FEATURES = [
   "Up to 5 data connections",
   "Entity profiling & risk scoring",
   "Recommendations & analytics",
-  "Pulse Studio (within limits)",
+  "Entivia Studio (within limits)",
   "Public API (1 key)",
 ];
 

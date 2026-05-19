@@ -28,7 +28,7 @@ A write key does not automatically grant read access to all GET routes in every 
 
 ## Dashboard sessions
 
-Sign-in tokens from the Pulse dashboard **cannot** be used on the public API. Use API keys for all programmatic access documented in this section.
+Sign-in tokens from the Entivia dashboard **cannot** be used on the public API. Use API keys for all programmatic access documented in this section.
 
 ## Rotating keys
 

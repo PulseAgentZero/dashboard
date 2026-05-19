@@ -69,12 +69,12 @@ export function SetupBanner() {
       return "Tell us about your business so recommendations match your goals.";
     }
     if (needsConn) {
-      return "Connect a data source so Pulse can read your data.";
+      return "Connect a data source so Entivia can read your data.";
     }
     if (needsMapping) {
       return "Your connection is ready. Map which table represents your users or customers so the pipeline can run.";
     }
-    return "Finish setting up Pulse.";
+    return "Finish setting up Entivia.";
   }
 
   return (
@@ -86,7 +86,7 @@ export function SetupBanner() {
               <Sparkles size={18} />
             </div>
             <div>
-              <p className="text-sm font-semibold text-slate-900">Finish setting up Pulse</p>
+              <p className="text-sm font-semibold text-slate-900">Finish setting up Entivia</p>
               <p className="mt-0.5 text-xs text-slate-600">{bannerMessage()}</p>
             </div>
           </div>

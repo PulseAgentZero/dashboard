@@ -77,7 +77,7 @@ export default function TrustGrid() {
       {/* Core Typographic Messaging Content Container */}
       <div className="relative z-10 max-w-4xl mx-auto text-center px-6 mt-20 mb-12 flex flex-col items-center">
         <span className="border border-white/20 px-3 py-1 rounded-full text-[10px] font-mono tracking-widest text-white/50 uppercase mb-6 bg-white/5 backdrop-blur-xs">
-          Pulse Engine
+          Entivia Engine
         </span>
         <h2 className="text-3xl sm:text-5xl md:text-6xl font-normal tracking-tight max-w-3xl leading-[1.15] text-neutral-100 font-sans">
           The core data platform for enterprise teams. Analyze, build, and

@@ -163,7 +163,7 @@ function OrgTab() {
         </Field>
       </div>
 
-      <Field label="Business context" hint="Describe your business so Pulse can generate context-aware recommendations.">
+      <Field label="Business context" hint="Describe your business so Entivia can generate context-aware recommendations.">
         <textarea
           name="business_context"
           className={`${inputCls} min-h-24 resize-y`}
@@ -173,10 +173,10 @@ function OrgTab() {
       </Field>
 
       <div className="grid gap-5 sm:grid-cols-2">
-        <Field label="Entity label" hint="What you call the primary entities Pulse profiles (e.g. Customer, Account, Supplier).">
+        <Field label="Entity label" hint="What you call the primary entities Entivia profiles (e.g. Customer, Account, Supplier).">
           <input name="entity_label" className={inputCls} defaultValue={org?.entity_label ?? ""} placeholder="Customer" />
         </Field>
-        <Field label="Goal label" hint="The primary outcome Pulse optimises for (e.g. Reduce churn, Increase ARPU).">
+        <Field label="Goal label" hint="The primary outcome Entivia optimises for (e.g. Reduce churn, Increase ARPU).">
           <input name="goal_label" className={inputCls} defaultValue={org?.goal_label ?? ""} placeholder="Reduce churn" />
         </Field>
       </div>
@@ -371,7 +371,7 @@ function ApiKeysTab() {
     <div className="space-y-5">
       <section>
         <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-400">API keys</p>
-        <p className="mb-4 text-xs text-slate-500">Use these keys to authenticate programmatic access to the Pulse API.</p>
+        <p className="mb-4 text-xs text-slate-500">Use these keys to authenticate programmatic access to the Entivia API.</p>
 
         {slot && (
           <div className="mb-4">

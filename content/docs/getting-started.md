@@ -1,17 +1,17 @@
 # Getting started
 
-How you start depends on **how you use Pulse**:
+How you start depends on **how you use Entivia**:
 
 | Goal | Path |
 |------|------|
-| Use Pulse as a **customer** (hosted SaaS) | [Pulse Cloud](#pulse-cloud) below |
+| Use Entivia as a **customer** (hosted SaaS) | [Entivia Cloud](#entivia-cloud) below |
 | **Self-host** in your infrastructure | [Self-hosted deployment](/docs/hosting/self-hosted) |
 
 ---
 
-## Pulse Cloud
+## Entivia Cloud
 
-Use Pulse in **our** hosted environment—sign up, connect your data, and run the pipeline from the dashboard.
+Use Entivia in **our** hosted environment—sign up, connect your data, and run the pipeline from the dashboard.
 
 1. **[Sign up](/auth/signup)** and verify your email.
 2. Use the **setup banner** on the dashboard to add **business context** (organization description for agents and recommendations).
@@ -19,7 +19,7 @@ Use Pulse in **our** hosted environment—sign up, connect your data, and run th
 4. Complete **Data mapping** for SQL sources (entity table, ID, and risk columns).
 5. Run your first **Pipeline** from **Data & pipeline → Pipeline** (or wait for the default schedule after setup completes).
 
-Upgrade, usage, and billing: [Pulse Cloud](/docs/hosting/cloud) and [Pricing](/pricing).
+Upgrade, usage, and billing: [Entivia Cloud](/docs/hosting/cloud) and [Pricing](/pricing).
 
 No Docker or server configuration required on your side.
 
@@ -36,7 +36,7 @@ For integrations, open **Settings → API keys**, create a key, and use the [API
 ## Next steps
 
 - [Product features](/docs/features) — what each dashboard area does
-- [Pulse Cloud](/docs/hosting/cloud) — SaaS product guide
+- [Entivia Cloud](/docs/hosting/cloud) — SaaS product guide
 - [Self-hosted](/docs/hosting/self-hosted) — install in your VPC
 - [Supported data sources](/docs/data-sources) — connectors and credentials
 - [Public API overview](/docs/api/overview) — integrate with API keys

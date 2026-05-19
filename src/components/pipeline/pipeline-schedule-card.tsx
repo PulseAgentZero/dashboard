@@ -112,7 +112,7 @@ export function PipelineScheduleCard() {
           <div className="border-b border-slate-100 px-4 py-3">
             <p className="text-sm font-semibold text-slate-900">Automatic runs</p>
             <p className="mt-0.5 text-xs leading-relaxed text-slate-500">
-              Choose how often Pulse should refresh user models and recommendations.
+              Choose how often Entivia should refresh user models and recommendations.
             </p>
           </div>
 

@@ -32,7 +32,7 @@ const sortedRoutes = Object.keys(pageMeta).sort((a, b) => b.length - a.length);
 function getPageMeta(pathname: string) {
   if (pageMeta[pathname]) return pageMeta[pathname];
   const match = sortedRoutes.find((route) => pathname.startsWith(route + "/"));
-  return match ? pageMeta[match] : { title: "Pulse", crumb: "" };
+  return match ? pageMeta[match] : { title: "Entivia", crumb: "" };
 }
 
 export default function Nav() {
@@ -43,7 +43,7 @@ export default function Nav() {
     <header className="flex h-16 shrink-0 items-center justify-between border-b border-slate-200 bg-white px-6">
       {/* Breadcrumb + title */}
       <div className="flex items-center gap-2 min-w-0">
-        <span className="text-xs text-slate-500 font-medium">Pulse</span>
+        <span className="text-xs text-slate-500 font-medium">Entivia</span>
         {crumb && (
           <>
             <span className="text-[13px] text-slate-300">/</span>
