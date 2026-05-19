@@ -31,8 +31,10 @@ services:
       NODE_ENV: production
     restart: unless-stopped
     networks:
-      - default
-      - reverse-proxy_nginx-network 
+      default:
+      reverse-proxy_nginx-network:
+        aliases:
+          - pulse-frontend
     healthcheck:
       test: ["CMD-SHELL", "wget -qO- http://localhost:3000/ || exit 1"]
       interval: 30s
