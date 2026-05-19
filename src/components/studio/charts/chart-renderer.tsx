@@ -31,7 +31,7 @@ import {
   yAxisProps,
 } from "@/lib/studio/chart-recharts-helpers";
 import { resolvePieColors, resolveSeriesColor } from "@/lib/studio/chart-theme";
-import { formatCellValue } from "@/lib/studio/format-cell";
+import { formatCellValue, formatRawCellValue } from "@/lib/studio/format-cell";
 import { ResultsTable } from "@/components/studio/core/results-table";
 import type { ChartType, ColumnFormatRule, QueryResult, VisualizationConfig } from "@/types/studio";
 
@@ -324,7 +324,7 @@ export function ChartRenderer({
     const pieRows = chartData as Record<string, unknown>[];
     const pieColors = resolvePieColors(
       config,
-      pieRows.map((row) => String(row[labelKey] ?? "")),
+      pieRows.map((row) => formatRawCellValue(row[labelKey] ?? "")),
     );
     return wrapChart(displayTitle, height, config, (
       <PieChart>

@@ -1,8 +1,21 @@
 import type { ColumnFormatRule } from "@/types/studio";
 
+/** Display JSON/object columns as JSON text instead of `[object Object]`. */
+export function formatRawCellValue(value: unknown): string {
+  if (value == null) return "";
+  if (typeof value === "object") {
+    try {
+      return JSON.stringify(value);
+    } catch {
+      return String(value);
+    }
+  }
+  return String(value);
+}
+
 export function formatCellValue(value: unknown, rule?: ColumnFormatRule | null): string {
   if (value == null) return "—";
-  if (!rule) return String(value);
+  if (!rule) return formatRawCellValue(value);
 
   const n = Number(value);
   switch (rule.type) {
@@ -36,9 +49,9 @@ export function formatCellValue(value: unknown, rule?: ColumnFormatRule | null):
         break;
       }
     case "badge":
-      return String(value);
+      return formatRawCellValue(value);
     default:
       break;
   }
-  return String(value);
+  return formatRawCellValue(value);
 }

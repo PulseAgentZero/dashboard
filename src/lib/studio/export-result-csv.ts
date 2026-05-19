@@ -1,7 +1,8 @@
 import type { QueryResult } from "@/types/studio";
+import { formatRawCellValue } from "@/lib/studio/format-cell";
 
 function escapeCsvCell(value: unknown): string {
-  const s = value == null ? "" : String(value);
+  const s = value == null ? "" : formatRawCellValue(value);
   if (/[",\n\r]/.test(s)) {
     return `"${s.replace(/"/g, '""')}"`;
   }
