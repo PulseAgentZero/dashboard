@@ -1,10 +1,23 @@
 import { api } from "./client";
 import type {
   LoginRequest,
+  LoginResult,
   MeResponse,
+  MfaVerifyRequest,
   SignupRequest,
   TokenResponse,
+  TotpDisableRequest,
+  TotpEnableRequest,
+  TotpEnableResponse,
+  TotpSetupResponse,
 } from "@/types/auth";
+
+export interface InvitePreview {
+  email: string;
+  org_name: string;
+  role: string;
+  expires_at: string;
+}
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 
@@ -14,12 +27,18 @@ export interface AuthInstanceStatus {
   can_create_organization: boolean;
 }
 
-export function initiateGoogleSignIn(intent: "login" | "signup" = "login") {
+export function initiateGoogleSignIn(
+  intent: "login" | "signup" | "invite" = "login",
+  options?: { inviteToken?: string },
+) {
   const callbackUrl = `${window.location.origin}/auth/oauth/callback`;
   const params = new URLSearchParams({
     redirect_uri: callbackUrl,
     intent,
   });
+  if (intent === "invite" && options?.inviteToken) {
+    params.set("invite_token", options.inviteToken);
+  }
   window.location.href = `${BASE_URL}/api/v1/auth/oauth/google?${params.toString()}`;
 }
 
@@ -27,7 +46,27 @@ export const authApi = {
   instance: () => api.get<AuthInstanceStatus>("/auth/instance"),
 
   login: (body: LoginRequest) =>
-    api.post<TokenResponse>("/auth/login", body),
+    api.post<LoginResult>("/auth/login", body),
+
+  verify2fa: (body: MfaVerifyRequest) =>
+    api.post<TokenResponse>("/auth/2fa/verify", body),
+
+  setup2fa: (setupToken?: string) =>
+    api.post<TotpSetupResponse>(
+      "/auth/2fa/setup",
+      {},
+      setupToken ? { headers: { "X-Setup-Token": setupToken } } : undefined,
+    ),
+
+  enable2fa: (body: TotpEnableRequest, setupToken?: string) =>
+    api.post<TotpEnableResponse>(
+      "/auth/2fa/enable",
+      body,
+      setupToken ? { headers: { "X-Setup-Token": setupToken } } : undefined,
+    ),
+
+  disable2fa: (body: TotpDisableRequest) =>
+    api.post<{ message: string }>("/auth/2fa/disable", body),
 
   signup: (body: SignupRequest) =>
     api.post<TokenResponse>("/auth/signup", body),
@@ -57,8 +96,13 @@ export const authApi = {
       new_password,
     }),
 
+  invitePreview: (token: string) =>
+    api.get<InvitePreview>(
+      `/auth/invite/preview?token=${encodeURIComponent(token)}`,
+    ),
+
   acceptInvite: (body: { token: string; full_name: string; password: string }) =>
-    api.post<TokenResponse>("/auth/accept-invite", body),
+    api.post<LoginResult>("/auth/accept-invite", body),
 
   confirmGoogleLink: (body: { link_token: string; password?: string }) =>
     api.post<TokenResponse>("/auth/oauth/google/link", body),

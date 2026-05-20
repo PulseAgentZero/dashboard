@@ -19,7 +19,18 @@ const OAUTH_ERROR_MESSAGES: Record<string, string> = {
   INVALID_STATE: "Your sign-in session expired. Please try again.",
   instance_org_exists:
     "This Entivia instance already has an organization. Sign in or ask your admin for an invite.",
+  invite_email_mismatch:
+    "Use the Google account for the email that received the invitation.",
+  invite_invalid: "This invitation link is invalid or expired.",
+  account_exists:
+    "An account with this email already exists. Sign in with your existing account.",
 };
+
+const INVITE_OAUTH_ERRORS = new Set([
+  "invite_email_mismatch",
+  "invite_invalid",
+  "account_exists",
+]);
 
 export default function OAuthCallbackContent() {
   const params = useSearchParams();
@@ -33,6 +44,15 @@ export default function OAuthCallbackContent() {
 
     const error = params.get("error");
     if (error) {
+      const inviteToken = params.get("invite_token");
+      if (INVITE_OAUTH_ERRORS.has(error) && inviteToken) {
+        const qs = new URLSearchParams({
+          token: inviteToken,
+          oauth_error: error,
+        });
+        router.replace(`/auth/accept-invite?${qs.toString()}`);
+        return;
+      }
       const code = params.get("code");
       const message =
         OAUTH_ERROR_MESSAGES[error] ??
@@ -60,6 +80,24 @@ export default function OAuthCallbackContent() {
         `/auth/oauth/complete-signup?pending_token=${encodeURIComponent(pendingToken)}`,
       );
       return;
+    }
+
+    if (oauthAction === "mfa_required") {
+      const mfaToken = params.get("mfa_token");
+      if (mfaToken) {
+        sessionStorage.setItem("mfa_token", mfaToken);
+        router.replace("/auth/login/verify-2fa");
+        return;
+      }
+    }
+
+    if (oauthAction === "setup_2fa") {
+      const setupToken = params.get("setup_token");
+      if (setupToken) {
+        sessionStorage.setItem("setup_2fa_token", setupToken);
+        router.replace("/auth/setup-2fa");
+        return;
+      }
     }
 
     const access = params.get("access_token");
@@ -93,7 +131,7 @@ function OAuthLoadingScreen() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-white">
       <div className="text-center space-y-3">
-        <Loader2 className="mx-auto h-8 w-8 animate-spin text-orange-500" />
+        <Loader2 className="mx-auto h-8 w-8 animate-spin text-blue-600" />
         <p className="text-[13px] text-slate-600">Signing you in…</p>
       </div>
     </div>

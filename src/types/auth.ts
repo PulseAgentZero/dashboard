@@ -24,6 +24,8 @@ export interface UserOut {
   last_login_at: string | null;
   created_at: string;
   profile_image_url?: string | null;
+  totp_enabled?: boolean;
+  is_org_owner?: boolean;
 }
 
 export interface OrgOut {
@@ -36,6 +38,7 @@ export interface OrgOut {
   created_at: string;
   logo_url?: string | null;
   tour_guide?: { completed?: boolean; version?: number; completed_at?: string | null };
+  require_2fa?: boolean;
 }
 
 export interface TokenResponse {
@@ -43,6 +46,49 @@ export interface TokenResponse {
   refresh_token: string;
   user: User;
   org: Org | null;
+}
+
+export interface MfaRequiredResponse {
+  status: "mfa_required";
+  mfa_token: string;
+  user: UserOut;
+}
+
+export type LoginResult = TokenResponse | MfaRequiredResponse;
+
+export function isMfaRequired(
+  data: LoginResult,
+): data is MfaRequiredResponse {
+  return "status" in data && data.status === "mfa_required";
+}
+
+export interface TotpSetupResponse {
+  secret: string;
+  otpauth_uri: string;
+}
+
+export interface MfaVerifyRequest {
+  mfa_token: string;
+  code: string;
+}
+
+export interface TotpEnableRequest {
+  code: string;
+}
+
+export interface TotpDisableRequest {
+  code: string;
+  password?: string;
+}
+
+export interface TotpEnableResponse {
+  message: string;
+  recovery_codes: string[];
+  totp_enabled: boolean;
+  access_token?: string;
+  refresh_token?: string;
+  user?: UserOut;
+  org?: OrgOut | null;
 }
 
 export interface MeResponse {

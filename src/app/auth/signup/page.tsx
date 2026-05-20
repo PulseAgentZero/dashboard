@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import { Google } from "../../../../public/icon/google";
 import FormField from "@/components/ui/form-field";
 import PasswordField from "@/components/ui/password-field";
-import AuthLayout from "@/components/auth/auth-layout";
+import { AuthSplitLayout } from "@/components/auth/auth-split-layout";
 import { useSignup } from "@/hooks/auth/use-signup";
 import { useAuthInstance } from "@/hooks/auth/use-auth-instance";
 import { initiateGoogleSignIn } from "@/lib/api/auth";
@@ -18,14 +18,8 @@ export default function SignupPage() {
   const [termsAccepted, setTermsAccepted] = useState(false);
   const { mutate: signup, isPending } = useSignup();
   const { fieldErrors, clearErrors, validate, handleApiError } = useFormValidation();
-
-  // Default to true while loading — form shows immediately, no loading flash
-  const { data: instance } = useAuthInstance();
+  const { data: instance, isLoading } = useAuthInstance();
   const registrationOpen = instance?.registration_open ?? true;
-
-  const closedMessage = isSelfHostedDeployment()
-    ? "This Entivia instance is already set up. Sign in with your account or ask an admin for an invite."
-    : "New organization registration is not available on this instance.";
 
   function requireTermsAccepted(): boolean {
     if (termsAccepted) return true;
@@ -33,11 +27,18 @@ export default function SignupPage() {
     return false;
   }
 
+  const closedMessage = isSelfHostedDeployment()
+    ? "This Entivia instance is already set up. Sign in with your account or ask an admin for an invite."
+    : "New organization registration is not available on this instance.";
+
   function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
     e.preventDefault();
     if (!requireTermsAccepted()) return;
     clearErrors();
-    const raw = Object.fromEntries(new FormData(e.currentTarget).entries()) as Record<string, string>;
+    const raw = Object.fromEntries(new FormData(e.currentTarget).entries()) as Record<
+      string,
+      string
+    >;
     const payload = validate(signupSchema, {
       full_name: raw.name,
       email: raw.email,
@@ -49,11 +50,21 @@ export default function SignupPage() {
   }
 
   return (
-    <AuthLayout
+    <AuthSplitLayout
       title="Create an account"
       subtitle="Get started with Entivia in minutes."
+      footer={
+        <p className="text-center text-[13px] text-slate-600">
+          Already have an account?{" "}
+          <a href="/auth/login" className="font-medium text-blue-600 hover:text-blue-500">
+            Sign in
+          </a>
+        </p>
+      }
     >
-      {registrationOpen ? (
+      {isLoading ? <p className="text-[13px] text-slate-500">Loading…</p> : null}
+
+      {registrationOpen && !isLoading ? (
         <form className="space-y-6" onSubmit={handleSubmit}>
           <div className="space-y-4">
             <FormField
@@ -94,19 +105,28 @@ export default function SignupPage() {
           <div className="flex items-start gap-3">
             <input
               id="accept-terms"
-              name="accept_terms"
               type="checkbox"
               checked={termsAccepted}
               onChange={(e) => setTermsAccepted(e.target.checked)}
-              className="mt-0.5 h-4 w-4 shrink-0 rounded border-slate-300 text-orange-600 focus:ring-orange-500"
+              className="mt-0.5 h-4 w-4 shrink-0 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
             />
             <label htmlFor="accept-terms" className="text-[13px] leading-snug text-slate-600">
               I agree to the{" "}
-              <Link href="/terms" target="_blank" rel="noopener noreferrer" className="font-medium text-orange-600 hover:text-orange-500">
+              <Link
+                href="/terms"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-medium text-blue-600 hover:text-blue-500"
+              >
                 Terms of Service
               </Link>{" "}
               and{" "}
-              <Link href="/privacy" target="_blank" rel="noopener noreferrer" className="font-medium text-orange-600 hover:text-orange-500">
+              <Link
+                href="/privacy"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-medium text-blue-600 hover:text-blue-500"
+              >
                 Privacy Policy
               </Link>
               .
@@ -116,7 +136,7 @@ export default function SignupPage() {
           <button
             type="submit"
             disabled={isPending || !termsAccepted}
-            className="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-[13px] font-semibold text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-1 focus:ring-offset-1 focus:ring-orange-500 transition duration-150 disabled:opacity-60 disabled:cursor-not-allowed"
+            className="flex w-full justify-center rounded-xl border border-transparent bg-blue-600 px-4 py-3 text-[13px] font-semibold text-white shadow-sm transition duration-150 hover:bg-blue-700 focus:ring-1 focus:ring-blue-500 focus:ring-offset-1 focus:outline-none disabled:cursor-not-allowed disabled:opacity-60"
           >
             {isPending ? "Creating account…" : "Create account"}
           </button>
@@ -126,7 +146,7 @@ export default function SignupPage() {
               <div className="w-full border-t border-slate-200" />
             </div>
             <div className="relative flex justify-center text-[13px]">
-              <span className="px-2 bg-white text-slate-500">Or continue with</span>
+              <span className="bg-white px-2 text-slate-500">Or continue with</span>
             </div>
           </div>
 
@@ -137,24 +157,19 @@ export default function SignupPage() {
               initiateGoogleSignIn("signup");
             }}
             disabled={!termsAccepted}
-            className="w-full flex items-center justify-center gap-3 py-3 px-4 border border-slate-200 rounded-xl bg-white text-[12px] font-medium text-slate-700 hover:bg-slate-50 transition duration-150 disabled:cursor-not-allowed disabled:opacity-60"
+            className="flex w-full items-center justify-center gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3 text-[12px] font-medium text-slate-700 transition duration-150 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
           >
             <Google />
             Sign up with Google
           </button>
         </form>
-      ) : (
+      ) : null}
+
+      {!registrationOpen && !isLoading ? (
         <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-[13px] text-amber-900">
           {closedMessage}
         </div>
-      )}
-
-      <p className="text-center text-[13px] text-slate-600">
-        Already have an account?{" "}
-        <a href="/auth/login" className="font-medium text-orange-600 hover:text-orange-500">
-          Sign in
-        </a>
-      </p>
-    </AuthLayout>
+      ) : null}
+    </AuthSplitLayout>
   );
 }

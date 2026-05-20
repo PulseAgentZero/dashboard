@@ -17,6 +17,8 @@ export type OrgProfile = {
   logo_url: string | null;
   tour_guide: TourGuideState;
   onboarding_done: boolean;
+  require_2fa?: boolean;
+  is_org_owner?: boolean;
   created_at: string;
   updated_at: string;
 };

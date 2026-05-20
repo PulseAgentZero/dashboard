@@ -93,13 +93,22 @@ async function request<T>(
 
   if (!res.ok) {
     const body = await res.json().catch(() => ({}));
-    const err = body.error ?? {};
-    const apiErr = new ApiError(
-      res.status,
-      err.code ?? "UNKNOWN",
-      err.message ?? res.statusText,
-      err.fields,
-    );
+    const err = body.error ?? body.detail ?? {};
+    const detail =
+      typeof err === "object" && err !== null && !("code" in err) && "detail" in body
+        ? body.detail
+        : err;
+    const errObj =
+      typeof detail === "object" && detail !== null ? detail : err;
+    const code = errObj.code ?? "UNKNOWN";
+    const rawMessage = errObj.message ?? res.statusText;
+    const fields = errObj.fields as Record<string, string> | undefined;
+    const safeMessage =
+      res.status >= 500 || code === "INTERNAL_ERROR"
+        ? "Something went wrong. Please try again."
+        : rawMessage;
+
+    const apiErr = new ApiError(res.status, code, safeMessage, fields);
 
     if (res.status === 401 && !retried) {
       tokens.clear();
@@ -118,11 +127,23 @@ async function request<T>(
 
 export const api = {
   get: <T>(path: string) => request<T>(path),
-  post: <T>(path: string, body: unknown) =>
-    request<T>(path, { method: "POST", body: JSON.stringify(body) }),
+  post: <T>(
+    path: string,
+    body: unknown,
+    options?: { headers?: Record<string, string> },
+  ) =>
+    request<T>(path, {
+      method: "POST",
+      body: JSON.stringify(body),
+      headers: options?.headers,
+    }),
+  delete: <T>(path: string, body?: unknown) =>
+    request<T>(path, {
+      method: "DELETE",
+      ...(body !== undefined ? { body: JSON.stringify(body) } : {}),
+    }),
   put: <T>(path: string, body: unknown) =>
     request<T>(path, { method: "PUT", body: JSON.stringify(body) }),
   patch: <T>(path: string, body: unknown) =>
     request<T>(path, { method: "PATCH", body: JSON.stringify(body) }),
-  delete: <T>(path: string) => request<T>(path, { method: "DELETE" }),
 };
