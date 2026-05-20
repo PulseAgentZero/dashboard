@@ -35,6 +35,10 @@ export function NewConnectionSetup({ catalogItem }: Props) {
           <ConnectionForm
             catalogItem={catalogItem}
             onSuccess={(connection) => {
+              if (!connection) {
+                router.push("/dashboard/connections");
+                return;
+              }
               // SQL DBs need the user to pick an entity table; redirect to the
               // wizard. File sources (CSV, Google Sheets, S3) auto-map in the
               // worker and are editable from the data-mapping page afterwards —

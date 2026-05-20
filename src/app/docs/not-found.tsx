@@ -23,8 +23,8 @@ export default function DocsNotFound() {
           That doc doesn&apos;t exist
         </h1>
         <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
-          The link may be out of date, or the page has been renamed. Try the sidebar, or
-          jump back to the documentation home.
+          The link may be out of date, or the page was renamed. Use the sidebar to browse
+          topics, or return to the documentation home.
         </p>
 
         <div className="mt-6 flex flex-wrap justify-center gap-2">

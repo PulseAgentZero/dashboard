@@ -203,7 +203,7 @@ export function SchemaMappingWizard({
         <p className="text-sm font-semibold text-rose-900">Could not read schema</p>
         <p className="mx-auto mt-2 max-w-md text-sm text-rose-800/90">
           {isFileSource
-            ? "We couldn't read this file. Re-upload it from Connections and try again."
+            ? "We couldn't read this file or workbook. Re-upload it from Connections and try again."
             : "Test the connection from Connections, then try again."}
         </p>
       </div>

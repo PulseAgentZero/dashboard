@@ -3,6 +3,7 @@ import { uploadMultipart } from "./upload";
 import type {
   ConnectorCatalogItem,
   ConnectionResponse,
+  FileUploadBatchResponse,
   TestConnectionResponse,
   EntityDetail,
   EntityRiskHistory,
@@ -40,6 +41,15 @@ export const connectionsFullApi = {
       resolveConnectionUploadPath(uploadEndpoint),
       fd,
     );
+  },
+  uploadBatch: (files: File[], uploadEndpoint: string) => {
+    const base = resolveConnectionUploadPath(uploadEndpoint);
+    const batchPath = base.endsWith("/upload") ? `${base}/batch` : "/connections/upload/batch";
+    const fd = new FormData();
+    for (const file of files) {
+      fd.append("files", file);
+    }
+    return uploadMultipart<FileUploadBatchResponse>(batchPath, fd);
   },
   test: (id: string) =>
     api.post<TestConnectionResponse>(`/connections/${id}/test`, {}),

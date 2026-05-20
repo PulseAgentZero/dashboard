@@ -36,6 +36,17 @@ export type CatalogField = {
   help?: string;
 };
 
+export type FileUploadBatchError = {
+  filename: string;
+  message: string;
+  code?: string | null;
+};
+
+export type FileUploadBatchResponse = {
+  connections: ConnectionResponse[];
+  errors: FileUploadBatchError[];
+};
+
 export type ConnectorCatalogItem = {
   connector_type: string;
   display_name: string;
@@ -43,6 +54,7 @@ export type ConnectorCatalogItem = {
   description: string;
   fields: CatalogField[];
   upload_endpoint?: string;
+  upload_accept?: string[];
   notes?: string;
 };
 

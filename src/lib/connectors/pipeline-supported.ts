@@ -20,6 +20,7 @@ const SQL_ENTITY_MAPPING_CONNECTORS = new Set([
  */
 const FILE_ENTITY_MAPPING_CONNECTORS = new Set([
   "csv",
+  "excel",
   "google_sheets",
   "s3",
 ]);

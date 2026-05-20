@@ -11,13 +11,14 @@ import type {
 import {
   useCreateConnection,
   useUploadConnection,
+  useUploadConnectionsBatch,
 } from "@/hooks/connections/use-connections";
 import {
   catalogFieldDefaults,
   visibleCatalogFields,
 } from "@/lib/connectors/catalog-field-utils";
 import { enrichConnectorCatalogItem } from "@/lib/connectors/catalog-enrich";
-import { CsvUploadField } from "./csv-upload-field";
+import { FileUploadField } from "./file-upload-field";
 
 const SELECT_LABELS: Record<string, string> = {
   api_key: "API key",
@@ -121,11 +122,12 @@ export function ConnectionForm({ catalogItem: rawCatalogItem, onSuccess, onCance
   );
 
   const { mutate: create, isPending: creating } = useCreateConnection();
-  const { mutate: upload, isPending: uploading } = useUploadConnection();
-  const isPending = creating || uploading;
+  const { mutate: upload, isPending: uploadingOne } = useUploadConnection();
+  const { mutate: uploadBatch, isPending: uploadingBatch } = useUploadConnectionsBatch();
+  const isPending = creating || uploadingOne || uploadingBatch;
   const usesUpload = Boolean(catalogItem.upload_endpoint);
 
-  const [csvFile, setCsvFile] = useState<File | null>(null);
+  const [uploadFiles, setUploadFiles] = useState<File[]>([]);
   const [fields, setFields] = useState<Record<string, string>>(() => ({
     ...catalogFieldDefaults(catalogItem.fields),
   }));
@@ -147,22 +149,40 @@ export function ConnectionForm({ catalogItem: rawCatalogItem, onSuccess, onCance
     }
 
     if (usesUpload) {
-      if (!csvFile) {
-        toast.error("Select a CSV file to upload");
+      if (uploadFiles.length === 0) {
+        toast.error("Select a file to upload");
         return;
       }
       if (!catalogItem.upload_endpoint) {
         toast.error("Upload is not configured for this connector");
         return;
       }
-      upload(
+
+      if (uploadFiles.length === 1) {
+        const file = uploadFiles[0]!;
+        upload(
+          {
+            file,
+            name: name || file.name,
+            connectorType: catalogItem.connector_type,
+            uploadEndpoint: catalogItem.upload_endpoint,
+          },
+          { onSuccess: (connection) => onSuccess?.(connection) },
+        );
+        return;
+      }
+
+      uploadBatch(
         {
-          file: csvFile,
-          name,
-          connectorType: catalogItem.connector_type,
+          files: uploadFiles,
           uploadEndpoint: catalogItem.upload_endpoint,
         },
-        { onSuccess: (connection) => onSuccess?.(connection) },
+        {
+          onSuccess: (result) => {
+            const first = result.connections[0];
+            onSuccess?.(first);
+          },
+        },
       );
       return;
     }
@@ -186,28 +206,37 @@ export function ConnectionForm({ catalogItem: rawCatalogItem, onSuccess, onCance
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <div>
-        <label className="mb-1 block text-xs font-semibold text-slate-600">
-          Connection name
-        </label>
-        <FieldInput
-          field={{
-            key: "name",
-            label: "Connection name",
-            type: "string",
-            required: false,
-            placeholder: catalogItem.display_name,
-          }}
-          value={fields.name ?? ""}
-          onChange={(v) => setFields((f) => ({ ...f, name: v }))}
-        />
-      </div>
+      {usesUpload && uploadFiles.length > 1 ? (
+        <p className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-600">
+          Each file becomes its own connection (named after the file). All are queryable
+          in Studio once active.
+        </p>
+      ) : (
+        <div>
+          <label className="mb-1 block text-xs font-semibold text-slate-600">
+            Connection name
+          </label>
+          <FieldInput
+            field={{
+              key: "name",
+              label: "Connection name",
+              type: "string",
+              required: false,
+              placeholder: catalogItem.display_name,
+            }}
+            value={fields.name ?? ""}
+            onChange={(v) => setFields((f) => ({ ...f, name: v }))}
+          />
+        </div>
+      )}
 
       {usesUpload && (
-        <CsvUploadField
-          file={csvFile}
-          onFileChange={setCsvFile}
+        <FileUploadField
+          files={uploadFiles}
+          onFilesChange={setUploadFiles}
           disabled={isPending}
+          accept={catalogItem.upload_accept}
+          multiple
         />
       )}
 
@@ -260,7 +289,9 @@ export function ConnectionForm({ catalogItem: rawCatalogItem, onSuccess, onCance
               ? "Uploading…"
               : "Testing & saving…"
             : usesUpload
-              ? "Upload & save connection"
+              ? uploadFiles.length > 1
+                ? `Upload ${uploadFiles.length} files`
+                : "Upload & save connection"
               : "Test & save connection"}
         </button>
       </div>
