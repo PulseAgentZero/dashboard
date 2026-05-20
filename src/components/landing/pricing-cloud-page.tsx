@@ -45,6 +45,7 @@ export function PricingCloudPage() {
     if (!reference || verifiedRef.current === reference) return;
     if (!tokens.getAccess()) return;
     verifiedRef.current = reference;
+    router.replace("/pricing", { scroll: false });
     verifyPayment(reference, {
       onSuccess: () => {
         router.replace("/pricing");
@@ -76,7 +77,7 @@ export function PricingCloudPage() {
           </div>
         )}
 
-        {reference && verifying && (
+        {verifying && (
           <div className="mx-auto mb-8 flex max-w-md items-center justify-center gap-2 rounded-xl border border-zinc-800 bg-zinc-900/80 px-5 py-4 text-sm text-zinc-300">
             <Loader2 size={16} className="animate-spin" />
             Verifying payment…

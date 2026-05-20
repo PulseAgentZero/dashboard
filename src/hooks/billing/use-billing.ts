@@ -109,3 +109,33 @@ export function useVerifySelfHostedPayment() {
     },
   });
 }
+
+export function useCancelSubscription() {
+  const qc = useQueryClient();
+
+  return useMutation({
+    mutationFn: () => billingApi.cancelSubscription(),
+    onSuccess: (data) => {
+      void qc.invalidateQueries({ queryKey: ["me"] });
+      void qc.invalidateQueries({ queryKey: ["usage"] });
+      void qc.invalidateQueries({ queryKey: ["billing", "subscription"] });
+      void qc.invalidateQueries({ queryKey: ["organization"] });
+      const planLabel = planDisplayName(data.effective_plan ?? data.plan);
+      if (data.next_payment_date) {
+        const end = new Date(data.next_payment_date).toLocaleDateString(undefined, {
+          dateStyle: "medium",
+        });
+        toast.success(
+          `Subscription cancelled. ${planLabel} access continues until ${end}.`,
+        );
+      } else {
+        toast.success("Subscription cancelled.");
+      }
+    },
+    onError: (e: unknown) => {
+      const msg =
+        e instanceof ApiError ? e.message : "Could not cancel subscription";
+      toast.error(msg);
+    },
+  });
+}

@@ -21,9 +21,13 @@ export function PricingSelfHostedPage() {
   const searchParams = useSearchParams();
   const reference = searchParams.get("reference");
   const { user, isAuthenticated, isLoading: authLoading } = useAuth();
-  const [email, setEmail] = useState("");
-  const [licenseKey, setLicenseKey] = useState<string | null>(null);
-  const [verifyMessage, setVerifyMessage] = useState<string | null>(null);
+  const [email, setEmail] = useState<string | null>(null);
+  const [licenseKey, setLicenseKey] = useState<string | null>(() =>
+    typeof window === "undefined" ? null : sessionStorage.getItem("pulse_license_key"),
+  );
+  const [verifyMessage, setVerifyMessage] = useState<string | null>(() =>
+    typeof window === "undefined" ? null : sessionStorage.getItem("pulse_license_message"),
+  );
   const verifiedRef = useRef<string | null>(null);
 
   const { mutate: startCheckout, isPending: checkoutPending } =
@@ -34,22 +38,10 @@ export function PricingSelfHostedPage() {
   const cloud = isCloudDeployment();
 
   useEffect(() => {
-    if (user?.email) setEmail(user.email);
-  }, [user?.email]);
-
-  useEffect(() => {
-    const stored = sessionStorage.getItem("pulse_license_key");
-    const storedMsg = sessionStorage.getItem("pulse_license_message");
-    if (stored) {
-      setLicenseKey(stored);
-      setVerifyMessage(storedMsg);
-    }
-  }, []);
-
-  useEffect(() => {
     if (!reference || verifiedRef.current === reference) return;
     if (!tokens.getAccess()) return;
     verifiedRef.current = reference;
+    router.replace("/pricing/self-hosted", { scroll: false });
     verifyPayment(reference, {
       onSuccess: (data) => {
         if (data.license_key) {
@@ -67,13 +59,14 @@ export function PricingSelfHostedPage() {
 
   function handlePurchase(e: React.FormEvent) {
     e.preventDefault();
-    if (!email.trim()) return;
+    const purchaseEmail = email?.trim() || user?.email?.trim();
+    if (!purchaseEmail) return;
     if (!isAuthenticated) {
       router.push("/auth/login?redirect=/pricing/self-hosted");
       return;
     }
     const callbackUrl = `${window.location.origin}/pricing/self-hosted`;
-    startCheckout({ email: email.trim(), callback_url: callbackUrl });
+    startCheckout({ email: purchaseEmail, callback_url: callbackUrl });
   }
 
   return (
@@ -93,7 +86,7 @@ export function PricingSelfHostedPage() {
           </div>
         )}
 
-        {reference && verifying && (
+        {verifying && (
           <div className="mx-auto mb-8 flex max-w-md items-center justify-center gap-2 rounded-xl border border-zinc-800 bg-zinc-900/80 px-5 py-4 text-sm text-zinc-300">
             <Loader2 size={16} className="animate-spin" />
             Verifying license payment…
@@ -156,7 +149,7 @@ export function PricingSelfHostedPage() {
                 <input
                   type="email"
                   required
-                  value={email}
+                  value={email ?? user?.email ?? ""}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full rounded-lg border border-zinc-700 bg-zinc-900 px-3 py-2.5 text-sm text-white outline-none focus:border-indigo-500"
                   placeholder="admin@yourcompany.com"
