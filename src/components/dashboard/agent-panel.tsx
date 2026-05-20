@@ -1,5 +1,5 @@
 import { SendHorizonal } from "lucide-react";
-import { agentMessages } from "@/lib/demo-data";
+import { agentMessages } from "@/lib/demo.data";
 
 export function AgentPanel() {
   return (
