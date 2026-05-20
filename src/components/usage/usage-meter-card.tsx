@@ -73,6 +73,21 @@ type Props = {
   slot: UsageSlot | undefined;
 };
 
+function resetCopy(meter: MeterDef, slot: UsageSlot | undefined): string {
+  if (meter.period === "always") return "Active resources";
+  if (!slot?.resets_at) {
+    return meter.period === "monthly" ? "Resets monthly" : "Resets daily";
+  }
+
+  const resetDate = new Date(slot.resets_at).toLocaleDateString(undefined, {
+    dateStyle: "medium",
+  });
+  if (meter.period === "daily") return `Resets ${resetDate}`;
+  return slot.window === "billing_cycle"
+    ? `Resets on billing cycle, ${resetDate}`
+    : `Resets ${resetDate}`;
+}
+
 export function UsageMeterCard({ meter, slot }: Props) {
   const status = getMeterStatus(slot);
   const styles = STATUS_STYLES[status];
@@ -95,13 +110,7 @@ export function UsageMeterCard({ meter, slot }: Props) {
       </div>
 
       <p className="mt-3 text-sm font-semibold text-slate-900">{meter.label}</p>
-      <p className="mt-0.5 text-[11px] text-slate-500">
-        {meter.period === "monthly"
-          ? "Resets monthly"
-          : meter.period === "daily"
-            ? "Resets daily"
-            : "Active resources"}
-      </p>
+      <p className="mt-0.5 text-[11px] text-slate-500">{resetCopy(meter, slot)}</p>
 
       <div className="mt-4 flex items-center gap-3">
         {status === "unlimited" ? (

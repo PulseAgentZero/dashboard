@@ -3,6 +3,8 @@ import { api } from "./client";
 export type UsageSlot = {
   used: number;
   limit: number | null; // null = unlimited
+  resets_at?: string;
+  window?: "calendar_month" | "billing_cycle";
 };
 
 export type PlanUsage = {

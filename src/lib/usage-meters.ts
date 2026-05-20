@@ -113,7 +113,11 @@ export const METER_GROUPS = [
     title: "Access & integrations",
     description: "Data connections, keys, webhooks, and seats",
   },
-  { id: "automation" as const, title: "Automation", description: "Resets on the 1st of each month" },
+  {
+    id: "automation" as const,
+    title: "Automation",
+    description: "Monthly quotas reset with your billing cycle",
+  },
   { id: "studio" as const, title: "Entivia Studio", description: "Dashboards and query executions" },
 ];
 
