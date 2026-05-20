@@ -290,7 +290,7 @@ export function PlaygroundPage() {
   );
 
   return (
-    <div className="flex h-[calc(100vh-64px)] flex-col overflow-hidden lg:flex-row">
+    <div className="flex h-[calc(100dvh-5rem)] flex-col overflow-hidden lg:flex-row">
 
       {/* ── Mobile/tablet tab bar ──────────────────────────────────── */}
       <div className="flex shrink-0 border-b border-slate-200 bg-white lg:hidden">

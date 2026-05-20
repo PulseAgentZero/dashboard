@@ -176,7 +176,7 @@ function StatPill({
 }) {
   return (
     <div
-      className={`min-w-[96px] rounded-xl border px-3.5 py-2 transition-colors ${
+      className={`min-w-0 flex-1 rounded-xl border px-3.5 py-2 transition-colors sm:min-w-[96px] sm:flex-none ${
         accent
           ? "border-orange-100 bg-orange-50/60"
           : "border-slate-200 bg-white"

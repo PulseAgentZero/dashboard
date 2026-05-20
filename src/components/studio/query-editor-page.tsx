@@ -38,6 +38,7 @@ import {
   useVisualizations,
 } from "@/hooks/studio/use-studio-visualizations";
 import { useDeleteConfirm } from "@/hooks/use-delete-confirm";
+import { useMediaQuery } from "@/hooks/use-media-query";
 import { studioApi } from "@/lib/api/studio-api";
 import { tokens } from "@/lib/auth-tokens";
 import { downloadQueryResultAsCsv } from "@/lib/studio/export-result-csv";
@@ -74,6 +75,8 @@ export function QueryEditorPage({ queryId }: Props) {
   const [explainText, setExplainText] = useState<string | null>(null);
   const [activeRunId, setActiveRunId] = useState<string | null>(null);
   const [connectionId, setConnectionId] = useState<string | null>(null);
+  const [mobilePanel, setMobilePanel] = useState<"schema" | "editor" | "runs">("editor");
+  const isDesktop = useMediaQuery("(min-width: 1024px)");
   const editorInsertRef = useRef<((text: string) => void) | null>(null);
 
   const handleSchemaInsert = useCallback((text: string) => {
@@ -253,7 +256,7 @@ export function QueryEditorPage({ queryId }: Props) {
   const isViewerEditor = isNew && !canCreateStudioContent(user?.role);
 
   return (
-    <div className="flex min-h-[calc(100vh-10rem)] flex-col gap-4">
+    <div className="flex min-h-[calc(100dvh-10rem)] flex-col gap-4">
       <div className="space-y-3">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="min-w-0">
@@ -340,8 +343,37 @@ export function QueryEditorPage({ queryId }: Props) {
         </div>
       )}
 
-      <div className="flex min-h-0 flex-1 gap-4">
-        <div className="w-56 shrink-0">
+      {!isDesktop && (
+        <div className="flex gap-1 overflow-x-auto no-scrollbar rounded-lg border border-slate-200 bg-white p-1">
+          {(
+            [
+              ["schema", "Schema"],
+              ["editor", "Editor"],
+              ...(queryId ? [["runs", "Runs"]] as const : []),
+            ] as const
+          ).map(([id, label]) => (
+            <button
+              key={id}
+              type="button"
+              onClick={() => setMobilePanel(id as "schema" | "editor" | "runs")}
+              className={`shrink-0 rounded-md px-3 py-1.5 text-xs font-semibold ${
+                mobilePanel === id
+                  ? "bg-indigo-600 text-white"
+                  : "text-slate-600 hover:bg-slate-50"
+              }`}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+      )}
+
+      <div className="flex min-h-0 flex-1 flex-col gap-4 lg:flex-row">
+        <div
+          className={`w-full shrink-0 lg:w-56 ${
+            !isDesktop && mobilePanel !== "schema" ? "hidden" : ""
+          } ${!isDesktop ? "min-h-[50dvh]" : ""}`}
+        >
           <SchemaBrowser
             tables={schema?.tables ?? []}
             isLoading={schemaLoading || refreshSchema.isPending}
@@ -350,7 +382,11 @@ export function QueryEditorPage({ queryId }: Props) {
             onInsert={handleSchemaInsert}
           />
         </div>
-        <div className="flex min-w-0 flex-1 flex-col gap-3">
+        <div
+          className={`flex min-w-0 flex-1 flex-col gap-3 ${
+            !isDesktop && mobilePanel !== "editor" ? "hidden lg:flex" : ""
+          }`}
+        >
           <ParamInputs
             params={params.length ? params : []}
             values={paramValues}
@@ -367,7 +403,11 @@ export function QueryEditorPage({ queryId }: Props) {
           <ResultsTable result={result} />
         </div>
         {queryId && (
-          <div className="w-48 shrink-0 overflow-y-auto rounded-lg border border-slate-200 bg-white p-2">
+          <div
+            className={`w-full shrink-0 overflow-y-auto rounded-lg border border-slate-200 bg-white p-2 lg:w-48 ${
+              !isDesktop && mobilePanel !== "runs" ? "hidden" : ""
+            } ${!isDesktop ? "min-h-[40dvh]" : ""}`}
+          >
             <p className="mb-2 flex items-center gap-1 text-xs font-semibold uppercase text-slate-500">
               <History size={12} />
               Runs

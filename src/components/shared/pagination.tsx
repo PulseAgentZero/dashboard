@@ -29,7 +29,7 @@ export function Pagination({
 
   return (
     <div
-      className={`flex items-center justify-between border-t border-slate-100 px-5 py-3 ${className}`}
+      className={`flex flex-col gap-3 border-t border-slate-100 px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-5 ${className}`}
     >
       <p className="text-xs text-slate-400">
         Page {page} of {totalPages}
@@ -40,17 +40,21 @@ export function Pagination({
           type="button"
           disabled={page <= 1}
           onClick={() => onPageChange(page - 1)}
-          className="flex items-center gap-1 rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-50 disabled:opacity-40"
+          className="flex items-center justify-center gap-1 rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-50 disabled:opacity-40 sm:min-w-0"
+          aria-label="Previous page"
         >
-          <ChevronLeft size={13} /> Prev
+          <ChevronLeft size={13} />
+          <span className="hidden sm:inline">Prev</span>
         </button>
         <button
           type="button"
           disabled={page >= totalPages}
           onClick={() => onPageChange(page + 1)}
-          className="flex items-center gap-1 rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-50 disabled:opacity-40"
+          className="flex items-center justify-center gap-1 rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-50 disabled:opacity-40 sm:min-w-0"
+          aria-label="Next page"
         >
-          Next <ChevronRight size={13} />
+          <span className="hidden sm:inline">Next</span>
+          <ChevronRight size={13} />
         </button>
       </div>
     </div>

@@ -720,7 +720,7 @@ export function SettingsPage() {
   const [tab, setTab] = useState<Tab>("org");
 
   return (
-    <div className="mx-auto max-w-8xl space-y-5">
+    <div className="mx-auto w-full max-w-[1400px] space-y-5">
       <div>
         <h1 className="text-xl font-semibold text-slate-900">Settings</h1>
         <p className="mt-0.5 text-sm text-slate-500">
@@ -729,12 +729,12 @@ export function SettingsPage() {
       </div>
 
       <div className="rounded-xl border border-slate-200 bg-white">
-        <div className="flex flex-wrap border-b border-slate-100 px-5 pt-4">
+        <div className="flex gap-1 overflow-x-auto border-b border-slate-100 px-4 pt-4 no-scrollbar lg:flex-wrap lg:overflow-visible lg:px-5">
           {visibleTabs.map(({ id, label, icon: Icon }) => (
             <button
               key={id}
               onClick={() => setTab(id)}
-              className={`flex items-center gap-2 rounded-t-lg px-4 py-2 text-sm font-semibold transition-colors ${
+              className={`flex shrink-0 items-center gap-2 rounded-t-lg px-4 py-2 text-sm font-semibold transition-colors ${
                 tab === id
                   ? "border-b-2 border-blue-600 text-blue-600"
                   : "text-slate-500 hover:text-slate-700"

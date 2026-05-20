@@ -55,9 +55,9 @@ export function TrendsPanel() {
       </div>
 
       {isLoading ? (
-        <div className="h-44 animate-pulse rounded-lg bg-slate-100" />
+        <div className="h-48 animate-pulse rounded-lg bg-slate-100 md:h-64" />
       ) : raw.length === 0 ? (
-        <div className="flex h-44 flex-col items-center justify-center rounded-lg bg-slate-50 px-4 text-center">
+        <div className="flex h-48 flex-col items-center justify-center rounded-lg bg-slate-50 px-4 text-center md:h-64">
           <p className="text-sm font-medium text-slate-600">No trend data yet</p>
           <p className="mt-1 text-xs text-slate-400">
             Run a pipeline to populate weekly risk scores.
@@ -65,7 +65,7 @@ export function TrendsPanel() {
         </div>
       ) : (
         /* Chart container: added relative group for future touch-tooltips if needed */
-        <div className="flex h-44 items-end gap-1 rounded-lg bg-slate-50 px-3 pb-3 pt-4">
+        <div className="flex h-48 items-end gap-1 rounded-lg bg-slate-50 px-3 pb-3 pt-4 md:h-64">
           {raw.map((v, i) => (
             <div key={i} className="flex h-full flex-1 flex-col justify-end">
               <div

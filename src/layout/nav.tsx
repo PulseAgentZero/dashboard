@@ -58,7 +58,9 @@ export default function Nav() {
 
         {/* Mobile: current page name only */}
         {crumb && (
-          <span className="text-[13px] font-semibold text-slate-700 lg:hidden">{crumb}</span>
+          <span className="min-w-0 truncate text-[13px] font-semibold text-slate-700 lg:hidden">
+            {crumb}
+          </span>
         )}
 
         {/* Desktop: Entivia / crumb */}

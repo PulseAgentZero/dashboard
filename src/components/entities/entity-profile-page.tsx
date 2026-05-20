@@ -29,7 +29,7 @@ function SkeletonBlock({ className }: { className?: string }) {
 function RiskHistoryChart({ points }: { points: { risk_score: number; recorded_at: string }[] }) {
   if (points.length === 0) {
     return (
-      <div className="flex h-40 items-center justify-center text-sm text-slate-400">
+      <div className="flex h-48 items-center justify-center text-sm text-slate-400 md:h-64">
         No history data available.
       </div>
     );
@@ -39,7 +39,7 @@ function RiskHistoryChart({ points }: { points: { risk_score: number; recorded_a
   const recent = points.slice(-30);
 
   return (
-    <div className="flex h-40 items-end gap-1 pt-6">
+    <div className="flex h-48 items-end gap-1 pt-6 md:h-64">
       {recent.map((p, i) => {
         const pct = (p.risk_score / max) * 100;
         const color =
@@ -67,9 +67,9 @@ function ProfileDataTable({ data }: { data: Record<string, unknown> }) {
   if (entries.length === 0) return <p className="text-sm text-slate-400">No profile data.</p>;
 
   return (
-    <dl className="grid gap-x-6 gap-y-4 grid-cols-1 xs:grid-cols-2">
+    <dl className="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2">
       {entries.map(([k, v]) => (
-        <div key={k} className="flex flex-col border-b border-slate-50 pb-2 xs:border-0 xs:pb-0">
+        <div key={k} className="flex flex-col border-b border-slate-50 pb-2 sm:border-0 sm:pb-0">
           <dt className="text-[10px] font-semibold uppercase tracking-wide text-slate-400">{humanizeKey(k)}</dt>
           <dd className="mt-0.5 text-sm font-medium text-slate-700 break-words">{v}</dd>
         </div>
@@ -193,7 +193,7 @@ export function EntityProfilePage() {
       )}
 
       {/* Main split grid structure layout */}
-      <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_320px]">
+      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_320px]">
         <div className="space-y-4">
           {/* Risk narrative */}
           {!isLoading && entity?.risk_narrative && (

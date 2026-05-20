@@ -114,7 +114,7 @@ export function UsageMeterCard({ meter, slot }: Props) {
 
       <div className="mt-4 flex items-center gap-3">
         {status === "unlimited" ? (
-          <div className="flex h-[76px] w-[76px] shrink-0 items-center justify-center rounded-full bg-emerald-50 ring-1 ring-emerald-100">
+          <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-emerald-50 ring-1 ring-emerald-100 sm:h-20 sm:w-20">
             <Infinity size={26} className="text-emerald-600" />
           </div>
         ) : (

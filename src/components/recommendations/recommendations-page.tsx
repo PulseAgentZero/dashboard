@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { TrendingUp, Zap } from "lucide-react";
+import { Check, TrendingUp, X, Zap, ArrowUp } from "lucide-react";
 import { Pagination } from "@/components/shared/pagination";
 import { RiskPill } from "@/components/shared/risk-pill";
 import { useRecommendations } from "@/hooks/recommendations/use-recommendations";
@@ -120,7 +120,7 @@ export function RecommendationsPage() {
         {/* Tabs + urgency filter with touch-friendly responsive layout */}
         <div className="px-4 pt-4 sm:px-5">
           <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-            <div className="flex gap-0.5 overflow-x-auto pb-2 md:pb-0 scrollbar-none">
+            <div className="flex gap-0.5 overflow-x-auto pb-2 md:pb-0 no-scrollbar">
               {STATUS_TABS.map((t) => (
                 <button
                   key={t}
@@ -135,7 +135,7 @@ export function RecommendationsPage() {
                 </button>
               ))}
             </div>
-            <div className="flex gap-1 overflow-x-auto pb-3 md:pb-0 scrollbar-none">
+            <div className="flex gap-1 overflow-x-auto pb-3 md:pb-0 no-scrollbar">
               {URGENCY_FILTERS.map((u) => (
                 <button
                   key={u}
@@ -238,23 +238,35 @@ export function RecommendationsPage() {
                       <button
                         disabled={busy}
                         onClick={() => action({ id: rec.id })}
-                        className="flex-1 sm:flex-none justify-center text-center whitespace-nowrap flex items-center gap-1.5 rounded-lg bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white hover:bg-slate-700 disabled:opacity-50 transition-colors"
+                        aria-label="Mark as done"
+                        className="flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white hover:bg-slate-700 disabled:opacity-50 sm:flex-none"
                       >
-                        {isActioning ? "Marking done…" : "Mark as done"}
+                        <Check size={14} className="md:hidden" />
+                        <span className="hidden md:inline">
+                          {isActioning ? "Marking done…" : "Mark as done"}
+                        </span>
                       </button>
                       <button
                         disabled={busy}
                         onClick={() => escalate(rec.id)}
-                        className="flex-1 sm:flex-none justify-center text-center whitespace-nowrap flex items-center gap-1.5 rounded-lg border border-amber-200 px-3 py-1.5 text-xs font-semibold text-amber-700 hover:bg-amber-50 disabled:opacity-50 transition-colors"
+                        aria-label="Escalate"
+                        className="flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-amber-200 px-3 py-1.5 text-xs font-semibold text-amber-700 hover:bg-amber-50 disabled:opacity-50 sm:flex-none"
                       >
-                        {isEscalating ? "Escalating…" : "Escalate"}
+                        <ArrowUp size={14} className="md:hidden" />
+                        <span className="hidden md:inline">
+                          {isEscalating ? "Escalating…" : "Escalate"}
+                        </span>
                       </button>
                       <button
                         disabled={busy}
                         onClick={() => dismiss({ id: rec.id })}
-                        className="flex-1 sm:flex-none justify-center text-center whitespace-nowrap flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-50 disabled:opacity-50 transition-colors"
+                        aria-label="Dismiss"
+                        className="flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-50 disabled:opacity-50 sm:flex-none"
                       >
-                        {isDismissing ? "Dismissing…" : "Dismiss"}
+                        <X size={14} className="md:hidden" />
+                        <span className="hidden md:inline">
+                          {isDismissing ? "Dismissing…" : "Dismiss"}
+                        </span>
                       </button>
                     </div>
                     <Link

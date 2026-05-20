@@ -157,7 +157,7 @@ export function ApiKeysPage() {
       ) : (
         <div className="divide-y divide-slate-100 rounded-xl border border-slate-200 bg-white">
           {keys.map((k) => (
-            <div key={k.id} className="flex items-center gap-4 px-4 py-3.5">
+            <div key={k.id} className="flex flex-col gap-3 px-4 py-3.5 md:flex-row md:items-center md:gap-4">
               <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-slate-100">
                 <Key size={14} className="text-slate-500" />
               </div>
@@ -176,7 +176,7 @@ export function ApiKeysPage() {
                   </span>
                 </div>
               </div>
-              <div className="shrink-0 text-right">
+              <div className="flex items-center justify-between gap-2 md:block md:shrink-0 md:text-right">
                 <p className="text-xs text-slate-400">
                   {k.last_used_at
                     ? `Last used ${new Date(k.last_used_at).toLocaleDateString()}`

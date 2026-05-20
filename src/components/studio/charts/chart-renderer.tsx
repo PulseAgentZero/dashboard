@@ -1,5 +1,6 @@
 "use client";
 
+import { useMediaQuery } from "@/hooks/use-media-query";
 import {
   Area,
   AreaChart,
@@ -63,11 +64,16 @@ export function ChartRenderer({
   result,
   columnFormats = {},
   title,
-  height = 280,
+  height,
 }: Props) {
+  const isMd = useMediaQuery("(min-width: 768px)");
+  const chartHeight = height ?? (isMd ? 300 : 220);
+  const yAxisWidth = isMd ? 96 : 48;
+  const pieOuterRadius = isMd ? 90 : 60;
+
   if (!result?.rows?.length) {
     return (
-      <div className="flex items-center justify-center text-sm text-slate-400" style={{ height }}>
+      <div className="flex items-center justify-center text-sm text-slate-400" style={{ height: chartHeight }}>
         No data
       </div>
     );
@@ -97,7 +103,7 @@ export function ChartRenderer({
           }))
         : null;
     return (
-      <div className="flex flex-col items-center justify-center py-4" style={{ minHeight: height }}>
+      <div className="flex flex-col items-center justify-center py-4" style={{ minHeight: chartHeight }}>
         {displayTitle && <p className="mb-2 text-sm text-slate-500">{displayTitle}</p>}
         <p className="text-4xl font-bold text-slate-900">
           {formatCellValue(d.value, fmt)}
@@ -123,7 +129,7 @@ export function ChartRenderer({
     const span = max - min || 1;
     const pct = Math.min(100, Math.max(0, ((d.value - min) / span) * 100));
     return (
-      <div style={{ height }} className="px-4">
+      <div style={{ height: chartHeight }} className="px-4">
         {displayTitle && <p className="mb-2 text-center text-sm text-slate-500">{displayTitle}</p>}
         <GaugeComponent value={pct} />
         <p className="mt-2 text-center text-sm text-slate-600">
@@ -143,7 +149,7 @@ export function ChartRenderer({
     const yLabels = [...new Set(result.rows.map((r) => String(r[yKey ?? ""])))];
     const max = Math.max(...result.rows.map((r) => Number(r[valKey ?? ""]) || 0), 1);
     return (
-      <div className="overflow-auto p-2" style={{ maxHeight: height }}>
+      <div className="overflow-auto p-2" style={{ maxHeight: chartHeight }}>
         {displayTitle && <p className="mb-2 text-sm font-medium text-slate-700">{displayTitle}</p>}
         <table className="text-xs">
           <thead>
@@ -189,7 +195,7 @@ export function ChartRenderer({
   if (chartType === "histogram") {
     const col = config.value_column ?? yKeys[0] ?? result.columns[0];
     const bins = toHistogramBins(result.rows, col);
-    return wrapChart(displayTitle, height, config, (
+    return wrapChart(displayTitle, chartHeight, config, (
       <BarChart data={bins}>
         {displayOpts.showGrid && <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />}
         <XAxis {...xAxisProps(config, "name")} />
@@ -206,7 +212,7 @@ export function ChartRenderer({
   if (chartType === "waterfall") {
     const valueKey = dataKeyForRow(chartData, yKeys[0] ?? "value");
     const wfData = toWaterfallData(chartData, valueKey);
-    return wrapChart(displayTitle, height, config, (
+    return wrapChart(displayTitle, chartHeight, config, (
       <BarChart data={wfData}>
         {displayOpts.showGrid && <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />}
         <XAxis {...xAxisProps(config, "name")} />
@@ -221,14 +227,14 @@ export function ChartRenderer({
 
   if (chartType === "bar_gauge") {
     const valueKey = config.value_column ?? "value";
-    return wrapChart(displayTitle, height, config, (
+    return wrapChart(displayTitle, chartHeight, config, (
       <BarChart data={chartData} layout="vertical" margin={{ left: 96 }}>
         {displayOpts.showGrid && <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />}
         <XAxis type="number" tick={{ fontSize: 11 }} />
         <YAxis
           type="category"
           dataKey="name"
-          width={96}
+          width={yAxisWidth}
           tick={{ fontSize: 10, fill: "#64748b" }}
           tickFormatter={xAxisProps(config).tickFormatter}
         />
@@ -241,13 +247,13 @@ export function ChartRenderer({
 
   if (chartType === "bar") {
     const stackId = displayOpts.stacked ? "stack" : undefined;
-    return wrapChart(displayTitle, height, config, (
+    return wrapChart(displayTitle, chartHeight, config, (
       <BarChart data={chartData} layout={displayOpts.horizontal ? "vertical" : "horizontal"}>
         {displayOpts.showGrid && <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />}
         {displayOpts.horizontal ? (
           <>
             <XAxis type="number" {...yAxisProps(config)} />
-            <YAxis type="category" dataKey="name" width={96} tick={{ fontSize: 10 }} tickFormatter={xAxisProps(config).tickFormatter} />
+            <YAxis type="category" dataKey="name" width={yAxisWidth} tick={{ fontSize: 10 }} tickFormatter={xAxisProps(config).tickFormatter} />
           </>
         ) : (
           <>
@@ -270,7 +276,7 @@ export function ChartRenderer({
   }
 
   if (chartType === "line" || chartType === "trend") {
-    return wrapChart(displayTitle, height, config, (
+    return wrapChart(displayTitle, chartHeight, config, (
       <LineChart data={chartData}>
         {displayOpts.showGrid && <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />}
         <XAxis {...xAxisProps(config, "name")} />
@@ -293,7 +299,7 @@ export function ChartRenderer({
 
   if (chartType === "area") {
     const stackId = displayOpts.stacked ? "stack" : undefined;
-    return wrapChart(displayTitle, height, config, (
+    return wrapChart(displayTitle, chartHeight, config, (
       <AreaChart data={chartData}>
         {displayOpts.showGrid && <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />}
         <XAxis {...xAxisProps(config, "name")} />
@@ -326,9 +332,9 @@ export function ChartRenderer({
       config,
       pieRows.map((row) => formatRawCellValue(row[labelKey] ?? "")),
     );
-    return wrapChart(displayTitle, height, config, (
+    return wrapChart(displayTitle, chartHeight, config, (
       <PieChart>
-        <Pie data={pieRows} dataKey={valueKey} nameKey={labelKey} cx="50%" cy="50%" outerRadius={90}>
+        <Pie data={pieRows} dataKey={valueKey} nameKey={labelKey} cx="50%" cy="50%" outerRadius={pieOuterRadius}>
           {pieRows.map((row, i) => (
             <Cell key={i} fill={pieColors[i]} />
           ))}
@@ -348,7 +354,7 @@ export function ChartRenderer({
       x: Number(r[xKey]) || 0,
       y: Number(r[yKey]) || 0,
     }));
-    return wrapChart(displayTitle, height, config, (
+    return wrapChart(displayTitle, chartHeight, config, (
       <ScatterChart>
         {displayOpts.showGrid && <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />}
         <XAxis type="number" dataKey="x" name={xKey} />
@@ -361,7 +367,7 @@ export function ChartRenderer({
   }
 
   if (chartType === "funnel") {
-    return wrapChart(displayTitle, height, config, (
+    return wrapChart(displayTitle, chartHeight, config, (
       <FunnelChart>
         <Tooltip formatter={tipFmt} />
         <Funnel dataKey="value" data={chartData} isAnimationActive>
@@ -372,7 +378,7 @@ export function ChartRenderer({
   }
 
   return (
-    <div className="text-sm text-slate-500" style={{ height }}>
+    <div className="text-sm text-slate-500" style={{ height: chartHeight }}>
       Unsupported chart type: {chartType}
     </div>
   );

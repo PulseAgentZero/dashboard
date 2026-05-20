@@ -139,7 +139,7 @@ export function StudioHomePage() {
         {/* Interactive Filters Grid Area */}
         <div className="flex flex-col gap-3 border-b border-slate-100 px-4 py-3 md:flex-row md:items-center md:justify-between">
           {/* Main Content Category Tabs */}
-          <div className="flex gap-0.5 overflow-x-auto pb-1 md:pb-0 scrollbar-none">
+          <div className="flex gap-0.5 overflow-x-auto pb-1 md:pb-0 no-scrollbar">
             {(["queries", "dashboards"] as const).map((t) => {
               const count = t === "queries" ? queriesTotal : dashboardsTotal;
               const active = tab === t;

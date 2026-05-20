@@ -25,7 +25,7 @@ export function NewConnectionSetup({ catalogItem }: Props) {
         All connectors
       </Link>
 
-      <div className="grid gap-8 lg:grid-cols-2">
+      <div className="grid gap-8 md:grid-cols-2">
         <div className="rounded-xl border border-slate-200 bg-white p-6 lg:sticky lg:top-6 lg:max-h-[calc(100vh-8rem)] lg:overflow-y-auto">
           <ConnectorSetupGuide catalogItem={catalogItem} />
         </div>

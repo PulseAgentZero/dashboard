@@ -184,8 +184,9 @@ export function EntityExplorerPreview() {
         </div>
 
         {/* Desktop Table View Container */}
-        <div className="hidden overflow-x-auto sm:block">
-          <table className="w-full min-w-175 border-separate border-spacing-0">
+        <div className="hidden sm:block">
+          <div className="overflow-x-auto">
+          <table className="w-full min-w-[640px] border-separate border-spacing-0">
             <thead>
               <tr className="text-[11px] font-semibold uppercase tracking-wide text-slate-400">
                 {["Entity", "Segment", "Risk", "Signal", "Recs"].map((col, i) => (
@@ -212,6 +213,7 @@ export function EntityExplorerPreview() {
             {data?.entities.map((e) => <EntityRow key={e.entity_id} e={e} />)}
           </tbody>
         </table>
+          </div>
         </div>
       </div>
 

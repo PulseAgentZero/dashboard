@@ -106,7 +106,7 @@ function SummaryPill({
 
   return (
     <div
-      className={`min-w-[140px] sm:min-w-[100px] flex-1 rounded-xl border px-4 py-3 shadow-xs ${accentCls}`}
+      className={`min-w-0 flex-1 rounded-xl border px-4 py-3 shadow-xs ${accentCls}`}
     >
       <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-500">
         {label}
@@ -266,7 +266,7 @@ export function PipelinePage() {
       )}
 
       {/* Summary Row */}
-      <div className="grid gap-3 grid-cols-2 md:grid-cols-3 lg:flex lg:flex-wrap">
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
         <SummaryPill
           label="Last run"
           value={lastRun ? statusLabel(lastRun.status) : "None"}

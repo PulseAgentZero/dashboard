@@ -131,7 +131,7 @@ export function SaveQueryModal({
               <span className="text-sm font-medium">Parameters</span>
               <div className="mt-2 space-y-2">
                 {params.map((p, i) => (
-                  <div key={p.name} className="grid grid-cols-3 gap-2 text-xs">
+                  <div key={p.name} className="grid grid-cols-1 gap-2 text-xs sm:grid-cols-3">
                     <input
                       value={p.name}
                       readOnly

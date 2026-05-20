@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import { GripVertical, Trash2 } from "lucide-react";
 import ReactGridLayout, { type Layout } from "react-grid-layout/legacy";
 import { useContainerWidth } from "@/hooks/studio/use-container-width";
+import { useMediaQuery } from "@/hooks/use-media-query";
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
 import { MarkdownPanel } from "./markdown-panel";
@@ -108,6 +109,7 @@ export function DashboardGrid({
   onRemoveItem,
 }: Props) {
   const { ref, width } = useContainerWidth();
+  const isDesktop = useMediaQuery("(min-width: 768px)");
   const gridLayout: Layout = useMemo(
     () =>
       layout.map((l) => ({
@@ -136,8 +138,82 @@ export function DashboardGrid({
     );
   }
 
-  if (width <= 0) {
+  if (width <= 0 && isDesktop) {
     return <div ref={ref} className="min-h-[240px] w-full" aria-hidden />;
+  }
+
+  function renderPanel(item: StudioDashboardItem, l: DashboardLayoutItem) {
+    const label = panelToolbarLabel(item, vizById);
+
+    if (item.panel_type === "text") {
+      return (
+        <div
+          key={l.item_id}
+          className="flex min-h-[200px] flex-col overflow-hidden rounded-xl border border-slate-200 bg-white md:h-full"
+        >
+          {editable && onRemoveItem && (
+            <PanelToolbar label={label} onRemove={() => onRemoveItem(item)} />
+          )}
+          <div className="min-h-0 flex-1 overflow-auto">
+            <MarkdownPanel content={item.content ?? textByItemId[item.id] ?? ""} />
+          </div>
+        </div>
+      );
+    }
+
+    const viz = item.visualization_id ? vizById[item.visualization_id] : null;
+
+    if (!viz) {
+      return (
+        <div
+          key={l.item_id}
+          className="flex min-h-[200px] flex-col overflow-hidden rounded-xl border border-slate-200 bg-white md:h-full"
+        >
+          {editable && onRemoveItem && (
+            <PanelToolbar label={label} onRemove={() => onRemoveItem(item)} />
+          )}
+          <div className="flex flex-1 items-center justify-center p-4 text-sm text-slate-400">
+            Visualization unavailable
+          </div>
+        </div>
+      );
+    }
+
+    const vizLoading = loadingVizIds?.has(viz.visualizationId) ?? false;
+
+    return (
+      <div key={l.item_id} className="flex min-h-[240px] flex-col overflow-hidden md:h-full md:min-h-0">
+        {editable && onRemoveItem && (
+          <PanelToolbar label={label} onRemove={() => onRemoveItem(item)} />
+        )}
+        <div className="min-h-0 flex-1">
+          <VisualizationCard
+            name={viz.name}
+            chartType={viz.chartType}
+            config={viz.config}
+            result={viz.result ?? null}
+            columnFormats={viz.columnFormats}
+            error={viz.error}
+            loading={vizLoading}
+            onDownload={onDownloadViz ? () => onDownloadViz(viz.visualizationId) : undefined}
+          />
+        </div>
+      </div>
+    );
+  }
+
+  const sortedLayout = [...layout].sort((a, b) => a.y - b.y || a.x - b.x);
+
+  if (!isDesktop) {
+    return (
+      <div ref={ref} className="flex w-full flex-col gap-4">
+        {sortedLayout.map((l) => {
+          const item = itemById.get(l.item_id);
+          if (!item) return null;
+          return renderPanel(item, l);
+        })}
+      </div>
+    );
   }
 
   return (
@@ -157,64 +233,7 @@ export function DashboardGrid({
         {layout.map((l) => {
           const item = itemById.get(l.item_id);
           if (!item) return <div key={l.item_id} />;
-
-          const label = panelToolbarLabel(item, vizById);
-
-          if (item.panel_type === "text") {
-            return (
-              <div
-                key={l.item_id}
-                className="flex h-full flex-col overflow-hidden rounded-xl border border-slate-200 bg-white"
-              >
-                {editable && onRemoveItem && (
-                  <PanelToolbar label={label} onRemove={() => onRemoveItem(item)} />
-                )}
-                <div className="min-h-0 flex-1 overflow-auto">
-                  <MarkdownPanel content={item.content ?? textByItemId[item.id] ?? ""} />
-                </div>
-              </div>
-            );
-          }
-
-          const viz = item.visualization_id ? vizById[item.visualization_id] : null;
-
-          if (!viz) {
-            return (
-              <div
-                key={l.item_id}
-                className="flex h-full flex-col overflow-hidden rounded-xl border border-slate-200 bg-white"
-              >
-                {editable && onRemoveItem && (
-                  <PanelToolbar label={label} onRemove={() => onRemoveItem(item)} />
-                )}
-                <div className="flex flex-1 items-center justify-center p-4 text-sm text-slate-400">
-                  Visualization unavailable
-                </div>
-              </div>
-            );
-          }
-
-          const vizLoading = loadingVizIds?.has(viz.visualizationId) ?? false;
-
-          return (
-            <div key={l.item_id} className="flex h-full flex-col overflow-hidden">
-              {editable && onRemoveItem && (
-                <PanelToolbar label={label} onRemove={() => onRemoveItem(item)} />
-              )}
-              <div className="min-h-0 flex-1">
-                <VisualizationCard
-                  name={viz.name}
-                  chartType={viz.chartType}
-                  config={viz.config}
-                  result={viz.result ?? null}
-                  columnFormats={viz.columnFormats}
-                  error={viz.error}
-                  loading={vizLoading}
-                  onDownload={onDownloadViz ? () => onDownloadViz(viz.visualizationId) : undefined}
-                />
-              </div>
-            </div>
-          );
+          return renderPanel(item, l);
         })}
       </ReactGridLayout>
     </div>

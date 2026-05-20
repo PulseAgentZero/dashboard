@@ -6,6 +6,7 @@ import { notFound } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { useConnectionCatalog } from "@/hooks/connections/use-connections";
 import { NewConnectionSetup } from "@/components/connectors/new-connection-setup";
+import { DashboardPageShell } from "@/components/layout/dashboard-page-shell";
 
 type PageProps = {
   params: Promise<{ connectorType: string }>;
@@ -39,8 +40,8 @@ function NewConnectionTypePage({ params }: PageProps) {
   }
 
   return (
-    <div className="mx-auto max-w-8xl">
+    <DashboardPageShell width="wide">
       <NewConnectionSetup catalogItem={catalogItem} />
-    </div>
+    </DashboardPageShell>
   );
 }

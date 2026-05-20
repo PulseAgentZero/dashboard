@@ -268,7 +268,7 @@ export function AgentPage() {
         )}
       </div>
 
-      <div className="flex h-[calc(100vh-12rem)] min-h-[450px] overflow-hidden rounded-xl border border-slate-200 bg-white shadow-xs">
+      <div className="flex h-[calc(100dvh-9rem)] min-h-[420px] overflow-hidden rounded-xl border border-slate-200 bg-white shadow-xs lg:min-h-[560px]">
         {loadingConvs ? (
           <div className="flex w-full items-center justify-center">
             <Loader2 size={24} className="animate-spin text-slate-300" />

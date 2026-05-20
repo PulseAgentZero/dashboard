@@ -305,7 +305,38 @@ export function TeamPage() {
           </div>
         </div>
 
-        <div className="overflow-x-auto">
+        <div className="divide-y divide-slate-100 md:hidden">
+          {loadingMembers &&
+            Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="animate-pulse space-y-2 px-4 py-4">
+                <div className="h-4 w-40 rounded bg-slate-100" />
+                <div className="h-3 w-56 rounded bg-slate-50" />
+              </div>
+            ))}
+          {!loadingMembers && members?.map((member) => (
+            <div key={member.id} className="flex items-start justify-between gap-3 px-4 py-4">
+              <div className="flex min-w-0 items-center gap-3">
+                <Initial name={member.full_name} email={member.email} />
+                <div className="min-w-0">
+                  <p className="truncate font-medium text-slate-900">{member.full_name}</p>
+                  <p className="truncate text-[11px] text-slate-400">{member.email}</p>
+                  <div className="mt-1.5">
+                    <RoleBadge role={member.role} />
+                  </div>
+                </div>
+              </div>
+              <span
+                className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold ${
+                  member.is_active ? "bg-emerald-50 text-emerald-700" : "bg-slate-100 text-slate-500"
+                }`}
+              >
+                {member.is_active ? "Active" : "Inactive"}
+              </span>
+            </div>
+          ))}
+        </div>
+
+        <div className="hidden overflow-x-auto md:block">
           <table className="w-full min-w-[720px] border-separate border-spacing-0">
             <thead>
               <tr className="text-[11px] font-semibold uppercase tracking-wide text-slate-400">

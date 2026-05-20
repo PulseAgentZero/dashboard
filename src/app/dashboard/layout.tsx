@@ -9,7 +9,6 @@ import { InactivityMonitor } from "@/components/auth/inactivity-monitor";
 import VerifyEmailBanner from "@/components/auth/verify-email-banner";
 import { SetupBanner } from "@/components/dashboard/setup-banner";
 import { ProductTour } from "@/components/tour/product-tour";
-import { FirstRunOverlay } from "@/components/tour/first-run-overlay";
 
 function useDashboardLightTheme() {
   useLayoutEffect(() => {
@@ -28,18 +27,18 @@ export default function DashboardLayout({
 
   return (
     <AuthGuard>
-      <FirstRunOverlay />
       <InactivityMonitor />
       <SidebarProvider>
-        <div className="flex h-screen overflow-hidden bg-[#f6f8fb] text-slate-900">
+        <div className="flex min-h-[100dvh] h-[100dvh] overflow-hidden bg-[#f6f8fb] text-slate-900">
           <Sidebar />
-          {/* Spacer so the fixed mobile sidebar doesn't shift desktop layout */}
-          <div className="flex min-w-0 flex-1 flex-col">
+          <div className="flex min-h-0 min-w-0 flex-1 flex-col">
             <VerifyEmailBanner />
             <SetupBanner />
             <ProductTour />
             <Nav />
-            <main className="flex-1 overflow-y-auto px-4 py-4 md:px-6 md:py-6">{children}</main>
+            <main className="flex-1 overflow-y-auto overflow-x-hidden p-4 lg:p-6">
+              {children}
+            </main>
           </div>
         </div>
       </SidebarProvider>

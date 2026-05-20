@@ -16,7 +16,7 @@ export function UsageOverviewChart({ data }: Props) {
       {data.map((row) => (
         <div key={row.name}>
           <div className="mb-1 flex items-center justify-between gap-2">
-            <span className="truncate text-[11px] font-medium text-slate-700" style={{ maxWidth: 120 }}>
+            <span className="truncate text-[11px] font-medium text-slate-700 max-w-[120px] md:max-w-[180px]">
               {row.name}
             </span>
             <span className="shrink-0 font-mono text-[11px] text-slate-400">

@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -169,7 +170,7 @@ function UserAvatar({
 }
 
 export default function Sidebar() {
-  const { collapsed, toggle } = useSidebar();
+  const { collapsed, toggle, mobileOpen, closeMobile } = useSidebar();
   const pathname = usePathname();
   const { user, org } = useAuth();
   const { mutate: logout, isPending: isLoggingOut } = useLogout();
@@ -194,42 +195,70 @@ export default function Sidebar() {
     }))
     .filter((group) => group.items.length > 0);
 
+  useEffect(() => {
+    if (!mobileOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") closeMobile();
+    };
+    document.addEventListener("keydown", onKey);
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = prev;
+    };
+  }, [mobileOpen, closeMobile]);
+
+  const railCollapsed = collapsed;
+
   return (
-    <aside
-      className={`relative flex h-screen shrink-0 flex-col border-r border-slate-200 bg-white transition-all duration-300 ease-in-out ${
-        collapsed ? "w-16" : "w-64"
-      }`}
-    >
-      <button
-        onClick={toggle}
-        className="absolute -right-3 top-7 z-20 flex h-6 w-6 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-500 shadow-sm transition-colors hover:text-slate-700"
-        aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+    <>
+      {mobileOpen && (
+        <button
+          type="button"
+          className="fixed inset-0 z-40 bg-slate-900/40 lg:hidden"
+          aria-label="Close menu"
+          onClick={closeMobile}
+        />
+      )}
+
+      <aside
+        className={`fixed inset-y-0 left-0 z-50 flex h-[100dvh] w-72 shrink-0 flex-col border-r border-slate-200 bg-white transition-transform duration-300 ease-in-out lg:relative lg:z-auto lg:h-screen lg:translate-x-0 ${
+          mobileOpen ? "translate-x-0" : "-translate-x-full"
+        } ${railCollapsed ? "lg:w-16" : "lg:w-64"}`}
       >
-        {collapsed ? <ChevronRight size={11} /> : <ChevronLeft size={11} />}
+      <button
+        type="button"
+        onClick={toggle}
+        className="absolute -right-3 top-7 z-20 hidden h-6 w-6 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-500 shadow-sm transition-colors hover:text-slate-700 lg:flex"
+        aria-label={railCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+      >
+        {railCollapsed ? <ChevronRight size={11} /> : <ChevronLeft size={11} />}
       </button>
 
       <Link
         href="/dashboard"
         aria-label="Go to dashboard home"
+        onClick={closeMobile}
         className={`flex items-center gap-3 border-b border-slate-200 px-4 py-5 transition-colors hover:bg-slate-50/80 ${
-          collapsed ? "justify-center px-0" : ""
+          railCollapsed ? "lg:justify-center lg:px-0" : ""
         }`}
       >
         <BrandMark
           logoUrl={org?.logo_url}
           label={org?.name ?? "Entivia"}
-          collapsed={collapsed}
+          collapsed={railCollapsed}
         />
-        {!collapsed && (
-          <div className="min-w-0 overflow-hidden">
-            <p className="truncate text-[13px] font-semibold text-slate-800">
-              {org?.name ?? "Entivia"}
-            </p>
-            <p className="truncate text-[11px] text-slate-500">
-              {org?.name ? "Workspace" : "Intelligence Platform"}
-            </p>
-          </div>
-        )}
+        <div
+          className={`min-w-0 overflow-hidden ${railCollapsed ? "max-lg:block lg:hidden" : ""}`}
+        >
+          <p className="truncate text-[13px] font-semibold text-slate-800">
+            {org?.name ?? "Entivia"}
+          </p>
+          <p className="truncate text-[11px] text-slate-500">
+            {org?.name ? "Workspace" : "Intelligence Platform"}
+          </p>
+        </div>
       </Link>
 
       <nav
@@ -239,11 +268,13 @@ export default function Sidebar() {
         <div className="space-y-4 px-2">
           {visibleNavGroups.map((group) => (
             <div key={group.label}>
-              {!collapsed && (
-                <p className="mb-1.5 px-3 text-[10px] font-semibold uppercase tracking-wider text-slate-400">
-                  {group.label}
-                </p>
-              )}
+              <p
+                className={`mb-1.5 px-3 text-[10px] font-semibold uppercase tracking-wider text-slate-400 ${
+                  railCollapsed ? "max-lg:block lg:hidden" : ""
+                }`}
+              >
+                {group.label}
+              </p>
               <ul className="space-y-0.5">
                 {group.items.map(({ label, href, icon: Icon }) => {
                   const active = isActive(href, pathname);
@@ -252,6 +283,7 @@ export default function Sidebar() {
                     <li key={href}>
                       <Link
                         href={href}
+                        onClick={closeMobile}
                         data-tour={
                           href === "/dashboard"
                             ? "nav-dashboard"
@@ -259,7 +291,7 @@ export default function Sidebar() {
                               ? "nav-connections"
                               : undefined
                         }
-                        title={collapsed ? label : undefined}
+                        title={railCollapsed ? label : undefined}
                         {...(opensDocs
                           ? { target: "_blank", rel: "noopener noreferrer" }
                           : {})}
@@ -267,7 +299,7 @@ export default function Sidebar() {
                           active
                             ? "bg-blue-50 text-blue-600"
                             : "text-slate-600 hover:bg-slate-50 hover:text-slate-800"
-                        } ${collapsed ? "justify-center px-0" : ""}`}
+                        } ${railCollapsed ? "lg:justify-center lg:px-0" : ""}`}
                       >
                         <div className="relative shrink-0">
                           <Icon
@@ -280,18 +312,20 @@ export default function Sidebar() {
                             />
                           )}
                         </div>
-                        {!collapsed && (
-                          <span className="flex min-w-0 flex-1 items-center gap-1.5 truncate font-medium">
-                            {label}
-                            {href === "/dashboard/audit-logs" && !auditLogsUnlocked && (
-                              <Lock
-                                size={12}
-                                className="shrink-0 text-slate-400"
-                                aria-hidden
-                              />
-                            )}
-                          </span>
-                        )}
+                        <span
+                          className={`flex min-w-0 flex-1 items-center gap-1.5 truncate font-medium ${
+                            railCollapsed ? "max-lg:flex lg:hidden" : ""
+                          }`}
+                        >
+                          {label}
+                          {href === "/dashboard/audit-logs" && !auditLogsUnlocked && (
+                            <Lock
+                              size={12}
+                              className="shrink-0 text-slate-400"
+                              aria-hidden
+                            />
+                          )}
+                        </span>
                       </Link>
                     </li>
                   );
@@ -304,48 +338,55 @@ export default function Sidebar() {
 
       <div
         className={`border-t border-slate-200 px-3 py-4 ${
-          collapsed ? "flex justify-center" : ""
+          railCollapsed ? "lg:flex lg:justify-center" : ""
         }`}
       >
-        {collapsed ? (
-          <Link href="/dashboard/settings" title={displayName}>
+        <div
+          className={`flex items-center gap-3 ${railCollapsed ? "max-lg:flex lg:hidden" : ""}`}
+        >
+          <Link href="/dashboard/settings" className="shrink-0" onClick={closeMobile}>
             <UserAvatar
               imageUrl={user?.profile_image_url}
               name={displayName}
             />
           </Link>
-        ) : (
-          <div className="flex items-center gap-3">
-            <Link href="/dashboard/settings" className="shrink-0">
-              <UserAvatar
-                imageUrl={user?.profile_image_url}
-                name={displayName}
-              />
-            </Link>
-            <div className="min-w-0 flex-1 overflow-hidden">
-              <p className="truncate text-xs font-medium text-slate-700">
-                {displayName}
-              </p>
-              <span className="mt-0.5 inline-block rounded bg-blue-50 px-1.5 py-px text-[10px] font-medium capitalize text-blue-600">
-                {user?.role || "member"}
-              </span>
-            </div>
-            <button
-              type="button"
-              onClick={() => logout()}
-              disabled={isLoggingOut}
-              className="shrink-0 text-slate-500 hover:text-slate-800 disabled:opacity-50"
-              aria-label="Log out"
-            >
-              {isLoggingOut ? (
-                <Loader2 size={14} className="animate-spin" />
-              ) : (
-                <LogOut size={14} />
-              )}
-            </button>
+          <div className="min-w-0 flex-1 overflow-hidden">
+            <p className="truncate text-xs font-medium text-slate-700">
+              {displayName}
+            </p>
+            <span className="mt-0.5 inline-block rounded bg-blue-50 px-1.5 py-px text-[10px] font-medium capitalize text-blue-600">
+              {user?.role || "member"}
+            </span>
           </div>
+          <button
+            type="button"
+            onClick={() => logout()}
+            disabled={isLoggingOut}
+            className="shrink-0 text-slate-500 hover:text-slate-800 disabled:opacity-50"
+            aria-label="Log out"
+          >
+            {isLoggingOut ? (
+              <Loader2 size={14} className="animate-spin" />
+            ) : (
+              <LogOut size={14} />
+            )}
+          </button>
+        </div>
+        {railCollapsed && (
+          <Link
+            href="/dashboard/settings"
+            title={displayName}
+            onClick={closeMobile}
+            className="mx-auto hidden lg:block"
+          >
+            <UserAvatar
+              imageUrl={user?.profile_image_url}
+              name={displayName}
+            />
+          </Link>
         )}
       </div>
     </aside>
+    </>
   );
 }

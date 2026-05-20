@@ -25,7 +25,7 @@ export function SchemaBrowser({
 
   return (
     <div
-      className={`flex h-[calc(100vh-13rem)] max-h-[640px] min-h-[300px] w-full flex-col rounded-lg border border-slate-200 bg-white${className ? ` ${className}` : ""}`}
+      className={`flex h-[60dvh] w-full flex-col rounded-lg border border-slate-200 bg-white lg:h-[calc(100dvh-13rem)] lg:max-h-[640px] lg:min-h-[300px]${className ? ` ${className}` : ""}`}
     >
       <div className="flex shrink-0 items-center justify-between border-b border-slate-100 px-3 py-2">
         <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">

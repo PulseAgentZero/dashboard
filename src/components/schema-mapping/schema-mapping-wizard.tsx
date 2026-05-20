@@ -211,7 +211,7 @@ export function SchemaMappingWizard({
   }
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[minmax(260px,300px)_1fr] lg:items-start">
+    <div className="grid gap-6 md:grid-cols-[minmax(260px,300px)_1fr] md:items-start">
       {/* Sidebar — progress & context */}
       <aside className="space-y-4 lg:sticky lg:top-6">
         <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
@@ -398,7 +398,7 @@ export function SchemaMappingWizard({
 
             {step === "identity" && selectedTable && (
               <div className="space-y-6">
-                <div className="grid gap-4 lg:grid-cols-2">
+                <div className="grid gap-4 md:grid-cols-2">
                   <Field
                     label="Unique ID column"
                     hint={`Required — stable identifier per ${entityLabel}`}
@@ -492,7 +492,7 @@ export function SchemaMappingWizard({
             )}
           </div>
 
-          <footer className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 px-5 py-4 sm:px-6">
+          <footer className="flex flex-col-reverse gap-3 border-t border-slate-100 px-5 py-4 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:px-6">
             <div>
               {onBack && step === "table" ? (
                 <button

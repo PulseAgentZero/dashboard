@@ -2,11 +2,12 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { RequireRole } from "@/components/auth/require-role";
 import { ConnectorPicker } from "@/components/connectors/connector-picker";
+import { DashboardPageShell } from "@/components/layout/dashboard-page-shell";
 
 export default function NewConnectionPage() {
   return (
     <RequireRole minRole="manager">
-      <div className="mx-auto max-w-8xl space-y-6">
+      <DashboardPageShell width="wide" className="space-y-6">
         <div>
           <Link
             href="/dashboard/connections"
@@ -23,7 +24,7 @@ export default function NewConnectionPage() {
         </div>
 
         <ConnectorPicker />
-      </div>
+      </DashboardPageShell>
     </RequireRole>
   );
 }

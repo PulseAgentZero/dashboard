@@ -84,8 +84,8 @@ export function ResultsTable({ result, columnFormats = {}, onPageChange }: Props
           </div>
         )}
       </div>
-      <div className="max-h-[400px] overflow-auto">
-        <table className="w-full text-left text-sm">
+      <div className="max-h-[60dvh] overflow-auto lg:max-h-[50dvh]">
+        <table className="min-w-full text-left text-sm">
           <thead className="sticky top-0 bg-slate-50">
             <tr>
               {result.columns.map((col) => (

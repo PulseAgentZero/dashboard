@@ -225,7 +225,7 @@ export function VizEditorPanel({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4">
       <div
-        className="flex h-[min(92vh,880px)] w-full max-w-7xl flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-2xl"
+        className="mx-4 flex h-[min(92dvh,880px)] w-full max-w-5xl flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-2xl"
         role="dialog"
         aria-modal="true"
         aria-labelledby="viz-editor-title"
@@ -254,13 +254,12 @@ export function VizEditorPanel({
                 </p>
               )}
             </div>
-            <div className="min-h-0 flex-1 rounded-xl border border-slate-200 bg-slate-50/80 p-4">
+            <div className="h-72 min-h-0 flex-1 rounded-xl border border-slate-200 bg-slate-50/80 p-4 lg:h-[400px]">
               <ChartRenderer
                 chartType={chartType}
                 config={debouncedConfig}
                 result={result}
                 columnFormats={columnFormats}
-                height={400}
               />
             </div>
           </div>

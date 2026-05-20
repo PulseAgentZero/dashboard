@@ -126,7 +126,7 @@ export function PipelineStatusCard() {
       </div>
 
       {/* Main Grid: Adapts cleanly from tight screen profiles to desktops */}
-      <div className="grid gap-2.5 grid-cols-1 xs:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-2.5 md:grid-cols-4">
         {steps.map((s) => (
           <Item key={s.label} {...s} />
         ))}

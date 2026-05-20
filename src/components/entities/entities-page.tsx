@@ -3,7 +3,9 @@
 import { useState, useTransition } from "react";
 import Link from "next/link";
 import { Search } from "lucide-react";
+import { PageHeader } from "@/components/shared/page-header";
 import { Pagination } from "@/components/shared/pagination";
+import { DashboardPageShell } from "@/components/layout/dashboard-page-shell";
 import { DEFAULT_PAGE_SIZE } from "@/lib/pagination";
 import { RiskPill } from "@/components/shared/risk-pill";
 import { useEntities } from "@/hooks/entities/use-entities";
@@ -75,20 +77,18 @@ export function EntitiesPage() {
   }
 
   return (
-    <div className="mx-auto max-w-350 space-y-5">
-      <div className="flex items-center justify-between gap-4">
-        <div>
-          <h1 className="text-xl font-semibold text-slate-900">Entity explorer</h1>
-          <p className="mt-0.5 text-sm text-slate-500">
-            Search, rank, and investigate every profiled entity.
-          </p>
-        </div>
-        {data && data.total > 0 && (
-          <span className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-medium text-slate-500">
-            {data.total.toLocaleString()} entities
-          </span>
-        )}
-      </div>
+    <DashboardPageShell className="space-y-5">
+      <PageHeader
+        title="Entity explorer"
+        description="Search, rank, and investigate every profiled entity."
+        actions={
+          data && data.total > 0 ? (
+            <span className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-medium text-slate-500">
+              {data.total.toLocaleString()} entities
+            </span>
+          ) : undefined
+        }
+      />
 
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard label="Total entities" value={(overview?.total_entities ?? 0).toLocaleString()} sub="Across all segments" color="text-slate-900" />
@@ -128,8 +128,51 @@ export function EntitiesPage() {
           </div>
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-175 border-separate border-spacing-0">
+        <div className="divide-y divide-slate-100 md:hidden">
+          {isLoading &&
+            Array.from({ length: 5 }).map((_, i) => (
+              <div key={i} className="animate-pulse space-y-2 px-4 py-4">
+                <div className="h-4 w-32 rounded bg-slate-100" />
+                <div className="h-3 w-24 rounded bg-slate-50" />
+              </div>
+            ))}
+          {!isLoading && (!data || data.entities.length === 0) && (
+            <p className="px-4 py-12 text-center text-sm text-slate-400">
+              {search || riskTier !== "All"
+                ? "No entities match your filters."
+                : "No entities profiled yet — run a pipeline to get started."}
+            </p>
+          )}
+          {data?.entities.map((e) => (
+            <Link
+              key={e.entity_id}
+              href={`/dashboard/entities/${encodeURIComponent(e.entity_id)}`}
+              className="flex items-start gap-3 px-4 py-4 hover:bg-slate-50/80"
+            >
+              <Initial name={e.entity_name} />
+              <div className="min-w-0 flex-1">
+                <p className="truncate font-medium text-slate-900">
+                  {e.entity_name ?? e.entity_id}
+                </p>
+                <p className="truncate text-[11px] text-slate-400">{e.entity_id}</p>
+                <div className="mt-2 flex flex-wrap items-center gap-2">
+                  <RiskPill risk={e.risk_tier ?? "Low"} />
+                  <span className="text-xs tabular-nums text-slate-500">
+                    Score {e.risk_score.toFixed(0)}
+                  </span>
+                  {e.open_recommendations > 0 && (
+                    <span className="rounded-full bg-amber-50 px-2 py-0.5 text-xs font-semibold text-amber-700">
+                      {e.open_recommendations} recs
+                    </span>
+                  )}
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
+
+        <div className="hidden overflow-x-auto md:block">
+          <table className="w-full min-w-[720px] border-separate border-spacing-0">
             <thead>
               <tr className="text-[11px] font-semibold uppercase tracking-wide text-slate-400">
                 {["Entity", "Segment", "Risk tier", "Risk score", "Open recs"].map((col, i) => (
@@ -212,6 +255,6 @@ export function EntitiesPage() {
           onPageChange={setPage}
         />
       </div>
-    </div>
+    </DashboardPageShell>
   );
 }
