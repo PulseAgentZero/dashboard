@@ -30,7 +30,7 @@ export default function LoginPage() {
       footer={
         <p className="text-center text-[13px] text-slate-600">
           Don&apos;t have an account?{" "}
-          <Link href="/auth/signup" className="font-medium text-blue-600 hover:text-blue-500">
+          <Link href="/auth/signup" className="font-medium text-orange-600 hover:text-orange-500">
             Create an account
           </Link>
         </p>
@@ -60,7 +60,7 @@ export default function LoginPage() {
             <input
               id="remember-me"
               type="checkbox"
-              className="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+              className="h-4 w-4 rounded border-slate-300 text-orange-600 focus:ring-orange-500"
             />
             <label htmlFor="remember-me" className="ml-2 block text-[13px] text-slate-700">
               Remember me
@@ -68,7 +68,7 @@ export default function LoginPage() {
           </div>
           <Link
             href="/auth/forgot-password"
-            className="text-[13px] font-medium text-blue-600 hover:text-blue-500"
+            className="text-[13px] font-medium text-orange-600 hover:text-orange-500"
           >
             Forgot password?
           </Link>
@@ -77,7 +77,7 @@ export default function LoginPage() {
         <button
           type="submit"
           disabled={isPending}
-          className="flex w-full justify-center rounded-xl border border-transparent bg-blue-600 px-4 py-3 text-[13px] font-semibold text-white transition duration-150 hover:bg-blue-700 focus:ring-1 focus:ring-blue-500 focus:ring-offset-1 focus:outline-none disabled:cursor-not-allowed disabled:opacity-60"
+          className="flex w-full justify-center rounded-xl border border-transparent bg-orange-600 px-4 py-3 text-[13px] font-semibold text-white transition duration-150 hover:bg-orange-700 focus:ring-1 focus:ring-orange-500 focus:ring-offset-1 focus:outline-none disabled:cursor-not-allowed disabled:opacity-60"
         >
           {isPending ? "Signing in…" : "Sign in"}
         </button>
