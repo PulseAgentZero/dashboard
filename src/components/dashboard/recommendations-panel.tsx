@@ -83,7 +83,7 @@ function RecItem({ rec }: { rec: Recommendation }) {
 }
 
 export function RecommendationsPanel() {
-  const { data, isLoading } = useRecommendations({ status: "open", limit: 6 });
+  const { data, isLoading } = useRecommendations({ status: "open", limit: 3 });
 
   return (
     <div className="w-full rounded-xl border border-slate-200 bg-white">

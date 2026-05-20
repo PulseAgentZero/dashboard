@@ -145,7 +145,7 @@ function EntityRow({ e }: { e: EntityListItem }) {
 }
 
 export function EntityExplorerPreview() {
-  const { data, isLoading } = useEntities({ limit: 8, risk_tier: "High" });
+  const { data, isLoading } = useEntities({ limit: 3, risk_tier: "High" });
 
   return (
     <div className="w-full rounded-xl border border-slate-200 bg-white">
@@ -215,13 +215,13 @@ export function EntityExplorerPreview() {
         </div>
       </div>
 
-      {data && data.total > 8 && (
+      {data && data.total > 3 && (
         <div className="border-t border-slate-100 px-5 py-3 text-center">
           <Link
             href="/dashboard/entities"
             className="text-xs font-semibold text-blue-600 hover:underline"
           >
-            {(data.total - 8).toLocaleString()} more entities →
+            {(data.total - 3).toLocaleString()} more entities →
           </Link>
         </div>
       )}
