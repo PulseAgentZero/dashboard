@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { BladeFan } from "../../../public/icon/bladeFan";
+import { marketingHref } from "@/lib/site-urls";
 
 export default function AuthLayout({
   title,
@@ -23,7 +24,7 @@ export default function AuthLayout({
         />
         <div className="absolute inset-0 bg-linear-to-br from-black/80 via-black/20 to-black/90 z-10" />
         <Link
-          href="/"
+          href={marketingHref("/")}
           aria-label="Go to Entivia home"
           className="absolute top-12 left-12 z-20 transition-opacity hover:opacity-80"
         >
@@ -32,7 +33,7 @@ export default function AuthLayout({
           </div>
         </Link>
         <Link
-          href="/"
+          href={marketingHref("/")}
           aria-label="Go to Entivia home"
           className="absolute bottom-12 left-12 z-20 transition-opacity hover:opacity-80"
         >

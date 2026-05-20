@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { BladeFan } from "../../../public/icon/bladeFan";
+import { marketingHref } from "@/lib/site-urls";
 
 type AuthSplitLayoutProps = {
   title: string;
@@ -55,7 +56,7 @@ export function AuthSplitLayout({
           <div className="auth-blob-3 pointer-events-none absolute top-[30%] left-[25%] h-[60%] w-[55%] rounded-full bg-[#ffaa00]/35 blur-[80px]" />
 
           <Link
-            href="/"
+            href={marketingHref("/")}
             aria-label="Go to Entivia home"
             className="absolute top-10 left-10 z-20 flex items-center gap-3 rounded-full px-1 py-1 -mx-1 -my-1 transition-opacity hover:opacity-80"
           >
