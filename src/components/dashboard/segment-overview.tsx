@@ -1,4 +1,4 @@
-import { segments } from "@/lib/demo-data";
+import { segments } from "@/lib/demo.data";
 import { SectionHeading } from "@/components/shared/section-heading";
 
 export function SegmentOverview() {
