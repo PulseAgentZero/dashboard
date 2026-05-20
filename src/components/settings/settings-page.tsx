@@ -301,7 +301,7 @@ function AccountTab() {
             imageUrl={user?.profile_image_url}
             fallbackLabel={user?.full_name || user?.email || "User"}
             shape="circle"
-            uploading={uploadAvatar || removingAvatar}
+            uploading={uploadingAvatar || removingAvatar}
             onUpload={(file) => uploadAvatar(file)}
             onRemove={() => removeAvatar()}
           />
