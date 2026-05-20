@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Loader2, ScrollText, Search } from "lucide-react";
+import { RequireRole } from "@/components/auth/require-role";
 import { Pagination } from "@/components/shared/pagination";
 import { FeatureLockPanel } from "@/components/shared/feature-lock-panel";
 import { useAuditLogs } from "@/hooks/audit/use-audit";
@@ -19,7 +20,7 @@ function actionColor(action: string) {
   return "bg-slate-100 text-slate-600 border border-slate-200/60";
 }
 
-export default function AuditLogsPage() {
+function AuditLogsPageContent() {
   const {
     hasAccess,
     loading: accessLoading,
@@ -78,7 +79,6 @@ export default function AuditLogsPage() {
 
   return (
     <div className="mx-auto max-w-7xl space-y-5 px-4 py-2 sm:px-6">
-      {/* Search Filter and Title Row */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900">Audit logs</h1>
@@ -141,7 +141,7 @@ export default function AuditLogsPage() {
                     {log.action}
                   </span>
                 </div>
-                
+
                 <div className="min-w-0 flex-1 space-y-0.5">
                   <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
                     <span className="text-xs font-semibold text-slate-800 break-all">
@@ -180,5 +180,13 @@ export default function AuditLogsPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function AuditLogsPage() {
+  return (
+    <RequireRole minRole="admin">
+      <AuditLogsPageContent />
+    </RequireRole>
   );
 }
