@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import {
   ArrowRight,
   BadgeCheck,
@@ -44,8 +44,9 @@ import {
 import type { CloudPlanTier } from "@/lib/api/billing-api";
 import { tokens } from "@/lib/auth-tokens";
 
+const VERIFIED_PAYMENT_REF_KEY = "pulse_verified_payment_ref";
+
 export function PlanPage() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const reference = searchParams.get("reference");
   const { user, org } = useAuth();
@@ -60,7 +61,6 @@ export function PlanPage() {
     useOpenManagePaymentLink();
   const { mutate: cancelSubscription, isPending: cancelling } =
     useCancelSubscription();
-  const verifiedRef = useRef<string | null>(null);
   const [licenseEmail, setLicenseEmail] = useState<string | null>(null);
   const [confirmCancel, setConfirmCancel] = useState(false);
 
@@ -77,14 +77,18 @@ export function PlanPage() {
   const canCancel = cloud && isPaidPlan(effectivePlan) && !nonRenewing;
 
   useEffect(() => {
-    if (!reference || verifiedRef.current === reference) return;
+    if (!reference) return;
+    if (typeof window === "undefined") return;
     if (!tokens.getAccess() || !cloud) return;
-    verifiedRef.current = reference;
-    router.replace("/dashboard/plan", { scroll: false });
-    verifyPayment(reference, {
-      onSuccess: () => router.replace("/dashboard/plan"),
-    });
-  }, [reference, verifyPayment, router, cloud]);
+
+    window.history.replaceState(null, "", "/dashboard/plan");
+
+    if (sessionStorage.getItem(VERIFIED_PAYMENT_REF_KEY) === reference) {
+      return;
+    }
+    sessionStorage.setItem(VERIFIED_PAYMENT_REF_KEY, reference);
+    verifyPayment(reference);
+  }, [reference, verifyPayment, cloud]);
 
   function handleUpgrade(tier: CloudPlanTier) {
     startCloudCheckout({

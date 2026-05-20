@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Check, Copy, Loader2 } from "lucide-react";
@@ -16,6 +16,8 @@ import { SELF_HOSTED_LICENSE_FEATURES } from "@/lib/plans";
 import { isCloudDeployment } from "@/lib/deployment";
 import { tokens } from "@/lib/auth-tokens";
 
+const VERIFIED_PAYMENT_REF_KEY = "pulse_verified_license_ref";
+
 export function PricingSelfHostedPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -28,7 +30,6 @@ export function PricingSelfHostedPage() {
   const [verifyMessage, setVerifyMessage] = useState<string | null>(() =>
     typeof window === "undefined" ? null : sessionStorage.getItem("pulse_license_message"),
   );
-  const verifiedRef = useRef<string | null>(null);
 
   const { mutate: startCheckout, isPending: checkoutPending } =
     useInitializeSelfHostedCheckout();
@@ -38,10 +39,16 @@ export function PricingSelfHostedPage() {
   const cloud = isCloudDeployment();
 
   useEffect(() => {
-    if (!reference || verifiedRef.current === reference) return;
+    if (!reference) return;
+    if (typeof window === "undefined") return;
     if (!tokens.getAccess()) return;
-    verifiedRef.current = reference;
-    router.replace("/pricing/self-hosted", { scroll: false });
+
+    window.history.replaceState(null, "", "/pricing/self-hosted");
+
+    if (sessionStorage.getItem(VERIFIED_PAYMENT_REF_KEY) === reference) {
+      return;
+    }
+    sessionStorage.setItem(VERIFIED_PAYMENT_REF_KEY, reference);
     verifyPayment(reference, {
       onSuccess: (data) => {
         if (data.license_key) {
@@ -52,10 +59,9 @@ export function PricingSelfHostedPage() {
         }
         setLicenseKey(data.license_key);
         setVerifyMessage(data.message);
-        router.replace("/pricing/self-hosted");
       },
     });
-  }, [reference, verifyPayment, router]);
+  }, [reference, verifyPayment]);
 
   function handlePurchase(e: React.FormEvent) {
     e.preventDefault();

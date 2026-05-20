@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Check, Loader2 } from "lucide-react";
@@ -25,6 +25,8 @@ import { resolveEffectivePlan } from "@/lib/plan-utils";
 import { tokens } from "@/lib/auth-tokens";
 import type { CloudPlanTier } from "@/lib/api/billing-api";
 
+const VERIFIED_PAYMENT_REF_KEY = "pulse_verified_payment_ref";
+
 export function PricingCloudPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -34,7 +36,6 @@ export function PricingCloudPage() {
   const { mutate: startCheckout, isPending: checkoutPending } =
     useInitializeCloudCheckout();
   const { mutate: verifyPayment, isPending: verifying } = useVerifyCloudPayment();
-  const verifiedRef = useRef<string | null>(null);
 
   const selfHosted = isSelfHostedDeployment();
   const effectivePlan = resolveEffectivePlan(undefined, org?.plan, subscription);
@@ -42,16 +43,18 @@ export function PricingCloudPage() {
   const isPro = effectivePlan === "pro" || effectivePlan === "enterprise";
 
   useEffect(() => {
-    if (!reference || verifiedRef.current === reference) return;
+    if (!reference) return;
+    if (typeof window === "undefined") return;
     if (!tokens.getAccess()) return;
-    verifiedRef.current = reference;
-    router.replace("/pricing", { scroll: false });
-    verifyPayment(reference, {
-      onSuccess: () => {
-        router.replace("/pricing");
-      },
-    });
-  }, [reference, verifyPayment, router]);
+
+    window.history.replaceState(null, "", "/pricing");
+
+    if (sessionStorage.getItem(VERIFIED_PAYMENT_REF_KEY) === reference) {
+      return;
+    }
+    sessionStorage.setItem(VERIFIED_PAYMENT_REF_KEY, reference);
+    verifyPayment(reference);
+  }, [reference, verifyPayment]);
 
   function handleUpgrade(tier: CloudPlanTier) {
     if (!isAuthenticated) {
