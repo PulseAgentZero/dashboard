@@ -109,35 +109,34 @@ export default function Navbar() {
             Entivia
           </Link>
 
-          {/* Desktop/Tablet Navigation (Center) */}
-          <div
-            className={[
-              "hidden lg:flex items-center gap-6 font-medium text-[15px] transition-colors duration-500",
-              T ? "text-white" : "text-neutral-800",
-            ].join(" ")}
-          >
-            {(["Solutions", "Products", "Discover", "Resources"] as const).map((label) => (
-              <button
-                key={label}
-                className="flex items-center gap-1 opacity-80 hover:opacity-100 transition"
-              >
-                {label}
-                <ChevronDown className="w-3.5 h-3.5 opacity-60" />
-              </button>
-            ))}
-            <Link href="/pricing" className="opacity-80 hover:opacity-100 transition">
-              Pricing
-            </Link>
-            <button className="opacity-60 hover:opacity-100 transition pl-1">
-              <Search className="w-4 h-4" />
-            </button>
-          </div>
-
           {/* Right Action Containers */}
           <div className="flex items-center h-full">
             <div
               className={[
-                "hidden sm:flex items-center gap-5 text-sm font-medium mr-6 transition-colors duration-500",
+                "hidden lg:flex items-center gap-6 font-medium text-[15px] mr-6 transition-colors duration-500",
+                T ? "text-white" : "text-neutral-800",
+              ].join(" ")}
+            >
+              {(["Solutions", "Products", "Documentation"] as const).map((label) => (
+                <button
+                  key={label}
+                  className="flex items-center gap-1 opacity-80 hover:opacity-100 transition"
+                >
+                  {label}
+                </button>
+              ))}
+              <Link href="/pricing" className="opacity-80 hover:opacity-100 transition">
+                Pricing
+              </Link>
+              <span className={T ? "text-white/20" : "text-black/15"}>|</span>
+              <Link href="/auth/login" className="opacity-80 hover:opacity-100 transition">
+                Log in
+              </Link>
+            </div>
+
+            <div
+              className={[
+                "hidden sm:flex lg:hidden items-center gap-5 text-sm font-medium mr-6 transition-colors duration-500",
                 T ? "text-white" : "text-neutral-800",
               ].join(" ")}
             >

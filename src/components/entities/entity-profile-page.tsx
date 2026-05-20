@@ -15,7 +15,7 @@ import { useEntity, useEntityRiskHistory } from "@/hooks/entities/use-entity";
 
 function Initial({ name }: { name: string | null }) {
   return (
-    <div className="grid h-16 w-16 shrink-0 place-items-center rounded-2xl bg-slate-100 text-xl font-bold text-slate-500 select-none">
+    <div className="grid h-14 w-14 sm:h-16 sm:w-16 shrink-0 place-items-center rounded-2xl bg-slate-100 text-lg sm:text-xl font-bold text-slate-500 select-none">
       {name?.charAt(0)?.toUpperCase() ?? "?"}
     </div>
   );
@@ -38,18 +38,18 @@ function RiskHistoryChart({ points }: { points: { risk_score: number; recorded_a
   const recent = points.slice(-30);
 
   return (
-    <div className="flex h-40 items-end gap-1">
+    <div className="flex h-40 items-end gap-1 pt-6">
       {recent.map((p, i) => {
         const pct = (p.risk_score / max) * 100;
         const color =
           p.risk_score >= 70 ? "bg-rose-400" : p.risk_score >= 40 ? "bg-amber-400" : "bg-emerald-400";
         return (
-          <div key={i} className="group relative flex flex-1 flex-col justify-end">
+          <div key={i} className="group relative flex flex-1 flex-col justify-end h-full">
             <div
-              className={`${color} rounded-t transition-all`}
+              className={`${color} rounded-t transition-all hover:opacity-80`}
               style={{ height: `${Math.max(pct, 4)}%` }}
             />
-            <div className="absolute bottom-full left-1/2 mb-1.5 hidden -translate-x-1/2 whitespace-nowrap rounded bg-slate-800 px-2 py-1 text-[10px] text-white group-hover:block">
+            <div className="absolute bottom-full left-1/2 mb-1.5 hidden -translate-x-1/2 whitespace-nowrap rounded bg-slate-800 px-2 py-1 text-[10px] text-white group-hover:block z-10 shadow-md">
               {p.risk_score.toFixed(0)} · {new Date(p.recorded_at).toLocaleDateString()}
             </div>
           </div>
@@ -64,11 +64,11 @@ function ProfileDataTable({ data }: { data: Record<string, unknown> }) {
   if (entries.length === 0) return <p className="text-sm text-slate-400">No profile data.</p>;
 
   return (
-    <dl className="grid gap-x-6 gap-y-2 sm:grid-cols-2">
+    <dl className="grid gap-x-6 gap-y-4 grid-cols-1 xs:grid-cols-2">
       {entries.map(([k, v]) => (
-        <div key={k} className="flex flex-col">
+        <div key={k} className="flex flex-col border-b border-slate-50 pb-2 xs:border-0 xs:pb-0">
           <dt className="text-[10px] font-semibold uppercase tracking-wide text-slate-400">{k.replace(/_/g, " ")}</dt>
-          <dd className="mt-0.5 text-sm text-slate-700 break-all">{String(v)}</dd>
+          <dd className="mt-0.5 text-sm font-medium text-slate-700 break-all">{String(v)}</dd>
         </div>
       ))}
     </dl>
@@ -84,7 +84,7 @@ export function EntityProfilePage() {
 
   if (isError) {
     return (
-      <div className="mx-auto max-w-8xl space-y-5">
+      <div className="mx-auto max-w-7xl space-y-4 px-4 py-4 sm:px-6">
         <Link href="/dashboard/entities" className="inline-flex items-center gap-2 text-sm font-semibold text-slate-600 hover:text-slate-900">
           <ArrowLeft size={15} /> Back to entities
         </Link>
@@ -97,7 +97,7 @@ export function EntityProfilePage() {
   }
 
   return (
-    <div className="mx-auto max-w-8xl space-y-5">
+    <div className="mx-auto max-w-7xl space-y-4 px-4 py-4 sm:px-6">
       <Link
         href="/dashboard/entities"
         className="inline-flex items-center gap-2 text-sm font-semibold text-slate-600 hover:text-slate-900 transition-colors"
@@ -106,39 +106,48 @@ export function EntityProfilePage() {
       </Link>
 
       {/* Header card */}
-      <div className="rounded-xl border border-slate-200 bg-white p-6">
+      <div className="rounded-xl border border-slate-200 bg-white p-4 sm:p-6">
         {isLoading ? (
           <div className="flex items-center gap-4">
-            <SkeletonBlock className="h-16 w-16 rounded-2xl" />
+            <SkeletonBlock className="h-14 w-14 sm:h-16 sm:w-16 rounded-2xl" />
             <div className="flex-1 space-y-2">
               <SkeletonBlock className="h-5 w-48" />
               <SkeletonBlock className="h-3.5 w-32" />
             </div>
           </div>
         ) : entity ? (
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-            <div className="flex items-center gap-4">
-              <Initial name={entity.entity_name} />
-              <div>
-                <div className="flex flex-wrap items-center gap-2">
+          <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
+              <div className="flex items-center gap-3">
+                <Initial name={entity.entity_name} />
+                <div className="sm:hidden min-w-0">
+                  <h1 className="text-xl font-semibold text-slate-900 truncate">
+                    {entity.entity_name ?? entity.entity_id}
+                  </h1>
+                  <p className="text-[11px] text-slate-400 truncate">{entity.entity_id}</p>
+                </div>
+              </div>
+              <div className="min-w-0">
+                <div className="flex flex-wrap items-center gap-1.5">
                   <RiskPill risk={entity.risk_tier ?? "Low"} />
-                  <span className="rounded-md bg-blue-50 px-2 py-0.5 text-xs font-semibold text-blue-700 ring-1 ring-blue-100">
+                  {/* Subtle earth-toned orange risk score badge instead of blue */}
+                  <span className="rounded-md bg-orange-50/70 px-2 py-0.5 text-xs font-semibold text-orange-700 ring-1 ring-orange-100/80">
                     Score {entity.risk_score.toFixed(0)}
                   </span>
                   {entity.segment && (
-                    <span className="rounded-md bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-600">
+                    <span className="rounded-md bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-600 truncate max-w-[150px]">
                       {entity.segment}
                     </span>
                   )}
                 </div>
-                <h1 className="mt-2 text-2xl font-semibold text-slate-900">
+                <h1 className="hidden sm:block mt-2 text-2xl font-semibold text-slate-900 truncate">
                   {entity.entity_name ?? entity.entity_id}
                 </h1>
-                <p className="mt-0.5 text-xs text-slate-400">{entity.entity_id}</p>
+                <p className="hidden sm:block mt-0.5 text-xs text-slate-400 truncate">{entity.entity_id}</p>
               </div>
             </div>
             {entity.last_pipeline_run_at && (
-              <p className="shrink-0 text-xs text-slate-400">
+              <p className="text-[11px] sm:text-xs text-slate-400 border-t border-slate-100 pt-2 md:border-0 md:pt-0 md:shrink-0">
                 Last run: {new Date(entity.last_pipeline_run_at).toLocaleString()}
               </p>
             )}
@@ -146,9 +155,9 @@ export function EntityProfilePage() {
         ) : null}
       </div>
 
-      {/* Risk score bar */}
+      {/* Risk score stats blocks */}
       {!isLoading && entity && (
-        <div className="grid gap-3 sm:grid-cols-3">
+        <div className="grid gap-3 grid-cols-1 sm:grid-cols-3">
           {[
             {
               label: "Risk score",
@@ -169,39 +178,42 @@ export function EntityProfilePage() {
               color: "text-slate-900",
             },
           ].map((s) => (
-            <div key={s.label} className="rounded-xl border border-slate-200 bg-white p-4">
-              <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">{s.label}</p>
-              <p className={`mt-2 text-2xl font-bold ${s.color}`}>{s.value}</p>
-              <p className="mt-0.5 text-xs text-slate-400">{s.sub}</p>
+            <div key={s.label} className="flex justify-between items-center rounded-xl border border-slate-200 bg-white p-4 sm:block">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">{s.label}</p>
+                <p className="mt-0.5 text-xs text-slate-400 sm:mt-1">{s.sub}</p>
+              </div>
+              <p className={`text-2xl font-bold sm:mt-2 ${s.color}`}>{s.value}</p>
             </div>
           ))}
         </div>
       )}
 
-      <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_320px]">
-        <div className="space-y-5">
+      {/* Main split grid structure layout */}
+      <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_320px]">
+        <div className="space-y-4">
           {/* Risk narrative */}
           {!isLoading && entity?.risk_narrative && (
-            <div className="rounded-xl border border-slate-200 bg-white p-5">
-              <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-slate-400">Risk narrative</p>
+            <div className="rounded-xl border border-slate-200 bg-white p-4 sm:p-5">
+              <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-400">Risk narrative</p>
               <p className="text-sm leading-relaxed text-slate-700">{entity.risk_narrative}</p>
             </div>
           )}
 
           {/* Risk history chart */}
-          <div className="rounded-xl border border-slate-200 bg-white p-5">
-            <p className="mb-4 text-xs font-semibold uppercase tracking-wide text-slate-400">
+          <div className="rounded-xl border border-slate-200 bg-white p-4 sm:p-5">
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
               Risk score history · 30 days
             </p>
             {isLoading ? (
-              <SkeletonBlock className="h-40 w-full" />
+              <SkeletonBlock className="h-40 w-full mt-4" />
             ) : (
               <RiskHistoryChart points={history?.points ?? []} />
             )}
           </div>
 
           {/* Profile data */}
-          <div className="rounded-xl border border-slate-200 bg-white p-5">
+          <div className="rounded-xl border border-slate-200 bg-white p-4 sm:p-5">
             <p className="mb-4 text-xs font-semibold uppercase tracking-wide text-slate-400">Profile data</p>
             {isLoading ? (
               <div className="space-y-2">
@@ -215,10 +227,10 @@ export function EntityProfilePage() {
           </div>
         </div>
 
-        {/* Sidebar */}
-        <div className="space-y-5">
+        {/* Sidebar panels */}
+        <div className="space-y-4">
           {/* Privacy posture */}
-          <div className="rounded-xl border border-slate-200 bg-white p-5">
+          <div className="rounded-xl border border-slate-200 bg-white p-4 sm:p-5">
             <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-slate-400">Data governance</p>
             <div className="flex gap-3">
               <div className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-emerald-50 text-emerald-600">
@@ -230,8 +242,8 @@ export function EntityProfilePage() {
             </div>
           </div>
 
-          {/* Recommendations */}
-          <div className="rounded-xl border border-slate-200 bg-white p-5">
+          {/* Recommendations list */}
+          <div className="rounded-xl border border-slate-200 bg-white p-4 sm:p-5">
             <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-slate-400">Recommendations</p>
             {isLoading ? (
               <div className="space-y-3">
@@ -267,9 +279,10 @@ export function EntityProfilePage() {
                     </p>
                   </div>
                 ))}
+                {/* Clean, low-vibrancy orange colorway update for action link */}
                 <Link
                   href="/dashboard/recommendations"
-                  className="mt-1 flex items-center gap-1 text-xs font-medium text-blue-600 hover:underline"
+                  className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-orange-600 hover:text-orange-700 hover:underline transition-colors"
                 >
                   View all recommendations <TrendingUp size={11} />
                 </Link>

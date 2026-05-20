@@ -36,8 +36,9 @@ export function TrendsPanel() {
   const change = raw.length > 1 ? last - first : 0;
 
   return (
-    <div className="rounded-xl border border-slate-200 bg-white p-5">
-      <div className="mb-5 flex items-start justify-between gap-4">
+    <div className="w-full rounded-xl border border-slate-200 bg-white p-4 sm:p-5">
+      {/* Header: Flexes to column layout on mobile to prevent clipping */}
+      <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
         <div>
           <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
             Analytics
@@ -47,7 +48,7 @@ export function TrendsPanel() {
           </h2>
         </div>
         {trendError && (
-          <span className="rounded-md bg-amber-50 px-2 py-1 text-[11px] font-medium text-amber-700">
+          <span className="self-start rounded-md bg-amber-50 px-2 py-1 text-[11px] font-medium text-amber-700">
             Live data unavailable
           </span>
         )}
@@ -63,11 +64,12 @@ export function TrendsPanel() {
           </p>
         </div>
       ) : (
+        /* Chart container: added relative group for future touch-tooltips if needed */
         <div className="flex h-44 items-end gap-1 rounded-lg bg-slate-50 px-3 pb-3 pt-4">
           {raw.map((v, i) => (
             <div key={i} className="flex h-full flex-1 flex-col justify-end">
               <div
-                className="rounded-sm bg-blue-500 transition-all duration-300"
+                className="rounded-sm bg-blue-500 transition-all duration-300 hover:bg-blue-600"
                 style={{ height: `${(v / max) * 100}%` }}
                 title={`${v}%`}
               />
@@ -76,7 +78,8 @@ export function TrendsPanel() {
         </div>
       )}
 
-      <div className="mt-4 grid grid-cols-3 gap-3">
+      {/* Stats Grid: Single column on mobile, 3 columns on tablet/desktop */}
+      <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
         {[
           { label: "Peak", value: raw.length ? `${peak}%` : "—", color: "text-slate-900" },
           {
@@ -102,9 +105,9 @@ export function TrendsPanel() {
             color: "text-slate-900",
           },
         ].map(({ label, value, color }) => (
-          <div key={label} className="rounded-lg bg-slate-50 p-3">
+          <div key={label} className="flex justify-between items-center rounded-lg bg-slate-50 p-3 sm:block">
             <p className="text-[11px] text-slate-400">{label}</p>
-            <p className={`mt-0.5 text-sm font-bold ${color}`}>{value}</p>
+            <p className={`mt-0.5 text-sm font-bold sm:mt-1 ${color}`}>{value}</p>
           </div>
         ))}
       </div>

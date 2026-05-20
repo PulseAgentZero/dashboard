@@ -21,10 +21,10 @@ function useConnections() {
 function StatusDot({ status }: { status: string }) {
   const s = status?.toLowerCase();
   if (s === "connected" || s === "active" || s === "succeeded")
-    return <span className="h-2 w-2 rounded-full bg-emerald-500" />;
+    return <span className="h-2 w-2 shrink-0 rounded-full bg-emerald-500" />;
   if (s === "error" || s === "failed")
-    return <span className="h-2 w-2 rounded-full bg-rose-500" />;
-  return <span className="h-2 w-2 rounded-full bg-amber-400" />;
+    return <span className="h-2 w-2 shrink-0 rounded-full bg-rose-500" />;
+  return <span className="h-2 w-2 shrink-0 rounded-full bg-amber-400" />;
 }
 
 function Item({
@@ -39,7 +39,8 @@ function Item({
   status?: string;
 }) {
   return (
-    <div className="flex items-center gap-3 rounded-lg bg-slate-50 px-4 py-3">
+    /* Changed padding to scale smoothly on mobile views */
+    <div className="flex items-center gap-3 rounded-lg bg-slate-50 p-3 sm:px-4 sm:py-3">
       <div className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-white border border-slate-200 text-slate-500">
         <Icon size={15} />
       </div>
@@ -47,7 +48,7 @@ function Item({
         <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-400">
           {label}
         </p>
-        <p className="mt-0.5 truncate text-sm font-semibold text-slate-800">
+        <p className="mt-0.5 truncate text-xs sm:text-sm font-semibold text-slate-800" title={value}>
           {value}
         </p>
       </div>
@@ -98,19 +99,20 @@ export function PipelineStatusCard() {
   ];
 
   return (
-    <div className="rounded-xl border border-slate-200 bg-white p-5">
-      <div className="mb-4 flex items-center justify-between">
-        <div>
+    <div className="w-full rounded-xl border border-slate-200 bg-white p-4 sm:p-5">
+      {/* Header layout adjustment to keep the state badge alongside text */}
+      <div className="mb-4 flex items-start justify-between gap-3">
+        <div className="min-w-0">
           <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
             System
           </p>
-          <h2 className="mt-0.5 text-base font-semibold text-slate-900">
+          <h2 className="mt-0.5 text-base font-semibold text-slate-900 leading-tight sm:leading-normal">
             Pipeline & connection status
           </h2>
         </div>
         {run && (
           <span
-            className={`rounded-full px-3 py-1 text-xs font-semibold ${
+            className={`rounded-full px-2.5 py-0.5 text-xs font-semibold capitalize shrink-0 ${
               run.status === "succeeded"
                 ? "bg-emerald-50 text-emerald-700"
                 : run.status === "failed"
@@ -123,7 +125,8 @@ export function PipelineStatusCard() {
         )}
       </div>
 
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      {/* Main Grid: Adapts cleanly from tight screen profiles to desktops */}
+      <div className="grid gap-2.5 grid-cols-1 xs:grid-cols-2 lg:grid-cols-4">
         {steps.map((s) => (
           <Item key={s.label} {...s} />
         ))}

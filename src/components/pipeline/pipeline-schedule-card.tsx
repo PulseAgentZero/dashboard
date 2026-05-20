@@ -105,136 +105,136 @@ export function PipelineScheduleCard() {
       </button>
 
       {open && (
-        <div
-          role="listbox"
-          className="absolute right-0 z-50 mt-2 w-[min(100vw-2rem,22rem)] overflow-hidden rounded-xl border border-slate-200 bg-white shadow-lg ring-1 ring-slate-900/5"
-        >
-          <div className="border-b border-slate-100 px-4 py-3">
-            <p className="text-sm font-semibold text-slate-900">Automatic runs</p>
-            <p className="mt-0.5 text-xs leading-relaxed text-slate-500">
-              Choose how often Entivia should refresh user models and recommendations.
-            </p>
-          </div>
+  <div
+    role="listbox"
+    className="absolute top-full right-0 max-sm:left-1/2 max-sm:-translate-x-1/2 z-50 mt-2 w-[calc(100vw-2rem)] sm:w-88 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-lg ring-1 ring-slate-900/5"
+  >
+    <div className="border-b border-slate-100 px-4 py-3">
+      <p className="text-sm font-semibold text-slate-900">Automatic runs</p>
+      <p className="mt-0.5 text-xs leading-relaxed text-slate-500">
+        Choose how often Entivia should refresh user models and recommendations.
+      </p>
+    </div>
 
-          <ul className="max-h-[min(24rem,60vh)] overflow-y-auto py-1">
-            {SCHEDULE_PRESETS.map((preset) => {
-              const selected = presetId === preset.id;
-              return (
-                <li key={preset.id}>
-                  <button
-                    type="button"
-                    role="option"
-                    aria-selected={selected}
-                    disabled={isPending}
-                    onClick={() => applyPreset(preset.id)}
-                    className={`flex w-full gap-3 px-4 py-2.5 text-left transition-colors hover:bg-slate-50 disabled:opacity-50 ${
-                      selected ? "bg-indigo-50/80" : ""
-                    }`}
-                  >
-                    <span
-                      className={`mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full border ${
-                        selected
-                          ? "border-indigo-600 bg-indigo-600"
-                          : "border-slate-300 bg-white"
-                      }`}
-                      aria-hidden
-                    >
-                      {selected && (
-                        <span className="h-1.5 w-1.5 rounded-full bg-white" />
-                      )}
-                    </span>
-                    <span className="min-w-0">
-                      <span className="block text-sm font-medium text-slate-900">
-                        {preset.label}
-                      </span>
-                      <span className="mt-0.5 block text-xs leading-snug text-slate-500">
-                        {preset.description}
-                      </span>
-                    </span>
-                  </button>
-                </li>
-              );
-            })}
-
-            <li className="border-t border-slate-100">
-              <button
-                type="button"
-                role="option"
-                aria-selected={presetId === "custom"}
-                disabled={isPending}
-                onClick={() => setPresetId("custom")}
-                className={`flex w-full gap-3 px-4 py-2.5 text-left transition-colors hover:bg-slate-50 disabled:opacity-50 ${
-                  presetId === "custom" ? "bg-indigo-50/80" : ""
+    <ul className="max-h-[min(24rem,50vh)] overflow-y-auto py-1">
+      {SCHEDULE_PRESETS.map((preset) => {
+        const selected = presetId === preset.id;
+        return (
+          <li key={preset.id}>
+            <button
+              type="button"
+              role="option"
+              aria-selected={selected}
+              disabled={isPending}
+              onClick={() => applyPreset(preset.id)}
+              className={`flex w-full gap-3 px-4 py-2.5 text-left transition-colors hover:bg-slate-50/80 disabled:opacity-50 ${
+                selected ? "bg-orange-50/60" : ""
+              }`}
+            >
+              <span
+                className={`mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full border ${
+                  selected
+                    ? "border-orange-600 bg-orange-600"
+                    : "border-slate-300 bg-white"
                 }`}
+                aria-hidden
               >
-                <span
-                  className={`mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full border ${
-                    presetId === "custom"
-                      ? "border-indigo-600 bg-indigo-600"
-                      : "border-slate-300 bg-white"
-                  }`}
-                  aria-hidden
-                >
-                  {presetId === "custom" && (
-                    <span className="h-1.5 w-1.5 rounded-full bg-white" />
-                  )}
-                </span>
-                <span className="min-w-0">
-                  <span className="block text-sm font-medium text-slate-900">
-                    {CUSTOM_SCHEDULE_PRESET.label}
-                  </span>
-                  <span className="mt-0.5 block text-xs leading-snug text-slate-500">
-                    {CUSTOM_SCHEDULE_PRESET.description}
-                  </span>
-                </span>
-              </button>
-            </li>
-          </ul>
-
-          {presetId === "custom" && (
-            <div className="border-t border-slate-100 bg-slate-50/80 px-4 py-3">
-              <label className="mb-1 block text-xs font-semibold text-slate-600">
-                Cron expression
-              </label>
-              <div className="flex gap-2">
-                <input
-                  className="min-w-0 flex-1 rounded-lg border border-slate-200 bg-white px-3 py-2 font-mono text-xs text-slate-900 outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
-                  value={customCron}
-                  onChange={(e) => setCustomCron(e.target.value)}
-                  placeholder="0 2 * * *"
-                />
-                <button
-                  type="button"
-                  disabled={isPending}
-                  onClick={saveCustomCron}
-                  className="shrink-0 rounded-lg bg-indigo-600 px-3 py-2 text-xs font-semibold text-white hover:bg-indigo-700 disabled:opacity-50"
-                >
-                  Save
-                </button>
-              </div>
-            </div>
-          )}
-
-          <div className="border-t border-slate-100 bg-slate-50/50 px-4 py-2.5 text-[11px] text-slate-500">
-            {schedule?.enabled && activePreset && presetId !== "custom" ? (
-              <span>Active: {activePreset.label}</span>
-            ) : schedule?.enabled && presetId === "custom" ? (
-              <span>
-                Active: custom (
-                <span className="font-mono">{schedule.cron}</span>)
+                {selected && (
+                  <span className="h-1.5 w-1.5 rounded-full bg-white" />
+                )}
               </span>
-            ) : (
-              <span>Automatic runs are off — use Run now when you need fresh results.</span>
-            )}
-            {schedule?.next_run_at && schedule.enabled && (
-              <span className="mt-1 block">
-                Next run: {new Date(schedule.next_run_at).toLocaleString()}
-                {org?.timezone ? ` (${org.timezone})` : ""}
+              <span className="min-w-0">
+                <span className="block text-sm font-medium text-slate-900">
+                  {preset.label}
+                </span>
+                <span className="mt-0.5 block text-xs leading-snug text-slate-500">
+                  {preset.description}
+                </span>
               </span>
+            </button>
+          </li>
+        );
+      })}
+
+      <li className="border-t border-slate-100">
+        <button
+          type="button"
+          role="option"
+          aria-selected={presetId === "custom"}
+          disabled={isPending}
+          onClick={() => setPresetId("custom")}
+          className={`flex w-full gap-3 px-4 py-2.5 text-left transition-colors hover:bg-slate-50 disabled:opacity-50 ${
+            presetId === "custom" ? "bg-orange-50/60" : ""
+          }`}
+        >
+          <span
+            className={`mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full border ${
+              presetId === "custom"
+                ? "border-orange-600 bg-orange-600"
+                : "border-slate-300 bg-white"
+            }`}
+            aria-hidden
+          >
+            {presetId === "custom" && (
+              <span className="h-1.5 w-1.5 rounded-full bg-white" />
             )}
-          </div>
+          </span>
+          <span className="min-w-0">
+            <span className="block text-sm font-medium text-slate-900">
+              {CUSTOM_SCHEDULE_PRESET.label}
+            </span>
+            <span className="mt-0.5 block text-xs leading-snug text-slate-500">
+              {CUSTOM_SCHEDULE_PRESET.description}
+            </span>
+          </span>
+        </button>
+      </li>
+    </ul>
+
+    {presetId === "custom" && (
+      <div className="border-t border-slate-100 bg-slate-50/80 px-4 py-3">
+        <label className="mb-1 block text-xs font-semibold text-slate-600">
+          Cron expression
+        </label>
+        <div className="flex gap-2">
+          <input
+            className="min-w-0 flex-1 rounded-lg border border-slate-200 bg-white px-3 py-2 font-mono text-xs text-slate-900 outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500"
+            value={customCron}
+            onChange={(e) => setCustomCron(e.target.value)}
+            placeholder="0 2 * * *"
+          />
+          <button
+            type="button"
+            disabled={isPending}
+            onClick={saveCustomCron}
+            className="shrink-0 rounded-lg bg-orange-600 px-3 py-2 text-xs font-semibold text-white hover:bg-orange-700 transition-colors disabled:opacity-50"
+          >
+            Save
+          </button>
         </div>
+      </div>
+    )}
+
+    <div className="border-t border-slate-100 bg-slate-50/50 px-4 py-2.5 text-[11px] text-slate-500">
+      {schedule?.enabled && activePreset && presetId !== "custom" ? (
+        <span>Active: {activePreset.label}</span>
+      ) : schedule?.enabled && presetId === "custom" ? (
+        <span>
+          Active: custom (
+          <span className="font-mono">{schedule.cron}</span>)
+        </span>
+      ) : (
+        <span>Automatic runs are off — use Run now when you need fresh results.</span>
       )}
+      {schedule?.next_run_at && schedule.enabled && (
+        <span className="mt-1 block leading-normal">
+          Next run: {new Date(schedule.next_run_at).toLocaleString()}
+          {org?.timezone ? ` (${org.timezone})` : ""}
+        </span>
+      )}
+    </div>
+  </div>
+)}
     </div>
   );
 }

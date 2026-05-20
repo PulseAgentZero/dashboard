@@ -21,24 +21,34 @@ export function FeatureLockPanel({
   secondaryLabel,
 }: Props) {
   return (
-    <div className="flex flex-col items-center justify-center rounded-2xl border border-slate-200 bg-gradient-to-b from-slate-50 to-white px-6 py-16 text-center shadow-sm">
-      <div className="grid h-14 w-14 place-items-center rounded-2xl bg-indigo-100 ring-1 ring-indigo-200">
-        <Lock size={26} className="text-indigo-600" />
+    <div className="flex flex-col items-center justify-center rounded-2xl border border-slate-200 bg-gradient-to-b from-slate-50/50 to-white px-6 py-16 text-center shadow-xs">
+      {/* Updated lock icon ring from Indigo to clean Slate & Amber/Orange */}
+      <div className="grid h-12 w-12 place-items-center rounded-xl bg-orange-50 border border-orange-100 text-orange-600">
+        <Lock size={20} />
       </div>
-      <h2 className="mt-5 text-lg font-semibold text-slate-900">{title}</h2>
-      <p className="mt-2 max-w-md text-sm leading-relaxed text-slate-500">{description}</p>
-      <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+      
+      <h2 className="mt-4 text-base font-bold tracking-tight text-slate-900 sm:text-lg">
+        {title}
+      </h2>
+      <p className="mt-1.5 max-w-md text-xs sm:text-sm leading-relaxed text-slate-500">
+        {description}
+      </p>
+
+      <div className="mt-6 flex flex-col w-full sm:w-auto sm:flex-row items-center justify-center gap-2.5 px-4 sm:px-0">
+        {/* Main CTA button updated to branding Orange */}
         <Link
           href={upgradeHref}
-          className="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700"
+          className="inline-flex w-full sm:w-auto items-center justify-center gap-1.5 rounded-xl bg-orange-600 px-5 py-2.5 text-xs sm:text-sm font-semibold text-white shadow-xs hover:bg-orange-700 transition-colors"
         >
           {upgradeLabel}
           <ArrowRight size={14} />
         </Link>
+        
+        {/* Secondary link matching page styling profiles */}
         {secondaryHref && secondaryLabel && (
           <Link
             href={secondaryHref}
-            className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+            className="inline-flex w-full sm:w-auto items-center justify-center gap-1.5 rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-xs sm:text-sm font-semibold text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition-colors"
           >
             {secondaryLabel}
           </Link>

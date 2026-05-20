@@ -48,7 +48,7 @@ export default function ForgotPasswordPage() {
           <button
             type="submit"
             disabled={isPending}
-            className="w-full rounded-xl bg-blue-600 py-3 text-[13px] font-semibold text-white hover:bg-blue-700 disabled:opacity-60"
+            className="w-full flex justify-center rounded-xl bg-orange-600 py-3 text-[13px] font-semibold text-white hover:bg-orange-700 focus:outline-none focus:ring-1 focus:ring-offset-1 focus:ring-orange-500 transition duration-150 disabled:opacity-60 disabled:cursor-not-allowed"
           >
             {isPending ? "Sending…" : "Send reset link"}
           </button>
@@ -56,7 +56,7 @@ export default function ForgotPasswordPage() {
       )}
 
       <p className="text-center text-[13px] text-slate-600">
-        <Link href="/auth/login" className="font-medium text-blue-600 hover:text-blue-500">
+        <Link href="/auth/login" className="font-medium text-orange-600 hover:text-orange-500">
           Back to sign in
         </Link>
       </p>

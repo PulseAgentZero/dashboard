@@ -10,9 +10,9 @@ export function DashboardHeader() {
     hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
 
   return (
-    <div className="flex items-center justify-between gap-4">
+    <div className="flex items-start justify-between gap-4">
       <div>
-        <h1 className="text-xl font-semibold text-slate-900">
+        <h1 className="text-lg md:text-xl font-semibold text-slate-900">
           {greeting}{user?.full_name ? `, ${user.full_name.split(" ")[0]}` : ""}
         </h1>
         <p className="mt-0.5 text-sm text-slate-500">
@@ -20,7 +20,7 @@ export function DashboardHeader() {
         </p>
       </div>
       {org && (
-        <div className="flex items-center gap-2">
+        <div className="hidden sm:flex items-center gap-2 shrink-0">
           <span className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-medium text-slate-600">
             {org.name}
           </span>

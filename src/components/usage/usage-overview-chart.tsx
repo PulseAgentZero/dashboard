@@ -1,15 +1,5 @@
 "use client";
 
-import {
-  Bar,
-  BarChart,
-  CartesianGrid,
-  Cell,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from "recharts";
 import type { ChartRow } from "@/lib/usage-meters";
 
 type Props = {
@@ -17,48 +7,31 @@ type Props = {
 };
 
 export function UsageOverviewChart({ data }: Props) {
-  if (data.length === 0) {
-    return null;
-  }
+  if (data.length === 0) return null;
+
+  const max = Math.max(...data.map((r) => r.limit), 1);
 
   return (
-    <ResponsiveContainer width="100%" height={280}>
-      <BarChart
-        data={data}
-        layout="vertical"
-        margin={{ top: 8, right: 24, left: 8, bottom: 8 }}
-        barCategoryGap="20%"
-      >
-        <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#e2e8f0" />
-        <XAxis type="number" tick={{ fontSize: 11, fill: "#64748b" }} />
-        <YAxis
-          type="category"
-          dataKey="name"
-          width={72}
-          tick={{ fontSize: 11, fill: "#334155", fontWeight: 500 }}
-        />
-        <Tooltip
-          cursor={{ fill: "rgba(148, 163, 184, 0.12)" }}
-          content={({ active, payload }) => {
-            if (!active || !payload?.[0]) return null;
-            const row = payload[0].payload as ChartRow;
-            return (
-              <div className="rounded-lg border border-slate-200 bg-white px-3 py-2 shadow-lg">
-                <p className="text-xs font-semibold text-slate-800">{row.name}</p>
-                <p className="mt-1 text-xs text-slate-600">
-                  {row.used.toLocaleString()} / {row.limit.toLocaleString()} used
-                </p>
-                <p className="text-xs text-slate-500">{row.pct}% of limit</p>
-              </div>
-            );
-          }}
-        />
-        <Bar dataKey="used" radius={[0, 6, 6, 0]} maxBarSize={22}>
-          {data.map((entry, i) => (
-            <Cell key={i} fill={entry.fill} />
-          ))}
-        </Bar>
-      </BarChart>
-    </ResponsiveContainer>
+    <div className="flex flex-col gap-3" style={{ minHeight: 280 }}>
+      {data.map((row) => (
+        <div key={row.name}>
+          <div className="mb-1 flex items-center justify-between gap-2">
+            <span className="truncate text-[11px] font-medium text-slate-700" style={{ maxWidth: 120 }}>
+              {row.name}
+            </span>
+            <span className="shrink-0 font-mono text-[11px] text-slate-400">
+              {row.used.toLocaleString()} / {row.limit.toLocaleString()}
+            </span>
+          </div>
+          <div className="relative h-2.5 overflow-hidden rounded-full bg-slate-100">
+            <div
+              className="absolute inset-y-0 left-0 rounded-full transition-all duration-500"
+              style={{ width: `${(row.used / max) * 100}%`, background: row.fill }}
+            />
+          </div>
+          <p className="mt-0.5 text-right font-mono text-[10px] text-slate-400">{row.pct}%</p>
+        </div>
+      ))}
+    </div>
   );
 }

@@ -99,36 +99,40 @@ export function StudioHomePage() {
   }
 
   return (
-    <DashboardPageShell className="space-y-5">
-      <header className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <DashboardPageShell className="space-y-4 px-4 py-4 sm:px-6">
+      {/* Top Banner Header Block */}
+      <header className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-xl font-semibold text-slate-900">Studio</h1>
-          <p className="mt-0.5 text-sm text-slate-500">Queries and dashboards on your data.</p>
+          <p className="mt-0.5 text-xs sm:text-sm text-slate-500">Queries and dashboards on your data.</p>
         </div>
         {canCreate && (
-          <div className="flex shrink-0 gap-2">
+          <div className="flex items-center gap-2 w-full sm:w-auto">
             <Link
               href="/dashboard/studio/queries/new"
-              className="inline-flex items-center gap-1.5 rounded-lg bg-indigo-600 px-3.5 py-2 text-sm font-medium text-white hover:bg-indigo-700"
+              className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 rounded-lg bg-orange-600 px-3.5 py-2 text-xs font-semibold text-white hover:bg-orange-700 transition-colors shadow-xs"
             >
-              <Plus size={15} />
+              <Plus size={14} />
               New query
             </Link>
             <button
               type="button"
               onClick={() => setCreateDashOpen(true)}
-              className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-3.5 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+              className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors"
             >
-              <LayoutDashboard size={15} />
+              <LayoutDashboard size={14} />
               Dashboard
             </button>
           </div>
         )}
       </header>
 
-      <div className="rounded-xl border border-slate-200 bg-white">
-        <div className="flex flex-col gap-3 border-b border-slate-100 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex gap-1">
+      {/* Main Container Card */}
+      <div className="rounded-xl border border-slate-200 bg-white overflow-hidden">
+        {/* Interactive Filters Grid Area */}
+        <div className="flex flex-col gap-3 border-b border-slate-100 px-4 py-3 md:flex-row md:items-center md:justify-between">
+          {/* Main Content Category Tabs */}
+          <div className="flex gap-0.5 overflow-x-auto pb-1 md:pb-0 scrollbar-none">
             {(["queries", "dashboards"] as const).map((t) => {
               const count = t === "queries" ? queriesTotal : dashboardsTotal;
               const active = tab === t;
@@ -137,7 +141,7 @@ export function StudioHomePage() {
                   key={t}
                   type="button"
                   onClick={() => setTab(t)}
-                  className={`rounded-md px-3 py-1.5 text-sm font-medium capitalize transition-colors ${
+                  className={`rounded-md px-3 py-1.5 text-xs font-medium capitalize whitespace-nowrap transition-colors ${
                     active ? "bg-slate-100 text-slate-900" : "text-slate-500 hover:text-slate-700"
                   }`}
                 >
@@ -148,47 +152,55 @@ export function StudioHomePage() {
             })}
           </div>
 
-          <div className="flex flex-wrap items-center gap-2">
-            <div className="relative min-w-[200px] flex-1 sm:max-w-xs">
+          {/* Search, Starred, & Tags Filters Lineup */}
+          <div className="flex flex-col gap-2.5 sm:flex-row sm:items-center sm:gap-3">
+            <div className="relative w-full sm:w-48 md:w-56">
               <Search
-                size={15}
+                size={14}
                 className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400"
               />
               <input
                 value={search}
                 onChange={(e) => handleSearchChange(e.target.value)}
                 placeholder="Search…"
-                className="w-full rounded-md border border-slate-200 py-1.5 pl-8 pr-2 text-sm outline-none focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400"
+                className="w-full rounded-md border border-slate-200 py-1.5 pl-8 pr-2 text-xs outline-none focus:border-orange-400 focus:ring-1 focus:ring-orange-400/30 transition-all"
               />
             </div>
-            <label className="flex cursor-pointer items-center gap-1.5 text-sm text-slate-600">
-              <input
-                type="checkbox"
-                checked={starredOnly}
-                onChange={(e) => setStarredOnly(e.target.checked)}
-                className="rounded border-slate-300 text-indigo-600"
-              />
-              Starred
-            </label>
-            {allTags.length > 0 && (
-              <select
-                value={tagFilter}
-                onChange={(e) => setTagFilter(e.target.value)}
-                className="rounded-md border border-slate-200 py-1.5 pl-2 pr-7 text-sm text-slate-700 outline-none focus:border-indigo-400"
-              >
-                <option value="">All tags</option>
-                {allTags.map((t) => (
-                  <option key={t} value={t}>
-                    {t}
-                  </option>
-                ))}
-              </select>
-            )}
+            
+            <div className="flex items-center justify-between gap-4 sm:gap-3">
+              <label className="flex cursor-pointer items-center gap-1.5 text-xs font-medium text-slate-600 select-none">
+                <input
+                  type="checkbox"
+                  checked={starredOnly}
+                  onChange={(e) => setStarredOnly(e.target.checked)}
+                  className="rounded border-slate-300 text-orange-600 focus:ring-orange-400/40 h-3.5 w-3.5"
+                />
+                Starred
+              </label>
+
+              {allTags.length > 0 && (
+                <select
+                  value={tagFilter}
+                  onChange={(e) => setTagFilter(e.target.value)}
+                  className="rounded-md border border-slate-200 bg-white py-1.5 pl-2 pr-7 text-xs text-slate-700 outline-none focus:border-orange-400 transition-colors"
+                >
+                  <option value="">All tags</option>
+                  {allTags.map((t) => (
+                    <option key={t} value={t}>
+                      {t}
+                    </option>
+                  ))}
+                </select>
+              )}
+            </div>
           </div>
         </div>
 
+        {/* Dynamic Resource Rows Content Panel */}
         {loading ? (
-          <StudioListSkeleton rows={6} compact />
+          <div className="p-4">
+            <StudioListSkeleton rows={6} compact />
+          </div>
         ) : (isQueries ? queries.length === 0 : dashboards.length === 0) ? (
           <StudioListEmpty
             kind={tab}
@@ -196,7 +208,7 @@ export function StudioHomePage() {
             onCreateDashboard={() => setCreateDashOpen(true)}
           />
         ) : isQueries ? (
-          <div>
+          <div className="divide-y divide-slate-50">
             {queries.map((query) => (
               <QueryListRow
                 key={query.id}
@@ -209,7 +221,7 @@ export function StudioHomePage() {
             ))}
           </div>
         ) : (
-          <div>
+          <div className="divide-y divide-slate-50">
             {dashboards.map((dashboard) => (
               <DashboardListRow
                 key={dashboard.id}
@@ -222,12 +234,14 @@ export function StudioHomePage() {
         )}
 
         {!loading && total > 0 && (
-          <Pagination
-            page={page}
-            pageSize={STUDIO_LIST_PAGE_SIZE}
-            total={total}
-            onPageChange={setPage}
-          />
+          <div className="border-t border-slate-100 p-4">
+            <Pagination
+              page={page}
+              pageSize={STUDIO_LIST_PAGE_SIZE}
+              total={total}
+              onPageChange={setPage}
+            />
+          </div>
         )}
       </div>
 

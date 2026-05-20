@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect } from "react";
 import {
   Bell,
   Bot,
@@ -102,11 +103,9 @@ function isActive(href: string, pathname: string) {
 
 function BrandMark({
   logoUrl,
-  label,
   collapsed,
 }: {
   logoUrl?: string | null;
-  label: string;
   collapsed: boolean;
 }) {
   const frame = collapsed ? "h-9 w-9" : "h-9 w-9";
@@ -159,7 +158,7 @@ function UserAvatar({
 
   return (
     <div
-      className={`${size} flex shrink-0 items-center justify-center rounded-full bg-linear-to-br from-blue-500 to-teal-400 text-[10px] font-bold text-white ring-2 ring-white`}
+      className={`${size} flex shrink-0 items-center justify-center rounded-full bg-linear-to-br from-orange-500 to-amber-400 text-[10px] font-bold text-white ring-2 ring-white`}
     >
       {initials || "?"}
     </div>
@@ -167,12 +166,18 @@ function UserAvatar({
 }
 
 export default function Sidebar() {
-  const { collapsed, toggle } = useSidebar();
+  const { collapsed, toggle, mobileOpen, closeMobile } = useSidebar();
   const pathname = usePathname();
+
   const { user, org } = useAuth();
   const { mutate: logout, isPending: isLoggingOut } = useLogout();
   const { data: connections } = useConnections();
   const { hasAccess: auditLogsUnlocked } = useAuditLogAccess();
+
+  useEffect(() => {
+    closeMobile();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathname]);
 
   const connectionDot =
     connections == null
@@ -186,28 +191,49 @@ export default function Sidebar() {
   const displayName = user?.full_name || user?.email || "User";
 
   return (
-    <aside
-      className={`relative flex h-screen shrink-0 flex-col border-r border-slate-200 bg-white transition-all duration-300 ease-in-out ${
-        collapsed ? "w-16" : "w-64"
-      }`}
-    >
+    <>
+      {/* Mobile backdrop */}
+      {mobileOpen && (
+        <div
+          className="fixed inset-0 z-30 bg-slate-900/40 lg:hidden"
+          onClick={closeMobile}
+          aria-hidden
+        />
+      )}
+
+      <aside
+        className={`relative flex h-screen shrink-0 flex-col border-r border-slate-200 bg-white transition-all duration-300 ease-in-out
+          ${collapsed ? "w-16" : "w-64"}
+          max-lg:fixed max-lg:inset-y-0 max-lg:left-0 max-lg:z-40 max-lg:w-72 max-lg:shadow-xl
+          ${mobileOpen ? "max-lg:translate-x-0" : "max-lg:-translate-x-full"}
+        `}
+      >
+      {/* Desktop collapse toggle */}
       <button
         onClick={toggle}
-        className="absolute -right-3 top-7 z-20 flex h-6 w-6 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-500 shadow-sm transition-colors hover:text-slate-700"
+        className="absolute -right-3 top-7 z-20 hidden lg:flex h-6 w-6 items-center justify-center rounded-full border border-orange-100 bg-white text-slate-500 shadow-sm transition-colors hover:border-orange-200 hover:text-orange-700"
         aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
       >
         {collapsed ? <ChevronRight size={11} /> : <ChevronLeft size={11} />}
       </button>
 
+      {/* Mobile close button */}
+      <button
+        onClick={closeMobile}
+        className="absolute right-3 top-5 z-20 flex h-7 w-7 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-500 shadow-sm transition-colors hover:text-slate-800 lg:hidden"
+        aria-label="Close menu"
+      >
+        <ChevronLeft size={13} />
+      </button>
+
       <Link
         href="/dashboard"
-        className={`flex items-center gap-3 border-b border-slate-200 px-4 py-5 transition-colors hover:bg-slate-50/80 ${
+        className={`flex items-center gap-3 border-b border-orange-100 px-4 py-5 transition-colors hover:bg-orange-50/50 ${
           collapsed ? "justify-center px-0" : ""
         }`}
       >
         <BrandMark
           logoUrl={org?.logo_url}
-          label={org?.name ?? "Entivia"}
           collapsed={collapsed}
         />
         {!collapsed && (
@@ -255,14 +281,14 @@ export default function Sidebar() {
                           : {})}
                         className={`flex items-center gap-3 rounded-lg px-3 py-2 text-[13px] transition-colors ${
                           active
-                            ? "bg-blue-50 text-blue-600"
-                            : "text-slate-600 hover:bg-slate-50 hover:text-slate-800"
+                            ? "bg-orange-50 text-orange-700 shadow-sm shadow-orange-600/5"
+                            : "text-slate-600 hover:bg-orange-50/60 hover:text-orange-700"
                         } ${collapsed ? "justify-center px-0" : ""}`}
                       >
                         <div className="relative shrink-0">
                           <Icon
                             size={17}
-                            className={active ? "text-blue-600" : ""}
+                            className={active ? "text-orange-700" : ""}
                           />
                           {href === "/dashboard/connections" && connectionDot && (
                             <span
@@ -316,7 +342,7 @@ export default function Sidebar() {
               <p className="truncate text-xs font-medium text-slate-700">
                 {displayName}
               </p>
-              <span className="mt-0.5 inline-block rounded bg-blue-50 px-1.5 py-px text-[10px] font-medium capitalize text-blue-600">
+              <span className="mt-0.5 inline-block rounded bg-slate-100 px-1.5 py-px text-[10px] font-medium capitalize text-slate-500">
                 {user?.role || "member"}
               </span>
             </div>
@@ -337,5 +363,6 @@ export default function Sidebar() {
         )}
       </div>
     </aside>
+    </>
   );
 }

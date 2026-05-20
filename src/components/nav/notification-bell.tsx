@@ -37,7 +37,7 @@ export function NotificationBell() {
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        className="relative flex h-9 w-9 items-center justify-center rounded-lg text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-700"
+        className="relative flex h-10 w-10 items-center justify-center rounded-lg text-slate-500 transition-colors hover:bg-orange-50 hover:text-orange-700"
         aria-label="Notifications"
         data-tour="notifications-bell"
       >
@@ -125,7 +125,7 @@ export function NotificationBell() {
             <Link
               href="/dashboard/notifications"
               onClick={() => setOpen(false)}
-              className="text-[11px] font-semibold text-blue-600 hover:text-blue-700"
+              className="text-[11px] font-semibold text-orange-600 hover:text-orange-700"
             >
               View all notifications
             </Link>

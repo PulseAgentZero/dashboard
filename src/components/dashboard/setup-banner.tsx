@@ -79,23 +79,27 @@ export function SetupBanner() {
 
   return (
     <>
-      <div className="border-b border-blue-100 bg-gradient-to-r from-blue-50 to-indigo-50 px-6 py-3">
-        <div className="mx-auto flex max-w-[1400px] flex-wrap items-center justify-between gap-3">
-          <div className="flex min-w-0 items-start gap-3">
-            <div className="mt-0.5 grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-blue-600 text-white">
-              <Sparkles size={18} />
+      <div className="border-b border-zinc-200 bg-white px-4 py-3.5 sm:px-6 relative">
+        <div className="mx-auto flex max-w-[1400px] flex-col lg:flex-row lg:items-center justify-between gap-4">
+          
+          {/* Left Side: Context Messaging */}
+          <div className="flex min-w-0 items-start gap-3 pr-8 lg:pr-4">
+            <div className="mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-orange-50 text-orange-600 border border-orange-100">
+              <Sparkles size={15} />
             </div>
-            <div>
-              <p className="text-sm font-semibold text-slate-900">Finish setting up Entivia</p>
-              <p className="mt-0.5 text-xs text-slate-600">{bannerMessage()}</p>
+            <div className="min-w-0">
+              <p className="text-sm font-medium text-zinc-900">Finish setting up Entivia</p>
+              <p className="mt-0.5 text-xs text-zinc-500 leading-normal">{bannerMessage()}</p>
             </div>
           </div>
-          <div className="flex flex-wrap items-center gap-2">
+
+          {/* Right Side Actions: Forced row layout layout across all formats */}
+          <div className="flex flex-row flex-wrap items-center gap-2 w-full lg:w-auto shrink-0">
             {needsContext && (
               <button
                 type="button"
                 onClick={() => setSheetOpen(true)}
-                className="rounded-lg bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-blue-700"
+                className="flex-1 sm:flex-initial text-center whitespace-nowrap rounded-lg bg-orange-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-orange-700 shadow-xs transition-colors"
               >
                 Add business context
               </button>
@@ -103,30 +107,35 @@ export function SetupBanner() {
             {needsConn && (
               <Link
                 href="/dashboard/connections/new"
-                className="inline-flex items-center gap-1.5 rounded-lg border border-blue-200 bg-white px-3 py-1.5 text-xs font-semibold text-blue-700 hover:bg-blue-50"
+                className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-lg border border-zinc-200 bg-white px-3 py-1.5 text-xs font-medium text-zinc-700 hover:bg-zinc-50 transition-colors"
               >
-                <Cable size={13} />
+                <Cable size={13} className="text-zinc-400" />
                 Connect data
               </Link>
             )}
             {needsMapping && firstMappableConnection && (
               <Link
                 href={`/dashboard/connections/${firstMappableConnection.id}/map`}
-                className="inline-flex items-center gap-1.5 rounded-lg border border-blue-200 bg-white px-3 py-1.5 text-xs font-semibold text-blue-700 hover:bg-blue-50"
+                className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-lg border border-zinc-200 bg-white px-3 py-1.5 text-xs font-medium text-zinc-700 hover:bg-zinc-50 transition-colors"
               >
-                <Layers size={13} />
+                <Layers size={13} className="text-zinc-400" />
                 Map your data
               </Link>
             )}
+          </div>
+
+          {/* Absolute positioned close button on mobile, clean inline transition for layout on desktop panels */}
+          <div className="absolute top-3.5 right-4 lg:relative lg:top-auto lg:right-auto lg:ml-1 shrink-0">
             <button
               type="button"
               onClick={dismiss}
-              className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 hover:bg-white/80 hover:text-slate-600"
+              className="flex h-7 w-7 items-center justify-center rounded-md text-zinc-400 hover:bg-zinc-100 hover:text-zinc-600 transition-colors"
               aria-label="Dismiss for now"
             >
               <X size={14} />
             </button>
           </div>
+
         </div>
       </div>
 

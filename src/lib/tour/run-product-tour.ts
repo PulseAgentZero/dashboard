@@ -16,7 +16,10 @@ export function runProductTour(onDestroyed?: () => void): Driver {
   const driverObj = driver({
     showProgress: true,
     allowClose: true,
-    overlayColor: "rgba(15, 23, 42, 0.55)",
+    animate: true,
+    overlayColor: "rgba(15, 23, 42, 0.65)",
+    stagePadding: 6,
+    stageRadius: 8,
     steps: getTourSteps(),
     onDestroyed: () => {
       activeDriver = null;

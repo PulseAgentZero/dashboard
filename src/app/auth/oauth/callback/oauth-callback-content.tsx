@@ -93,7 +93,7 @@ function OAuthLoadingScreen() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-white">
       <div className="text-center space-y-3">
-        <Loader2 className="mx-auto h-8 w-8 animate-spin text-blue-600" />
+        <Loader2 className="mx-auto h-8 w-8 animate-spin text-orange-500" />
         <p className="text-[13px] text-slate-600">Signing you in…</p>
       </div>
     </div>

@@ -9,21 +9,28 @@ import { DashboardPageShell } from "@/components/layout/dashboard-page-shell";
 
 export default function DashboardPage() {
   return (
-    <DashboardPageShell className="space-y-5">
+    <DashboardPageShell className="space-y-4 md:space-y-5">
+      
       <DashboardHeader />
+      
       <MetricsGrid />
 
-      <div className="grid gap-5 lg:grid-cols-[1fr_1.6fr]">
+      {/* 
+      */}
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.6fr] gap-4 md:gap-5">
         <RiskBreakdown />
         <TrendsPanel />
       </div>
 
-      <div className="grid gap-5 lg:grid-cols-[1.8fr_1fr]">
+      {/* 
+      */}
+      <div className="grid grid-cols-1 lg:grid-cols-[1.8fr_1fr] gap-4 md:gap-5">
         <EntityExplorerPreview />
         <RecommendationsPanel />
       </div>
 
       <PipelineStatusCard />
+      
     </DashboardPageShell>
   );
 }

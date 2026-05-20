@@ -52,7 +52,7 @@ export function RetakeTourButton({
         disabled={isLoading}
         className={
           className ??
-          "inline-flex items-center gap-1.5 text-xs font-semibold text-blue-600 hover:text-blue-700 disabled:opacity-50"
+          "inline-flex items-center gap-1.5 text-xs font-semibold text-orange-600 hover:text-orange-700 disabled:opacity-50"
         }
       >
         {isLoading ? (
@@ -78,7 +78,7 @@ export function RetakeTourButton({
       {isLoading ? (
         <Loader2 size={14} className="animate-spin" />
       ) : (
-        <Compass size={14} className="text-blue-600" />
+        <Compass size={14} className="text-orange-600" />
       )}
       {label}
     </button>

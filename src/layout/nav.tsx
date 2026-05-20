@@ -2,10 +2,10 @@
 
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { Database } from "lucide-react";
+import { Database, Menu } from "lucide-react";
 import SearchInput from "@/components/ui/search-input";
 import { NotificationBell } from "@/components/nav/notification-bell";
-import { RetakeTourButton } from "@/components/tour/retake-tour-button";
+import { useSidebar } from "@/lib/sidebar-context";
 
 const pageMeta: Record<string, { title: string; crumb: string }> = {
   "/dashboard": { title: "Dashboard", crumb: "Overview" },
@@ -38,37 +38,53 @@ function getPageMeta(pathname: string) {
 export default function Nav() {
   const pathname = usePathname();
   const { title, crumb } = getPageMeta(pathname);
+  const { toggleMobile } = useSidebar();
 
   return (
-    <header className="flex h-16 shrink-0 items-center justify-between border-b border-slate-200 bg-white px-6">
-      {/* Breadcrumb + title */}
+    <header className="flex h-16 shrink-0 items-center justify-between border-b border-orange-100 bg-white px-4 lg:px-6">
+      {/* Left: hamburger (mobile) + breadcrumb */}
       <div className="flex items-center gap-2 min-w-0">
-        <span className="text-xs text-slate-500 font-medium">Entivia</span>
+        <button
+          onClick={toggleMobile}
+          className="flex h-9 w-9 items-center justify-center rounded-lg text-slate-500 transition-colors hover:bg-orange-50 hover:text-orange-700 lg:hidden"
+          aria-label="Open menu"
+        >
+          <Menu size={18} />
+        </button>
+
+        {/* Mobile: current page name only */}
         {crumb && (
-          <>
-            <span className="text-[13px] text-slate-300">/</span>
-            <span className="text-[13px] font-semibold text-slate-700">{crumb}</span>
-          </>
+          <span className="text-[13px] font-semibold text-slate-700 lg:hidden">{crumb}</span>
         )}
+
+        {/* Desktop: Entivia / crumb */}
+        <span className="hidden lg:inline text-xs font-semibold text-orange-600">Entivia</span>
+        {crumb && (
+          <span className="hidden lg:flex items-center gap-2">
+            <span className="text-[13px] text-orange-200">/</span>
+            <span className="text-[13px] font-semibold text-slate-700">{crumb}</span>
+          </span>
+        )}
+
         <h1 className="sr-only">{title}</h1>
       </div>
 
       {/* Right controls */}
       <div className="flex items-center gap-2">
-        <SearchInput placeholder="Search recommendations…" />
+        {/* Desktop-only controls */}
+        <div className="hidden lg:flex items-center gap-2">
+          <SearchInput placeholder="Search recommendations…" />
+          <NotificationBell />
+        </div>
 
-        <NotificationBell />
-
-        <RetakeTourButton variant="icon" label="Product tour" />
-
-        {/* Connect Data CTA */}
+        {/* Connect Data — icon-only on mobile, full button on desktop */}
         <Link
           href="/dashboard/connections"
           data-tour="connect-data"
-          className="flex h-10 items-center gap-1 rounded-lg bg-blue-600 px-4 text-[13px] font-medium text-white transition-colors hover:bg-blue-700 active:bg-blue-800"
+          className="flex h-9 w-9 items-center justify-center rounded-lg bg-orange-600 text-white shadow-sm shadow-orange-600/15 transition-colors hover:bg-orange-700 active:bg-orange-800 lg:h-10 lg:w-auto lg:gap-2 lg:px-4"
         >
-          <Database size={12} />
-          <span className="hidden sm:inline text-[14px] mb-0.5">Connect Data</span>
+          <Database size={14} />
+          <span className="hidden lg:inline text-[13px] font-semibold leading-none">Connect Data</span>
         </Link>
       </div>
     </header>

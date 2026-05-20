@@ -5,9 +5,9 @@ export function getTourSteps(): DriveStep[] {
     {
       element: "[data-tour='sidebar-nav']",
       popover: {
-        title: "Navigation",
+        title: "Your workspace",
         description:
-          "Move between your dashboard, entities, recommendations, and data tools from the sidebar.",
+          "Everything lives here — entities, recommendations, analytics, pipeline, and settings. You can collapse the sidebar anytime for more space.",
         side: "right",
         align: "start",
       },
@@ -15,33 +15,36 @@ export function getTourSteps(): DriveStep[] {
     {
       element: "[data-tour='nav-dashboard']",
       popover: {
-        title: "Dashboard",
-        description: "Your home view for risk metrics, trends, and pipeline status.",
+        title: "Home dashboard",
+        description:
+          "Your live overview: risk metrics, scoring trends, entity segments, and pipeline health — all in one place.",
         side: "right",
       },
     },
     {
       element: "[data-tour='nav-connections']",
       popover: {
-        title: "Connections",
-        description: "Connect databases, warehouses, spreadsheets, and files as data sources.",
+        title: "Data connections",
+        description:
+          "Connect a database, data warehouse, CSV, or third-party source. Entivia reads your data and scores entities from it.",
         side: "right",
       },
     },
     {
       element: "[data-tour='connect-data']",
       popover: {
-        title: "Quick connect",
-        description: "Use Connect Data anytime to add or manage sources from the header.",
+        title: "Add a data source",
+        description:
+          "Tap this anytime to plug in a new source. It's the first step — no data, no scoring.",
         side: "bottom",
       },
     },
     {
       element: "[data-tour='notifications-bell']",
       popover: {
-        title: "Notifications",
+        title: "Alerts & activity",
         description:
-          "Pipeline runs, recommendations, and alerts appear here. Open the full inbox from the sidebar.",
+          "Pipeline completions, risk spikes, and recommendation updates surface here. You can also set custom alert rules under Alerts in the sidebar.",
         side: "bottom",
       },
     },

@@ -38,7 +38,7 @@ function StatusIcon({ status }: { status: PipelineRunStatus }) {
     return <CheckCircle2 size={16} className="text-emerald-500" />;
   if (status === "failed") return <XCircle size={16} className="text-rose-500" />;
   if (status === "running")
-    return <Loader2 size={16} className="animate-spin text-indigo-500" />;
+    return <Loader2 size={16} className="animate-spin text-orange-500" />;
   return <Clock size={16} className="text-slate-400" />;
 }
 
@@ -46,7 +46,7 @@ function statusPillClass(status: PipelineRunStatus) {
   const map = {
     success: "bg-emerald-50 text-emerald-700 ring-emerald-200/60",
     failed: "bg-rose-50 text-rose-700 ring-rose-200/60",
-    running: "bg-indigo-50 text-indigo-700 ring-indigo-200/60",
+    running: "bg-orange-50 text-orange-700 ring-orange-200/60",
     pending: "bg-slate-100 text-slate-600 ring-slate-200/60",
   };
   return `inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-semibold ring-1 ${map[status]}`;
@@ -106,20 +106,20 @@ function SummaryPill({
 
   return (
     <div
-      className={`min-w-[100px] flex-1 rounded-xl border px-4 py-3 shadow-sm ${accentCls}`}
+      className={`min-w-[140px] sm:min-w-[100px] flex-1 rounded-xl border px-4 py-3 shadow-xs ${accentCls}`}
     >
       <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-500">
         {label}
       </p>
       <p className={`mt-1 text-xl font-bold tabular-nums ${valueCls}`}>{value}</p>
-      {sub && <p className="mt-0.5 text-[11px] text-slate-500">{sub}</p>}
+      {sub && <p className="mt-0.5 text-[11px] text-slate-500 leading-tight">{sub}</p>}
     </div>
   );
 }
 
 function RunRow({ run }: { run: PipelineRun }) {
   return (
-    <div className="group flex flex-col gap-2 px-5 py-4 transition-colors hover:bg-slate-50/80 sm:flex-row sm:items-center sm:gap-4">
+    <div className="group flex flex-col gap-3 px-4 py-4 transition-colors hover:bg-slate-50/80 sm:px-5 sm:flex-row sm:items-center sm:gap-4">
       <div className="flex min-w-0 flex-1 items-start gap-3 sm:items-center">
         <div className="mt-0.5 grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-slate-100 group-hover:bg-white sm:mt-0">
           <StatusIcon status={run.status} />
@@ -137,7 +137,7 @@ function RunRow({ run }: { run: PipelineRun }) {
             )}
           </div>
           {run.current_step && (run.status === "running" || run.status === "pending") && (
-            <p className="mt-1 truncate text-xs text-indigo-600">
+            <p className="mt-1 truncate text-xs text-orange-600 font-medium">
               Step: {run.current_step.replace(/_/g, " ")}
             </p>
           )}
@@ -149,8 +149,8 @@ function RunRow({ run }: { run: PipelineRun }) {
           )}
         </div>
       </div>
-      <div className="flex shrink-0 items-center justify-between gap-4 sm:block sm:text-right">
-        <p className="text-sm font-medium text-slate-700">{formatDuration(run)}</p>
+      <div className="flex shrink-0 items-center justify-between gap-4 border-t border-slate-100/60 pt-2 sm:border-t-0 sm:pt-0 sm:block sm:text-right">
+        <p className="text-xs sm:text-sm font-medium text-slate-700">{formatDuration(run)}</p>
         <p className="text-[11px] text-slate-400">{formatWhen(run.created_at)}</p>
       </div>
     </div>
@@ -188,12 +188,12 @@ export function PipelinePage() {
       <header className="flex flex-col gap-4 border-b border-slate-200/80 pb-6 lg:flex-row lg:items-end lg:justify-between">
         <div>
           <div className="flex items-center gap-3">
-            <div className="grid h-11 w-11 place-items-center rounded-xl bg-gradient-to-br from-indigo-600 to-violet-600 text-white shadow-md shadow-indigo-200">
+            <div className="grid h-11 w-11 place-items-center rounded-xl bg-orange-600 text-white shadow-xs">
               <GitBranch size={22} />
             </div>
             <div>
-              <h1 className="text-2xl font-bold tracking-tight text-slate-900">Pipeline</h1>
-              <p className="mt-0.5 text-sm text-slate-500">
+              <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900">Pipeline</h1>
+              <p className="mt-0.5 text-xs sm:text-sm text-slate-500">
                 Score entities, generate recommendations, and refresh your models
               </p>
             </div>
@@ -201,21 +201,21 @@ export function PipelinePage() {
           <div className="mt-3">
             <DashboardDocsLink
               href="/docs/architecture"
-              className="text-sm font-semibold text-indigo-600 hover:text-indigo-700"
+              className="text-xs sm:text-sm font-semibold text-orange-600 hover:text-orange-700"
             >
               How the pipeline works
             </DashboardDocsLink>
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
           <PipelineScheduleCard />
           <button
             type="button"
             onClick={() => trigger()}
             disabled={triggering || !hasMapping}
             title={!hasMapping ? "Complete a data mapping first" : undefined}
-            className="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-50"
+            className="inline-flex items-center justify-center gap-2 rounded-lg bg-orange-600 px-4 py-2.5 text-sm font-semibold text-white shadow-xs transition hover:bg-orange-700 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {triggering ? (
               <Loader2 size={15} className="animate-spin" />
@@ -227,36 +227,36 @@ export function PipelinePage() {
         </div>
       </header>
 
-      {!hasMapping && (
-        <div className="flex flex-col gap-3 rounded-2xl border border-amber-200 bg-gradient-to-r from-amber-50 to-orange-50/80 p-5 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex gap-3">
-            <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-amber-100 text-amber-700">
-              <Zap size={18} />
-            </div>
-            <div>
-              <p className="text-sm font-semibold text-amber-900">Map your data first</p>
-              <p className="mt-0.5 max-w-xl text-sm text-amber-800/90">
-                The pipeline needs a schema mapping on a SQL connection. Saving your first
-                mapping automatically starts the initial run.
-              </p>
-            </div>
-          </div>
-          <Link
-            href="/dashboard/connections"
-            className="inline-flex shrink-0 items-center gap-1.5 rounded-lg bg-amber-700 px-4 py-2 text-sm font-semibold text-white hover:bg-amber-800"
-          >
-            Go to connections
-            <ArrowRight size={14} />
-          </Link>
-        </div>
-      )}
+    {!hasMapping && (
+  <div className="flex flex-col gap-4 rounded-xl border border-slate-200 bg-slate-50 p-4 sm:flex-row sm:items-center sm:justify-between">
+    <div className="flex items-start gap-3">
+      <div className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-slate-200 text-slate-600 mt-0.5 sm:mt-0">
+        <AlertTriangle size={16} />
+      </div>
+      <div>
+        <p className="text-sm font-semibold text-slate-900">Schema mapping required</p>
+        <p className="mt-0.5 max-w-xl text-xs text-slate-500 leading-relaxed">
+          The pipeline requires an active data mapping on your SQL connection before it can run. 
+          Saving your first mapping will trigger an initial sync automatically.
+        </p>
+      </div>
+    </div>
+    <Link
+      href="/dashboard/connections"
+      className="inline-flex shrink-0 items-center justify-center gap-1.5 rounded-lg bg-orange-600 px-3.5 py-2 text-xs font-semibold text-white hover:bg-orange-700 transition-colors"
+    >
+      Configure mapping
+      <ArrowRight size={13} />
+    </Link>
+  </div>
+)}
 
       {activeRun && (
-        <div className="flex items-center gap-3 rounded-xl border border-indigo-200 bg-indigo-50/80 px-4 py-3">
-          <Loader2 size={18} className="animate-spin text-indigo-600" />
+        <div className="flex items-center gap-3 rounded-xl border border-orange-200 bg-orange-50/60 px-4 py-3">
+          <Loader2 size={18} className="animate-spin text-orange-600" />
           <div className="min-w-0 flex-1">
-            <p className="text-sm font-semibold text-indigo-900">Pipeline in progress</p>
-            <p className="truncate text-xs text-indigo-700/90">
+            <p className="text-sm font-semibold text-orange-900">Pipeline in progress</p>
+            <p className="truncate text-xs text-orange-700/90">
               {activeRun.current_step
                 ? `Current step: ${activeRun.current_step.replace(/_/g, " ")}`
                 : "Your run is queued or executing — this page refreshes automatically."}
@@ -265,7 +265,8 @@ export function PipelinePage() {
         </div>
       )}
 
-      <div className="flex flex-wrap gap-3">
+      {/* Summary Row */}
+      <div className="grid gap-3 grid-cols-2 md:grid-cols-3 lg:flex lg:flex-wrap">
         <SummaryPill
           label="Last run"
           value={lastRun ? statusLabel(lastRun.status) : "None"}
@@ -287,23 +288,27 @@ export function PipelinePage() {
           value={failedCount}
           accent={failedCount > 0 ? "danger" : "default"}
         />
-        <SummaryPill label="Schedule" value={scheduleLabel} sub={schedule?.enabled ? "Automatic" : "Manual only"} />
+        <SummaryPill 
+          label="Schedule" 
+          value={scheduleLabel} 
+          sub={schedule?.enabled ? "Automatic" : "Manual only"} 
+        />
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
-        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+      <div className="grid gap-6 grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
+        <div className="h-fit rounded-2xl border border-slate-200 bg-white p-4 sm:p-5 shadow-xs">
           <h2 className="text-sm font-semibold text-slate-900">What runs here</h2>
-          <ul className="mt-4 space-y-3 text-sm text-slate-600">
+          <ul className="mt-4 space-y-3 text-xs sm:text-sm text-slate-600">
             <li className="flex gap-2">
-              <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-indigo-500" />
+              <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-orange-500" />
               Pull entities from your mapped tables
             </li>
             <li className="flex gap-2">
-              <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-indigo-500" />
+              <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-orange-500" />
               Score risk and churn signals per entity
             </li>
             <li className="flex gap-2">
-              <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-indigo-500" />
+              <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-orange-500" />
               Generate AI recommendations for your team
             </li>
           </ul>
@@ -314,8 +319,8 @@ export function PipelinePage() {
           </p>
         </div>
 
-        <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-          <div className="flex items-center justify-between border-b border-slate-100 px-5 py-4">
+        <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xs">
+          <div className="flex items-center justify-between border-b border-slate-100 px-4 py-4 sm:px-5">
             <div>
               <p className="text-sm font-semibold text-slate-900">Run history</p>
               <p className="text-xs text-slate-500">Most recent executions for your organization</p>
@@ -336,12 +341,12 @@ export function PipelinePage() {
           )}
 
           {!isLoading && runs.length === 0 && (
-            <div className="flex flex-col items-center px-6 py-14 text-center">
+            <div className="flex flex-col items-center px-4 py-12 sm:py-16 text-center">
               <div className="grid h-14 w-14 place-items-center rounded-2xl bg-slate-100">
                 <RefreshCw size={26} className="text-slate-300" />
               </div>
               <p className="mt-4 text-base font-semibold text-slate-700">No pipeline runs yet</p>
-              <p className="mt-1 max-w-sm text-sm text-slate-500">
+              <p className="mt-1 max-w-sm text-xs sm:text-sm text-slate-500 leading-relaxed">
                 {hasMapping
                   ? 'Click "Run now" to process your mapped data, or wait for the schedule.'
                   : "Complete a data mapping on a connection — your first run starts automatically."}
