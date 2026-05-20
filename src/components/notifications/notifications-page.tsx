@@ -28,7 +28,7 @@ export function NotificationsPage() {
   const total = data?.total ?? notifications.length;
 
   return (
-    <div className="mx-auto w-full max-w-7xl space-y-5 px-4 py-2 sm:px-6">
+    <div className="mx-auto w-full max-w-7xl space-y-5">
       {/* Title Header Row */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>

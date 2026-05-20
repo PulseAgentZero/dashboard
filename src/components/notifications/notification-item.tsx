@@ -156,6 +156,9 @@ function InboxRow({ n, onRead }: { n: Notification; onRead?: (id: string) => voi
           {n.source && (
             <span className="text-[11px] text-slate-400">{n.source}</span>
           )}
+          <span className="text-[11px] font-medium text-slate-500 sm:hidden">
+            {timeAgo(n.created_at)}
+          </span>
           {!n.is_read && (
             <span className="inline-flex h-1.5 w-1.5 rounded-full bg-blue-500" aria-hidden />
           )}
@@ -187,11 +190,6 @@ function InboxRow({ n, onRead }: { n: Notification; onRead?: (id: string) => voi
         )}
       </div>
 
-      <div className="flex shrink-0 items-center sm:hidden">
-        {!n.is_read && (
-          <span className="h-2 w-2 rounded-full bg-blue-500" aria-label="Unread" />
-        )}
-      </div>
     </div>
   );
 

@@ -268,12 +268,12 @@ export function ConnectionForm({ catalogItem: rawCatalogItem, onSuccess, onCance
         </p>
       )}
 
-      <div className="flex justify-end gap-2 border-t border-slate-200 pt-4">
+      <div className="flex flex-col-reverse gap-2 border-t border-slate-200 pt-4 sm:flex-row sm:justify-end">
         {onCancel && (
           <button
             type="button"
             onClick={onCancel}
-            className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-50"
+            className="flex w-full items-center justify-center rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-50 sm:w-auto"
           >
             Cancel
           </button>
@@ -281,7 +281,7 @@ export function ConnectionForm({ catalogItem: rawCatalogItem, onSuccess, onCance
         <button
           type="submit"
           disabled={isPending}
-          className="flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700 disabled:opacity-50"
+          className="flex w-full items-center justify-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700 disabled:opacity-50 sm:w-auto"
         >
           {isPending && <Loader2 size={14} className="animate-spin" />}
           {isPending

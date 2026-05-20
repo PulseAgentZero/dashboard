@@ -77,7 +77,7 @@ function ConnectionMapPage() {
       <header className="flex flex-col gap-4 border-b border-slate-200/80 pb-6 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <Breadcrumb connectionName={connection.name} />
-          <div className="mt-3 flex items-center gap-3">
+          <div className="mt-3 flex min-w-0 items-center gap-3">
             <div className="grid h-10 w-10 place-items-center rounded-xl bg-indigo-600 text-white shadow-sm">
               <Layers size={20} />
             </div>
@@ -126,7 +126,7 @@ function Breadcrumb({ connectionName }: { connectionName?: string }) {
       {connectionName && (
         <>
           <span className="text-slate-300">/</span>
-          <span className="font-medium text-slate-700">{connectionName}</span>
+          <span className="min-w-0 truncate font-medium text-slate-700">{connectionName}</span>
           <span className="text-slate-300">/</span>
           <span className="text-slate-500">Map</span>
         </>

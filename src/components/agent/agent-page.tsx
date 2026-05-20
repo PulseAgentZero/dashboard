@@ -211,7 +211,7 @@ function ChatPanel({
           <button
             onClick={handleSend}
             disabled={!input.trim() || sending}
-            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-orange-600 text-white hover:bg-orange-700 active:bg-orange-800 disabled:opacity-40 transition-colors shadow-xs"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-orange-600 text-white hover:bg-orange-700 active:bg-orange-800 disabled:opacity-40 transition-colors shadow-xs sm:h-9 sm:w-9"
           >
             <Send size={13} />
           </button>

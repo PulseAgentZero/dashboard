@@ -85,7 +85,7 @@ export function PipelineScheduleCard() {
         disabled={isPending}
         aria-expanded={open}
         aria-haspopup="listbox"
-        className="inline-flex max-w-[min(100vw-12rem,20rem)] items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-left text-sm shadow-sm transition-colors hover:border-slate-300 hover:bg-slate-50 disabled:opacity-50"
+        className="inline-flex w-full items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-left text-sm shadow-sm transition-colors hover:border-slate-300 hover:bg-slate-50 disabled:opacity-50 sm:max-w-[min(100vw-12rem,20rem)] sm:w-auto"
       >
         <Calendar size={15} className="shrink-0 text-slate-400" />
         <span className="min-w-0 flex-1 truncate">

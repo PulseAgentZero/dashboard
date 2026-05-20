@@ -38,7 +38,7 @@ export function DashboardToolbar({
 
   return (
     <div className="flex flex-wrap items-end gap-3 rounded-xl border border-slate-200 bg-white p-3 shadow-sm">
-      <div className="flex flex-col gap-1">
+      <div className="flex w-full flex-col gap-1 sm:w-auto">
         <label className="text-xs font-medium text-slate-500">Time range</label>
         <select
           value={timeRange.preset}
@@ -61,7 +61,7 @@ export function DashboardToolbar({
 
       {timeRange.preset === "custom" && (
         <>
-          <div className="flex flex-col gap-1">
+          <div className="flex w-full flex-col gap-1 sm:w-auto">
             <label className="text-xs font-medium text-slate-500">From</label>
             <input
               type="datetime-local"
@@ -76,7 +76,7 @@ export function DashboardToolbar({
               className="rounded-lg border border-slate-200 px-2.5 py-1.5 text-sm"
             />
           </div>
-          <div className="flex flex-col gap-1">
+          <div className="flex w-full flex-col gap-1 sm:w-auto">
             <label className="text-xs font-medium text-slate-500">To</label>
             <input
               type="datetime-local"
@@ -94,7 +94,7 @@ export function DashboardToolbar({
         </>
       )}
 
-      <div className="flex flex-col gap-1">
+      <div className="flex w-full flex-col gap-1 sm:w-auto">
         <label className="text-xs font-medium text-slate-500">Refresh</label>
         <select
           value={refreshIntervalSeconds ?? ""}

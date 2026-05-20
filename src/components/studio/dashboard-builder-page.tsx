@@ -306,7 +306,7 @@ export function DashboardBuilderPage({ dashboardId }: Props) {
           <input
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="mt-1 block text-xl font-semibold text-slate-900 border-0 border-b border-transparent focus:border-indigo-300 focus:outline-none"
+            className="mt-1 block w-full border-0 border-b border-transparent text-xl font-semibold text-slate-900 focus:border-indigo-300 focus:outline-none sm:w-auto"
           />
         </div>
         <div className="flex flex-wrap gap-2">

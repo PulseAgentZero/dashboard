@@ -442,7 +442,7 @@ export function QueryEditorPage({ queryId }: Props) {
                     >
                       {v.name} ({v.chart_type})
                     </button>
-                    <div className="flex shrink-0 opacity-0 group-hover:opacity-100">
+                    <div className="flex shrink-0 opacity-100 sm:opacity-0 sm:group-hover:opacity-100">
                       <button
                         type="button"
                         onClick={() => {

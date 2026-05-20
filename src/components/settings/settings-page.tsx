@@ -233,7 +233,7 @@ function OrgTab() {
         </div>
       )}
 
-      <div className="flex items-center justify-between border-t border-slate-100 pt-4">
+      <div className="flex flex-col gap-3 border-t border-slate-100 pt-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex flex-wrap items-center gap-2">
           <RetakeTourButton />
           {isAdmin && (
@@ -467,10 +467,10 @@ function ApiKeysTab() {
               <code className="flex-1 truncate rounded border border-emerald-200 bg-white px-3 py-1.5 font-mono text-xs text-slate-800">
                 {revealed === newKey.id ? newKey.key : `${newKey.key.slice(0, 12)}${"•".repeat(24)}`}
               </code>
-              <button onClick={() => setRevealed(revealed === newKey.id ? null : newKey.id)} className="shrink-0 text-emerald-600 hover:text-emerald-800">
+              <button onClick={() => setRevealed(revealed === newKey.id ? null : newKey.id)} className="shrink-0 rounded-md p-2 text-emerald-600 hover:bg-emerald-100/60 hover:text-emerald-800">
                 {revealed === newKey.id ? <EyeOff size={15} /> : <Eye size={15} />}
               </button>
-              <button onClick={() => { void navigator.clipboard.writeText(newKey.key); toast.success("Copied!"); }} className="shrink-0 text-emerald-600 hover:text-emerald-800">
+              <button onClick={() => { void navigator.clipboard.writeText(newKey.key); toast.success("Copied!"); }} className="shrink-0 rounded-md p-2 text-emerald-600 hover:bg-emerald-100/60 hover:text-emerald-800">
                 <Copy size={15} />
               </button>
             </div>
@@ -606,7 +606,7 @@ function LlmKeysTab() {
                   placeholder={placeholder}
                   autoComplete="off"
                 />
-                <button type="button" onClick={toggle} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
+                <button type="button" onClick={toggle} className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600">
                   {show ? <EyeOff size={15} /> : <Eye size={15} />}
                 </button>
               </div>
@@ -693,16 +693,16 @@ function LicenseTab() {
 
       <section>
         <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-slate-400">Activate license</p>
-        <form onSubmit={handleActivate} className="flex gap-2">
+        <form onSubmit={handleActivate} className="flex flex-col gap-2 sm:flex-row sm:items-center">
           <input
-            className={`${inputCls} flex-1 font-mono`}
+            className={`${inputCls} w-full font-mono sm:flex-1`}
             value={key}
             onChange={(e) => setKey(e.target.value)}
             placeholder="PULSE-XXXX-XXXX-XXXX"
             required
           />
           <button type="submit" disabled={isPending || !key.trim()}
-            className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-50">
+            className="flex w-full items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-50 sm:w-auto">
             {isPending && <Loader2 size={13} className="animate-spin" />}
             {isPending ? "Activating…" : "Activate"}
           </button>
@@ -746,7 +746,7 @@ export function SettingsPage() {
           ))}
         </div>
 
-        <div className="p-6">
+        <div className="p-4 sm:p-6">
           {tab === "org" && <OrgTab />}
           {tab === "account" && <AccountTab />}
           {tab === "apikeys" && <ApiKeysTab />}

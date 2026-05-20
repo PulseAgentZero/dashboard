@@ -118,8 +118,8 @@ export function ApiKeysPage() {
   const atLimit = slot ? (slot.limit !== null && slot.used >= slot.limit) : false;
 
   return (
-    <div className="mx-auto max-w-3xl space-y-6 px-4 py-6">
-      <div className="flex items-start justify-between gap-4">
+    <div className="mx-auto max-w-3xl space-y-6">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
         <div>
           <h1 className="text-xl font-semibold text-slate-900">API Keys</h1>
           <p className="mt-1 text-sm text-slate-500">
@@ -176,16 +176,14 @@ export function ApiKeysPage() {
                   </span>
                 </div>
               </div>
-              <div className="flex items-center justify-between gap-2 md:block md:shrink-0 md:text-right">
-                <p className="text-xs text-slate-400">
+              <div className="flex flex-col text-xs text-slate-400 md:shrink-0 md:text-right">
+                <p>
                   {k.last_used_at
                     ? `Last used ${new Date(k.last_used_at).toLocaleDateString()}`
                     : "Never used"}
                 </p>
                 {k.expires_at && (
-                  <p className="text-xs text-slate-400">
-                    Expires {new Date(k.expires_at).toLocaleDateString()}
-                  </p>
+                  <p>Expires {new Date(k.expires_at).toLocaleDateString()}</p>
                 )}
               </div>
               <button
@@ -204,10 +202,10 @@ export function ApiKeysPage() {
       <div className="rounded-lg bg-slate-50 p-4 text-xs text-slate-500">
         <p className="font-medium text-slate-700">Using your API key</p>
         <p className="mt-1">Pass the key in the <code className="rounded bg-slate-200 px-1">X-API-Key</code> header:</p>
-        <code className="mt-2 block rounded bg-slate-100 p-2 text-slate-600">
-          curl https://api.yourpulse.io/api/public/v1/entities \<br />
-          &nbsp;&nbsp;-H &quot;X-API-Key: pk_read_…&quot;
-        </code>
+        <pre className="mt-2 overflow-x-auto rounded bg-slate-100 p-2">
+          <code className="block whitespace-pre text-[11px] text-slate-600">{`curl https://api.yourpulse.io/api/public/v1/entities \\
+  -H "X-API-Key: pk_read_…"`}</code>
+        </pre>
       </div>
 
       {showCreate && (

@@ -25,7 +25,7 @@ export function SQLEditor({
   onInsertReady,
   tables = [],
   readOnly,
-  height = "280px",
+  height = "clamp(180px, 35dvh, 320px)",
 }: Props) {
   const editorRef = useRef<import("monaco-editor").editor.IStandaloneCodeEditor | null>(null);
   const suggestions = useMemo(() => {

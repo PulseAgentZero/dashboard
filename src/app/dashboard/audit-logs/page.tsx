@@ -54,7 +54,7 @@ function AuditLogsPageContent() {
 
   if (!hasAccess) {
     return (
-      <div className="mx-auto max-w-7xl space-y-5 px-4 py-2 sm:px-6">
+      <div className="mx-auto max-w-7xl space-y-5">
         <div>
           <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900">Audit logs</h1>
           <p className="mt-0.5 text-xs sm:text-sm text-slate-500">
@@ -78,7 +78,7 @@ function AuditLogsPageContent() {
   }
 
   return (
-    <div className="mx-auto max-w-7xl space-y-5 px-4 py-2 sm:px-6">
+    <div className="mx-auto max-w-7xl space-y-5">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900">Audit logs</h1>

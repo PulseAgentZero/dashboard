@@ -2,15 +2,18 @@
 
 import { useState } from "react";
 import { ChevronRight, Loader2, Play, Terminal } from "lucide-react";
+import { toast } from "sonner";
 import { useApiKeys } from "@/hooks/apikeys/use-apikeys";
+import { useMediaQuery } from "@/hooks/use-media-query";
 import {
   PUBLIC_API_CATALOG,
   type PublicApiEndpoint,
 } from "@/lib/docs/public-api-catalog";
 
-const BASE_URL =
-  (typeof window !== "undefined" ? "" : process.env.NEXT_PUBLIC_API_URL) ||
-  "http://localhost:8000";
+const BASE_URL = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000").replace(
+  /\/$/,
+  "",
+);
 
 function buildUrl(
   endpoint: PublicApiEndpoint,
@@ -46,24 +49,36 @@ export function PlaygroundPage() {
   const [loading, setLoading] = useState(false);
   const [rawKey, setRawKey] = useState("");
   const [activeTab, setActiveTab] = useState<Tab>("endpoints");
+  const isDesktop = useMediaQuery("(min-width: 1280px)");
 
   async function run() {
     const key = rawKey.trim();
     if (!key) {
-      alert("Enter your API key value below the selector.");
+      toast.error("Enter your full API key in the field below the selector.");
       return;
     }
+
+    const missingPath = selectedEndpoint.pathParams?.find(
+      (p) => p.required && !(pathValues[p.key] ?? "").trim(),
+    );
+    if (missingPath) {
+      toast.error(`Missing required path parameter: ${missingPath.key}`);
+      return;
+    }
+
     const url = buildUrl(selectedEndpoint, pathValues, queryValues);
     setLoading(true);
     setResponse(null);
     const t0 = Date.now();
     try {
+      const headers: Record<string, string> = { "X-API-Key": key };
+      if (selectedEndpoint.method === "POST") {
+        headers["Content-Type"] = "application/json";
+      }
+
       const res = await fetch(url, {
         method: selectedEndpoint.method,
-        headers: {
-          "X-API-Key": key,
-          "Content-Type": "application/json",
-        },
+        headers,
         body: selectedEndpoint.method === "POST" ? JSON.stringify({}) : undefined,
       });
       const ms = Date.now() - t0;
@@ -76,9 +91,13 @@ export function PlaygroundPage() {
       }
       setResponse({ status: res.status, body, ms });
       setActiveTab("response");
+      if (res.status >= 400) {
+        toast.error(`Request failed (${res.status})`);
+      }
     } catch (err) {
       setResponse({ status: 0, body: String(err), ms: Date.now() - t0 });
       setActiveTab("response");
+      toast.error("Request could not be sent. Check the API URL and network.");
     } finally {
       setLoading(false);
     }
@@ -113,7 +132,7 @@ export function PlaygroundPage() {
             <button
               key={ep.id}
               onClick={() => selectEndpoint(ep)}
-              className={`flex w-full items-center gap-2 px-3 py-2 text-left text-[13px] transition-colors ${
+              className={`flex w-full items-center gap-2 px-3 py-2.5 text-left text-[13px] transition-colors ${
                 selectedEndpoint.id === ep.id
                   ? "bg-blue-50 text-blue-700"
                   : "text-slate-600 hover:bg-slate-50"
@@ -163,7 +182,7 @@ export function PlaygroundPage() {
             <select
               value={selectedKeyPrefix}
               onChange={(e) => setSelectedKeyPrefix(e.target.value)}
-              className="mb-2 w-full rounded-lg border border-slate-200 px-3 py-2 text-xs outline-none focus:border-blue-500"
+              className="mb-2 w-full rounded-lg border border-slate-200 px-3 py-2.5 text-base outline-none focus:border-blue-500 sm:text-sm"
             >
               <option value="">Select a key…</option>
               {allKeys.map((k) => (
@@ -184,7 +203,7 @@ export function PlaygroundPage() {
             value={rawKey}
             onChange={(e) => setRawKey(e.target.value)}
             placeholder="Paste your full API key value here"
-            className="w-full rounded-lg border border-slate-200 px-3 py-2 font-mono text-xs outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+            className="w-full rounded-lg border border-slate-200 px-3 py-2.5 font-mono text-base outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 sm:text-sm"
           />
           <p className="mt-1 text-[10px] text-slate-400">
             Keys are hashed — paste the full value from when you created it.
@@ -205,7 +224,7 @@ export function PlaygroundPage() {
                     value={pathValues[p.key] ?? ""}
                     onChange={(e) => setPathValues((prev) => ({ ...prev, [p.key]: e.target.value }))}
                     placeholder={p.placeholder}
-                    className="w-full rounded border border-slate-200 px-2.5 py-1.5 text-xs outline-none focus:border-blue-500"
+                    className="w-full rounded border border-slate-200 px-3 py-2 text-base outline-none focus:border-blue-500 sm:px-2.5 sm:py-1.5 sm:text-sm"
                   />
                 </div>
               ))}
@@ -225,7 +244,7 @@ export function PlaygroundPage() {
                     value={queryValues[p.key] ?? ""}
                     onChange={(e) => setQueryValues((prev) => ({ ...prev, [p.key]: e.target.value }))}
                     placeholder={p.placeholder}
-                    className="w-full rounded border border-slate-200 px-2.5 py-1.5 text-xs outline-none focus:border-blue-500"
+                    className="w-full rounded border border-slate-200 px-3 py-2 text-base outline-none focus:border-blue-500 sm:px-2.5 sm:py-1.5 sm:text-sm"
                   />
                 </div>
               ))}
@@ -243,7 +262,7 @@ export function PlaygroundPage() {
       </div>
 
       {/* Send button */}
-      <div className="border-t border-slate-100 p-4">
+      <div className="border-t border-slate-100 p-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
         <button
           onClick={run}
           disabled={loading}
@@ -272,7 +291,7 @@ export function PlaygroundPage() {
             </span>
             <span className="text-xs text-slate-400">{response.ms}ms</span>
           </div>
-          <pre className="flex-1 overflow-auto p-4 font-mono text-xs leading-relaxed text-slate-300">
+          <pre className="flex-1 overflow-auto whitespace-pre-wrap p-4 font-mono text-xs leading-relaxed text-slate-300 xl:whitespace-pre">
             {response.body}
           </pre>
         </>
@@ -290,55 +309,57 @@ export function PlaygroundPage() {
   );
 
   return (
-    <div className="flex h-[calc(100dvh-5rem)] flex-col overflow-hidden lg:flex-row">
-
-      {/* ── Mobile/tablet tab bar ──────────────────────────────────── */}
-      <div className="flex shrink-0 border-b border-slate-200 bg-white lg:hidden">
-        {tabs.map((t) => (
-          <button
-            key={t.id}
-            onClick={() => setActiveTab(t.id)}
-            className={`flex-1 py-2.5 text-xs font-semibold transition-colors ${
-              activeTab === t.id
-                ? "border-b-2 border-blue-600 text-blue-700"
-                : "text-slate-500 hover:text-slate-700"
-            }`}
-          >
-            {t.label}
-            {t.id === "response" && response && (
-              <span
-                className={`ml-1.5 inline-block h-1.5 w-1.5 rounded-full ${
-                  response.status >= 200 && response.status < 300 ? "bg-emerald-400" : "bg-rose-400"
+    <div
+      className={`flex h-full min-h-[480px] overflow-hidden ${isDesktop ? "flex-row" : "flex-col"}`}
+    >
+      {isDesktop ? (
+        <>
+          <aside className="flex w-56 shrink-0 flex-col overflow-hidden border-r border-slate-200 bg-white">
+            {endpointPanel}
+          </aside>
+          <div className="flex w-80 shrink-0 flex-col border-r border-slate-200 bg-white">
+            {requestPanel}
+          </div>
+          <div className="flex min-w-0 flex-1 flex-col overflow-hidden">{responsePanel}</div>
+        </>
+      ) : (
+        <>
+          <div className="flex shrink-0 border-b border-slate-200 bg-white">
+            {tabs.map((t) => (
+              <button
+                key={t.id}
+                type="button"
+                onClick={() => setActiveTab(t.id)}
+                className={`flex-1 py-3 text-xs font-semibold transition-colors ${
+                  activeTab === t.id
+                    ? "border-b-2 border-blue-600 text-blue-700"
+                    : "text-slate-500 hover:text-slate-700"
                 }`}
-              />
+              >
+                {t.label}
+                {t.id === "response" && response && (
+                  <span
+                    className={`ml-1.5 inline-block h-1.5 w-1.5 rounded-full ${
+                      response.status >= 200 && response.status < 300
+                        ? "bg-emerald-400"
+                        : "bg-rose-400"
+                    }`}
+                  />
+                )}
+              </button>
+            ))}
+          </div>
+          <div className="min-h-0 flex-1 overflow-hidden">
+            {activeTab === "endpoints" && (
+              <div className="h-full bg-white">{endpointPanel}</div>
             )}
-          </button>
-        ))}
-      </div>
-
-      {/* ── Mobile/tablet: one panel at a time ────────────────────── */}
-      <div className="flex-1 overflow-hidden lg:hidden">
-        {activeTab === "endpoints" && (
-          <div className="h-full bg-white">{endpointPanel}</div>
-        )}
-        {activeTab === "request" && (
-          <div className="h-full bg-white">{requestPanel}</div>
-        )}
-        {activeTab === "response" && (
-          <div className="h-full">{responsePanel}</div>
-        )}
-      </div>
-
-      {/* ── Desktop: 3-column layout ───────────────────────────────── */}
-      <aside className="hidden w-56 shrink-0 overflow-hidden border-r border-slate-200 bg-white lg:flex lg:flex-col">
-        {endpointPanel}
-      </aside>
-      <div className="hidden w-80 shrink-0 flex-col border-r border-slate-200 bg-white lg:flex">
-        {requestPanel}
-      </div>
-      <div className="hidden flex-1 flex-col overflow-hidden lg:flex">
-        {responsePanel}
-      </div>
+            {activeTab === "request" && (
+              <div className="h-full bg-white">{requestPanel}</div>
+            )}
+            {activeTab === "response" && <div className="h-full">{responsePanel}</div>}
+          </div>
+        </>
+      )}
     </div>
   );
 }

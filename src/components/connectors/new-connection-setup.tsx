@@ -25,12 +25,12 @@ export function NewConnectionSetup({ catalogItem }: Props) {
         All connectors
       </Link>
 
-      <div className="grid gap-8 md:grid-cols-2">
-        <div className="rounded-xl border border-slate-200 bg-white p-6 lg:sticky lg:top-6 lg:max-h-[calc(100vh-8rem)] lg:overflow-y-auto">
+      <div className="grid gap-8 lg:grid-cols-2">
+        <div className="rounded-xl border border-slate-200 bg-white p-4 sm:p-6 lg:sticky lg:top-6 lg:max-h-[calc(100vh-8rem)] lg:overflow-y-auto">
           <ConnectorSetupGuide catalogItem={catalogItem} />
         </div>
 
-        <div className="rounded-xl border border-slate-200 bg-white p-6">
+        <div className="rounded-xl border border-slate-200 bg-white p-4 sm:p-6">
           <h2 className="mb-4 text-lg font-semibold text-slate-900">Configuration</h2>
           <ConnectionForm
             catalogItem={catalogItem}

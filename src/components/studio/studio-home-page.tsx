@@ -102,7 +102,7 @@ export function StudioHomePage() {
   }
 
   return (
-    <DashboardPageShell className="space-y-4 px-4 py-4 sm:px-6">
+    <DashboardPageShell className="space-y-4">
       {/* Top Banner Header Block */}
       <header className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>

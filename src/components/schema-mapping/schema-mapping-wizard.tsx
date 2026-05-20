@@ -442,7 +442,7 @@ export function SchemaMappingWizard({
                         key={col.name}
                         type="button"
                         onClick={() => toggleSignal(col.name)}
-                        className={`rounded-lg border px-3 py-2 font-mono text-xs font-medium transition ${
+                        className={`max-w-full break-all rounded-lg border px-3 py-2 font-mono text-xs font-medium transition ${
                           on
                             ? "border-indigo-400 bg-indigo-50 text-indigo-800 shadow-sm"
                             : "border-slate-200 bg-slate-50 text-slate-600 hover:border-slate-300 hover:bg-white"
@@ -518,7 +518,7 @@ export function SchemaMappingWizard({
                 </button>
               ) : null}
             </div>
-            <div className="flex gap-2">
+            <div className="flex w-full gap-2 sm:w-auto">
               {step !== "review" ? (
                 <button
                   type="button"
@@ -531,7 +531,7 @@ export function SchemaMappingWizard({
                       step === "table" ? "identity" : step === "identity" ? "signals" : "review",
                     )
                   }
-                  className="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700 disabled:opacity-50"
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700 disabled:opacity-50 sm:w-auto"
                 >
                   Continue
                   <ArrowRight size={16} />
@@ -541,7 +541,7 @@ export function SchemaMappingWizard({
                   type="button"
                   disabled={saving}
                   onClick={handleSave}
-                  className="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700 disabled:opacity-50"
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700 disabled:opacity-50 sm:w-auto"
                 >
                   {saving && <Loader2 size={16} className="animate-spin" />}
                   {existingMapping ? "Save changes" : "Save mapping"}
@@ -575,7 +575,7 @@ function ColumnPreview({
           return (
             <li
               key={c.name}
-              className={`rounded-md border px-2 py-1 font-mono text-[11px] ${
+              className={`max-w-full break-all rounded-md border px-2 py-1 font-mono text-[11px] ${
                 on
                   ? "border-indigo-300 bg-indigo-50 text-indigo-800"
                   : "border-slate-200 bg-white text-slate-600"
@@ -609,7 +609,7 @@ function ReviewCard({
           <div key={row.label} className="flex justify-between gap-4 text-sm">
             <dt className="text-slate-500">{row.label}</dt>
             <dd
-              className={`max-w-[60%] truncate text-right font-medium text-slate-900 ${
+              className={`min-w-0 break-all text-right font-medium text-slate-900 sm:max-w-[60%] sm:truncate ${
                 row.mono ? "font-mono text-xs" : ""
               }`}
             >

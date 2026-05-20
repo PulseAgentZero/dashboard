@@ -74,7 +74,7 @@ export function RecommendationDetailPage() {
 
   if (isError) {
     return (
-      <div className="mx-auto max-w-7xl space-y-4 px-4 py-4 sm:px-6">
+      <div className="mx-auto max-w-7xl space-y-4">
         <Link href="/dashboard/recommendations" className="inline-flex items-center gap-2 text-sm font-semibold text-slate-600 hover:text-slate-900">
           <ArrowLeft size={15} /> Back to recommendations
         </Link>
@@ -87,7 +87,7 @@ export function RecommendationDetailPage() {
   }
 
   return (
-    <div className="mx-auto max-w-7xl space-y-4 px-4 py-4 sm:px-6">
+    <div className="mx-auto max-w-7xl space-y-4">
       <Link
         href="/dashboard/recommendations"
         className="inline-flex items-center gap-2 text-sm font-semibold text-slate-600 transition-colors hover:text-slate-900"
@@ -163,7 +163,7 @@ export function RecommendationDetailPage() {
         ))}
       </div>
 
-      <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_320px]">
+      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_320px]">
         <div className="space-y-4">
           <DetailCard title="Why this matters" icon={<AlertTriangle size={14} className="text-amber-500" />}>
             {isLoading ? (

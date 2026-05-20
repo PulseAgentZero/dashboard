@@ -69,7 +69,7 @@ export function RecommendationsPage() {
   }
 
   return (
-    <div className="mx-auto max-w-7xl space-y-4 px-4 py-4 sm:px-6">
+    <div className="mx-auto max-w-7xl space-y-4">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-xl font-semibold text-slate-900">Recommendations</h1>
@@ -186,6 +186,11 @@ export function RecommendationsPage() {
                           {humanizeRecommendationType(rec.type)}
                         </span>
                       )}
+                      {rec.confidence_score != null && (
+                        <span className="text-xs text-slate-500 sm:hidden">
+                          Confidence: {(rec.confidence_score * 100).toFixed(0)}%
+                        </span>
+                      )}
                     </div>
                     <h2 className="mt-2 text-sm font-semibold text-slate-900 leading-snug">
                       <Link
@@ -216,7 +221,7 @@ export function RecommendationsPage() {
                   </div>
 
                   {rec.confidence_score != null && (
-                    <div className="self-start sm:self-auto shrink-0 rounded-lg border border-slate-200 bg-white p-2.5 text-center min-w-20">
+                    <div className="hidden shrink-0 self-start rounded-lg border border-slate-200 bg-white p-2.5 text-center min-w-20 sm:block sm:self-auto">
                       <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-400">Confidence</p>
                       <p className="mt-0.5 text-lg font-bold text-slate-900">
                         {(rec.confidence_score * 100).toFixed(0)}%
@@ -239,7 +244,7 @@ export function RecommendationsPage() {
                         disabled={busy}
                         onClick={() => action({ id: rec.id })}
                         aria-label="Mark as done"
-                        className="flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white hover:bg-slate-700 disabled:opacity-50 sm:flex-none"
+                        className="flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-slate-900 px-3 py-2.5 text-xs font-semibold text-white hover:bg-slate-700 disabled:opacity-50 sm:flex-none sm:py-1.5"
                       >
                         <Check size={14} className="md:hidden" />
                         <span className="hidden md:inline">
@@ -250,7 +255,7 @@ export function RecommendationsPage() {
                         disabled={busy}
                         onClick={() => escalate(rec.id)}
                         aria-label="Escalate"
-                        className="flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-amber-200 px-3 py-1.5 text-xs font-semibold text-amber-700 hover:bg-amber-50 disabled:opacity-50 sm:flex-none"
+                        className="flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-amber-200 px-3 py-2.5 text-xs font-semibold text-amber-700 hover:bg-amber-50 disabled:opacity-50 sm:flex-none sm:py-1.5"
                       >
                         <ArrowUp size={14} className="md:hidden" />
                         <span className="hidden md:inline">
@@ -261,7 +266,7 @@ export function RecommendationsPage() {
                         disabled={busy}
                         onClick={() => dismiss({ id: rec.id })}
                         aria-label="Dismiss"
-                        className="flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-50 disabled:opacity-50 sm:flex-none"
+                        className="flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-slate-200 px-3 py-2.5 text-xs font-semibold text-slate-600 hover:bg-slate-50 disabled:opacity-50 sm:flex-none sm:py-1.5"
                       >
                         <X size={14} className="md:hidden" />
                         <span className="hidden md:inline">
