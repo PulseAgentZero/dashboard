@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { RiskPill } from "@/components/shared/risk-pill";
 import { useEntity, useEntityRiskHistory } from "@/hooks/entities/use-entity";
+import { formatProfileValue, humanizeGeneratedText, humanizeKey, humanizeStatus } from "@/lib/readable-text";
 
 function Initial({ name }: { name: string | null }) {
   return (
@@ -60,15 +61,17 @@ function RiskHistoryChart({ points }: { points: { risk_score: number; recorded_a
 }
 
 function ProfileDataTable({ data }: { data: Record<string, unknown> }) {
-  const entries = Object.entries(data).filter(([, v]) => v != null);
+  const entries = Object.entries(data)
+    .map(([k, v]) => [k, formatProfileValue(v)] as const)
+    .filter(([, v]) => v);
   if (entries.length === 0) return <p className="text-sm text-slate-400">No profile data.</p>;
 
   return (
     <dl className="grid gap-x-6 gap-y-4 grid-cols-1 xs:grid-cols-2">
       {entries.map(([k, v]) => (
         <div key={k} className="flex flex-col border-b border-slate-50 pb-2 xs:border-0 xs:pb-0">
-          <dt className="text-[10px] font-semibold uppercase tracking-wide text-slate-400">{k.replace(/_/g, " ")}</dt>
-          <dd className="mt-0.5 text-sm font-medium text-slate-700 break-all">{String(v)}</dd>
+          <dt className="text-[10px] font-semibold uppercase tracking-wide text-slate-400">{humanizeKey(k)}</dt>
+          <dd className="mt-0.5 text-sm font-medium text-slate-700 break-words">{v}</dd>
         </div>
       ))}
     </dl>
@@ -166,13 +169,13 @@ export function EntityProfilePage() {
               color: entity.risk_score >= 70 ? "text-rose-600" : entity.risk_score >= 40 ? "text-amber-600" : "text-emerald-600",
             },
             {
-              label: "Open recs",
+              label: "Open recommendations",
               value: entity.recommendations.filter((r) => r.status === "open").length,
-              sub: "Pending action",
+              sub: "Still need work",
               color: "text-slate-900",
             },
             {
-              label: "Total recs",
+              label: "Total recommendations",
               value: entity.recommendations.length,
               sub: "All time",
               color: "text-slate-900",
@@ -195,8 +198,8 @@ export function EntityProfilePage() {
           {/* Risk narrative */}
           {!isLoading && entity?.risk_narrative && (
             <div className="rounded-xl border border-slate-200 bg-white p-4 sm:p-5">
-              <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-400">Risk narrative</p>
-              <p className="text-sm leading-relaxed text-slate-700">{entity.risk_narrative}</p>
+              <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-400">Why this needs attention</p>
+              <p className="text-sm leading-relaxed text-slate-700">{humanizeGeneratedText(entity.risk_narrative)}</p>
             </div>
           )}
 
@@ -214,7 +217,7 @@ export function EntityProfilePage() {
 
           {/* Profile data */}
           <div className="rounded-xl border border-slate-200 bg-white p-4 sm:p-5">
-            <p className="mb-4 text-xs font-semibold uppercase tracking-wide text-slate-400">Profile data</p>
+            <p className="mb-4 text-xs font-semibold uppercase tracking-wide text-slate-400">Key details</p>
             {isLoading ? (
               <div className="space-y-2">
                 {Array.from({ length: 4 }).map((_, i) => (
@@ -237,7 +240,7 @@ export function EntityProfilePage() {
                 <ShieldCheck size={16} />
               </div>
               <p className="text-xs leading-relaxed text-slate-600">
-                Entity data is read from connected sources on demand. Entivia stores recommendation metadata only — not raw records.
+                Entivia reads this record from your connected source when needed. It does not store the raw source record.
               </p>
             </div>
           </div>
@@ -259,25 +262,29 @@ export function EntityProfilePage() {
             ) : (
               <div className="space-y-2">
                 {entity.recommendations.map((rec) => (
-                  <div key={rec.id} className="rounded-lg bg-slate-50 p-3">
+                  <Link
+                    key={rec.id}
+                    href={`/dashboard/recommendations/${encodeURIComponent(rec.id)}`}
+                    className="block rounded-lg bg-slate-50 p-3 transition-colors hover:bg-slate-100"
+                  >
                     <div className="flex items-center gap-2">
                       {rec.urgency && <RiskPill risk={rec.urgency} />}
                       {rec.status && (
                         <span className={`text-[10px] font-semibold ${
                           rec.status === "open" ? "text-amber-600" : "text-slate-400"
                         }`}>
-                          {rec.status}
+                          {humanizeStatus(rec.status)}
                         </span>
                       )}
                     </div>
                     <p className="mt-1.5 text-xs font-medium text-slate-800 line-clamp-2">
-                      {rec.title ?? "Untitled"}
+                      {humanizeGeneratedText(rec.title) || "Untitled"}
                     </p>
                     <p className="mt-0.5 flex items-center gap-1 text-[10px] text-slate-400">
                       <Clock size={9} />
                       {new Date(rec.created_at).toLocaleDateString()}
                     </p>
-                  </div>
+                  </Link>
                 ))}
                 {/* Clean, low-vibrancy orange colorway update for action link */}
                 <Link

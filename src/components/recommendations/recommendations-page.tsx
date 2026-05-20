@@ -9,6 +9,7 @@ import { useRecommendations } from "@/hooks/recommendations/use-recommendations"
 import { useActionRecommendation, useDismissRecommendation } from "@/hooks/recommendations/use-recommendation-actions";
 import { useEscalateRecommendation } from "@/hooks/recommendations/use-escalate-recommendation";
 import { useDashboardOverview } from "@/hooks/dashboard/use-dashboard-overview";
+import { humanizeGeneratedText, humanizeRecommendationType, humanizeStatus } from "@/lib/readable-text";
 
 const STATUS_TABS = ["open", "actioned", "dismissed", "escalated"] as const;
 type StatusTab = (typeof STATUS_TABS)[number];
@@ -73,12 +74,12 @@ export function RecommendationsPage() {
         <div>
           <h1 className="text-xl font-semibold text-slate-900">Recommendations</h1>
           <p className="mt-0.5 text-xs sm:text-sm text-slate-500">
-            Prioritized next-best actions generated from risk patterns.
+            See the actions Entivia recommends and why they matter.
           </p>
         </div>
         {data && (
           <span className="self-start sm:self-auto rounded-full border border-slate-200 bg-white px-2.5 py-0.5 text-xs font-medium text-slate-500">
-            {data.total.toLocaleString()} {status}
+            {data.total.toLocaleString()} {humanizeStatus(status).toLowerCase()}
           </span>
         )}
       </div>
@@ -95,13 +96,13 @@ export function RecommendationsPage() {
           {
             label: "Critical",
             value: (overview?.critical_recommendations ?? 0).toLocaleString(),
-            sub: "Require immediate action",
+            sub: "Need attention now",
             color: "text-rose-600",
           },
           {
             label: "Coverage",
             value: (overview?.total_entities ?? 0).toLocaleString(),
-            sub: "Entities profiled",
+            sub: "Records reviewed",
             color: "text-slate-900",
           },
         ].map((stat) => (
@@ -130,7 +131,7 @@ export function RecommendationsPage() {
                       : "text-slate-500 hover:bg-slate-100 hover:text-slate-700"
                   }`}
                 >
-                  {t}
+                  {humanizeStatus(t)}
                 </button>
               ))}
             </div>
@@ -182,12 +183,17 @@ export function RecommendationsPage() {
                       <RiskPill risk={rec.urgency ?? "Low"} />
                       {rec.type && (
                         <span className="inline-flex items-center gap-1 rounded-md bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-600">
-                          {rec.type}
+                          {humanizeRecommendationType(rec.type)}
                         </span>
                       )}
                     </div>
                     <h2 className="mt-2 text-sm font-semibold text-slate-900 leading-snug">
-                      {rec.title ?? "Untitled recommendation"}
+                      <Link
+                        href={`/dashboard/recommendations/${encodeURIComponent(rec.id)}`}
+                        className="transition-colors hover:text-orange-700 hover:underline"
+                      >
+                        {humanizeGeneratedText(rec.title) || "Untitled recommendation"}
+                      </Link>
                     </h2>
                     {rec.entity_label && (
                       <Link
@@ -199,12 +205,12 @@ export function RecommendationsPage() {
                     )}
                     {rec.reasoning && (
                       <p className="mt-2 text-xs leading-relaxed text-slate-500 line-clamp-2">
-                        {rec.reasoning}
+                        {humanizeGeneratedText(rec.reasoning)}
                       </p>
                     )}
                     {rec.suggested_action && (
                       <p className="mt-2 text-xs font-medium text-slate-700">
-                        Action: {rec.suggested_action}
+                        Next step: {humanizeGeneratedText(rec.suggested_action)}
                       </p>
                     )}
                   </div>
@@ -234,7 +240,7 @@ export function RecommendationsPage() {
                         onClick={() => action({ id: rec.id })}
                         className="flex-1 sm:flex-none justify-center text-center whitespace-nowrap flex items-center gap-1.5 rounded-lg bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white hover:bg-slate-700 disabled:opacity-50 transition-colors"
                       >
-                        {isActioning ? "Actioning…" : "Mark actioned"}
+                        {isActioning ? "Marking done…" : "Mark as done"}
                       </button>
                       <button
                         disabled={busy}
@@ -251,6 +257,12 @@ export function RecommendationsPage() {
                         {isDismissing ? "Dismissing…" : "Dismiss"}
                       </button>
                     </div>
+                    <Link
+                      href={`/dashboard/recommendations/${encodeURIComponent(rec.id)}`}
+                      className="text-xs font-medium text-orange-600 hover:text-orange-700 hover:underline transition-colors sm:ml-2"
+                    >
+                      View details
+                    </Link>
                     <p className="text-[10px] text-slate-400 sm:ml-auto">
                       {new Date(rec.created_at).toLocaleDateString()}
                     </p>
@@ -259,7 +271,7 @@ export function RecommendationsPage() {
 
                 {status !== "open" && (
                   <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 border-t border-slate-100 pt-3 text-[10px] text-slate-400">
-                    {rec.actioned_by && <span>By {rec.actioned_by}</span>}
+                    {rec.actioned_by && <span>Marked done</span>}
                     {rec.actioned_at && <span>{new Date(rec.actioned_at).toLocaleString()}</span>}
                     <span className="sm:ml-auto">Created {new Date(rec.created_at).toLocaleDateString()}</span>
                   </div>

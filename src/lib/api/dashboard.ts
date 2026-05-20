@@ -12,6 +12,7 @@ export const dashboardApi = {
 };
 
 export const recommendationsApi = {
+  get: (id: string) => api.get<Recommendation>(`/recommendations/${id}`),
   list: (params?: {
     status?: string;
     urgency?: string;

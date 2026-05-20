@@ -18,3 +18,15 @@ export function useRecommendations(params?: {
     retry: 1,
   });
 }
+
+export function useRecommendation(id: string | undefined) {
+  const enabled = useAuthEnabled();
+
+  return useQuery({
+    queryKey: ["recommendations", id],
+    queryFn: () => recommendationsApi.get(id as string),
+    enabled: enabled && Boolean(id),
+    staleTime: 30_000,
+    retry: 1,
+  });
+}
