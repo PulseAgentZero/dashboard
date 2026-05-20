@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { Menu, X } from "lucide-react";
 import { getPublicRedocUrl } from "@/lib/docs/api-url";
+import { appHref, marketingHref } from "@/lib/site-urls";
 import { DocsThemeToggle } from "./docs-theme-toggle";
 
 type Props = {
@@ -26,7 +27,7 @@ export function DocsHeader({ mobileOpen, onToggleMobile }: Props) {
             {mobileOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
           <Link
-            href="/"
+            href={marketingHref("/")}
             className="shrink-0 font-black tracking-tighter text-zinc-900 uppercase italic dark:text-white"
           >
             Entivia
@@ -53,13 +54,13 @@ export function DocsHeader({ mobileOpen, onToggleMobile }: Props) {
             API (ReDoc)
           </a>
           <Link
-            href="/dashboard/playground"
+            href={appHref("/dashboard/playground")}
             className="hidden text-zinc-600 hover:text-indigo-600 dark:text-zinc-400 dark:hover:text-indigo-400 md:inline"
           >
             Playground
           </Link>
           <Link
-            href="/auth/login"
+            href={appHref("/auth/login")}
             className="rounded-full bg-zinc-900 px-3 py-1.5 text-xs font-semibold whitespace-nowrap text-white hover:bg-zinc-700 sm:px-4 dark:bg-indigo-600 dark:hover:bg-indigo-500"
           >
             Sign in

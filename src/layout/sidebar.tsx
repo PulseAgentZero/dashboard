@@ -210,6 +210,7 @@ export default function Sidebar() {
 
       <Link
         href="/dashboard"
+        aria-label="Go to dashboard home"
         className={`flex items-center gap-3 border-b border-slate-200 px-4 py-5 transition-colors hover:bg-slate-50/80 ${
           collapsed ? "justify-center px-0" : ""
         }`}

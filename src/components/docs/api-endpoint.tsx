@@ -3,6 +3,7 @@ import {
   buildExampleCurl,
   type PublicApiEndpoint,
 } from "@/lib/docs/public-api-catalog";
+import { appHref } from "@/lib/site-urls";
 import { CodeBlock } from "./code-block";
 
 type Props = {
@@ -57,7 +58,7 @@ export function ApiEndpoint({ endpoint, showPlaygroundLink = true }: Props) {
         <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-400">
           Try this in the{" "}
           <Link
-            href="/dashboard/playground"
+            href={appHref("/dashboard/playground")}
             className="font-medium text-indigo-600 hover:underline dark:text-indigo-400"
           >
             API Playground

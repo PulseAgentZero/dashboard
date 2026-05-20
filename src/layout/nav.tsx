@@ -62,7 +62,13 @@ export default function Nav() {
         )}
 
         {/* Desktop: Entivia / crumb */}
-        <span className="hidden lg:inline text-xs font-semibold text-orange-600">Entivia</span>
+        <Link
+          href="/"
+          aria-label="Go to Entivia home"
+          className="hidden lg:inline text-xs font-semibold text-orange-600 transition-colors hover:text-orange-700"
+        >
+          Entivia
+        </Link>
         {crumb && (
           <span className="hidden lg:flex items-center gap-2">
             <span className="text-[13px] text-orange-200">/</span>

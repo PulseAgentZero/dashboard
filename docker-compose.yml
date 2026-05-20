@@ -24,6 +24,11 @@ services:
         # For production: https://api.yourpulse.io
         NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8000}
         NEXT_PUBLIC_DEPLOYMENT_MODE: cloud
+        # Optional: absolute URLs used by the docs subdomain so cross-origin
+        # links (Sign in, dashboard, etc.) escape the /docs rewrite. Leave
+        # unset for local dev to keep links relative.
+        NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-}
+        NEXT_PUBLIC_MARKETING_URL: ${NEXT_PUBLIC_MARKETING_URL:-}
     image: entivia/entivia-frontend:${IMAGE_TAG:-latest}
     ports:
       - "${FRONTEND_PORT:-3096}:3000"

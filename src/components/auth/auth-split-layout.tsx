@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { BladeFan } from "../../../public/icon/bladeFan";
 
 type AuthSplitLayoutProps = {
@@ -53,12 +54,16 @@ export function AuthSplitLayout({
           <div className="auth-blob-2 pointer-events-none absolute bottom-[-18%] right-[-8%] h-[80%] w-[75%] rounded-full bg-[#c9260c]/55 blur-[100px]" />
           <div className="auth-blob-3 pointer-events-none absolute top-[30%] left-[25%] h-[60%] w-[55%] rounded-full bg-[#ffaa00]/35 blur-[80px]" />
 
-          <div className="absolute top-10 left-10 z-20 flex items-center gap-3">
+          <Link
+            href="/"
+            aria-label="Go to Entivia home"
+            className="absolute top-10 left-10 z-20 flex items-center gap-3 rounded-full px-1 py-1 -mx-1 -my-1 transition-opacity hover:opacity-80"
+          >
             <div className="animate-spin" style={{ animationDuration: "60s" }}>
               <BladeFan color="white" size={36} />
             </div>
             <span className="text-base font-bold tracking-tight text-white">Entivia</span>
-          </div>
+          </Link>
 
           <div className="absolute inset-0 z-10 flex flex-col items-start justify-center px-12 xl:px-16">
             <p className="mb-4 font-mono text-[10px] uppercase tracking-[0.28em] text-white/40">
