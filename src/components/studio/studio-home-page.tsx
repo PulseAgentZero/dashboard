@@ -27,6 +27,9 @@ import { canCreateStudioContent } from "@/lib/studio/roles";
 export function StudioHomePage() {
   const router = useRouter();
   const { user } = useAuth();
+  // Viewers can compose and run ad-hoc SQL in Studio, but can't persist queries.
+  // Creating saved queries/dashboards still requires analyst+ on the backend.
+  const canComposeQuery = Boolean(user?.role);
   const canCreate = canCreateStudioContent(user?.role);
   const [, startTransition] = useTransition();
 
@@ -106,23 +109,27 @@ export function StudioHomePage() {
           <h1 className="text-xl font-semibold text-slate-900">Studio</h1>
           <p className="mt-0.5 text-xs sm:text-sm text-slate-500">Queries and dashboards on your data.</p>
         </div>
-        {canCreate && (
+        {(canComposeQuery || canCreate) && (
           <div className="flex items-center gap-2 w-full sm:w-auto">
-            <Link
-              href="/dashboard/studio/queries/new"
-              className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 rounded-lg bg-orange-600 px-3.5 py-2 text-xs font-semibold text-white hover:bg-orange-700 transition-colors shadow-xs"
-            >
-              <Plus size={14} />
-              New query
-            </Link>
-            <button
-              type="button"
-              onClick={() => setCreateDashOpen(true)}
-              className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors"
-            >
-              <LayoutDashboard size={14} />
-              Dashboard
-            </button>
+            {canComposeQuery && (
+              <Link
+                href="/dashboard/studio/queries/new"
+                className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 rounded-lg bg-orange-600 px-3.5 py-2 text-xs font-semibold text-white hover:bg-orange-700 transition-colors shadow-xs"
+              >
+                <Plus size={14} />
+                New query
+              </Link>
+            )}
+            {canCreate && (
+              <button
+                type="button"
+                onClick={() => setCreateDashOpen(true)}
+                className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors"
+              >
+                <LayoutDashboard size={14} />
+                Dashboard
+              </button>
+            )}
           </div>
         )}
       </header>
@@ -204,7 +211,7 @@ export function StudioHomePage() {
         ) : (isQueries ? queries.length === 0 : dashboards.length === 0) ? (
           <StudioListEmpty
             kind={tab}
-            canCreate={canCreate}
+            canCreate={isQueries ? canComposeQuery : canCreate}
             onCreateDashboard={() => setCreateDashOpen(true)}
           />
         ) : isQueries ? (

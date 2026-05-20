@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import type { ConnectorCatalogItem } from "@/types/connections";
-import { supportsEntityMapping } from "@/lib/connectors/pipeline-supported";
+import { isSqlEntityMappingConnector } from "@/lib/connectors/pipeline-supported";
 import { ConnectorSetupGuide } from "./connector-setup-guide";
 import { ConnectionForm } from "./connection-form";
 
@@ -35,7 +35,11 @@ export function NewConnectionSetup({ catalogItem }: Props) {
           <ConnectionForm
             catalogItem={catalogItem}
             onSuccess={(connection) => {
-              if (supportsEntityMapping(catalogItem.connector_type)) {
+              // SQL DBs need the user to pick an entity table; redirect to the
+              // wizard. File sources (CSV, Google Sheets, S3) auto-map in the
+              // worker and are editable from the data-mapping page afterwards —
+              // redirecting here would race the background mapping job.
+              if (isSqlEntityMappingConnector(catalogItem.connector_type)) {
                 router.push(`/dashboard/connections/${connection.id}/map`);
               } else {
                 router.push("/dashboard/connections");

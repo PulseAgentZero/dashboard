@@ -250,6 +250,8 @@ export function QueryEditorPage({ queryId }: Props) {
       ? "Select a data source before saving."
       : undefined;
 
+  const isViewerEditor = isNew && !canCreateStudioContent(user?.role);
+
   return (
     <div className="flex min-h-[calc(100vh-10rem)] flex-col gap-4">
       <div className="space-y-3">
@@ -269,6 +271,12 @@ export function QueryEditorPage({ queryId }: Props) {
             {sqlDirty && (
               <p className="mt-1 text-xs font-medium text-amber-700">
                 Unsaved SQL changes — Run uses your editor text; Save to persist.
+              </p>
+            )}
+            {isViewerEditor && (
+              <p className="mt-1 text-xs font-medium text-slate-500">
+                View-only access — you can run ad-hoc queries against the data source, but
+                saving requires an Analyst role.
               </p>
             )}
           </div>

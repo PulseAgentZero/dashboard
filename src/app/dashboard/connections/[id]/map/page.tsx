@@ -64,8 +64,8 @@ function ConnectionMapPage() {
         <div className="rounded-2xl border border-amber-200 bg-amber-50 p-8">
           <p className="text-base font-semibold text-amber-900">Mapping not available</p>
           <p className="mt-2 max-w-2xl text-sm text-amber-800/90">
-            Entity mapping is only for SQL databases (PostgreSQL, MySQL, Snowflake, and similar).
-            File and API connectors use a different ingestion path.
+            This connector type doesn&apos;t expose a tabular schema, so it can&apos;t be mapped.
+            Use a SQL database, a CSV upload, Google Sheets, or S3 if you need pipeline mapping.
           </p>
         </div>
       </DashboardPageShell>

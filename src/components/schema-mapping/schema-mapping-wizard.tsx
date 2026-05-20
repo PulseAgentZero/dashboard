@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import {
   ArrowLeft,
   ArrowRight,
@@ -25,6 +25,7 @@ import {
   buildRawSchema,
   inferMappingFromSchema,
 } from "@/lib/schema-mapping-infer";
+import { isFileEntityMappingConnector } from "@/lib/connectors/pipeline-supported";
 
 const inputCls =
   "w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 shadow-sm outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20";
@@ -64,6 +65,9 @@ export function SchemaMappingWizard({
   const entityLabelPlural = `${entityLabel}s`;
 
   const tables = introspect?.tables ?? [];
+  const isFileSource = connectorType
+    ? isFileEntityMappingConnector(connectorType)
+    : false;
 
   const [step, setStep] = useState<Step>("table");
   const [tableSearch, setTableSearch] = useState("");
@@ -74,6 +78,18 @@ export function SchemaMappingWizard({
   const [signalCols, setSignalCols] = useState<Record<string, string>>(
     existingMapping?.signal_columns ?? {},
   );
+
+  // For single-table sources (CSV uploads, single-sheet Google Sheets), the
+  // "Choose table" step is meaningless — auto-select and advance the user to
+  // the identity step where the real decisions are.
+  useEffect(() => {
+    if (step !== "table") return;
+    if (tables.length !== 1) return;
+    const only = tables[0];
+    if (entityTable && entityTable !== only.name) return;
+    if (!entityTable) setEntityTable(only.name);
+    setStep("identity");
+  }, [tables, step, entityTable]);
 
   const selectedTable = useMemo(
     () => tables.find((t) => t.name === entityTable),
@@ -184,10 +200,11 @@ export function SchemaMappingWizard({
   if (isError) {
     return (
       <div className="rounded-2xl border border-rose-200 bg-rose-50 p-8 text-center shadow-sm">
-        <p className="text-sm font-semibold text-rose-900">Could not read tables</p>
+        <p className="text-sm font-semibold text-rose-900">Could not read schema</p>
         <p className="mx-auto mt-2 max-w-md text-sm text-rose-800/90">
-          Test the connection from Connections, then try again. Entity mapping requires a SQL
-          database connector.
+          {isFileSource
+            ? "We couldn't read this file. Re-upload it from Connections and try again."
+            : "Test the connection from Connections, then try again."}
         </p>
       </div>
     );

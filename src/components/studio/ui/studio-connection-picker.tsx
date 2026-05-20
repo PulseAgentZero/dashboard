@@ -10,6 +10,8 @@ import {
   studioConnectionLabel,
 } from "@/lib/studio/connections";
 import type { ConnectionResponse } from "@/types/connections";
+import { useAuth } from "@/providers/auth-provider";
+import { hasMinRole } from "@/lib/permissions";
 
 type Props = {
   value: string | null;
@@ -41,6 +43,8 @@ export function StudioConnectionPicker({
   variant = "default",
 }: Props) {
   const { data: connections, isLoading } = useConnections();
+  const { user } = useAuth();
+  const canManageConnections = hasMinRole(user?.role, "manager");
 
   const options = (connections ?? []).filter(studioCapable);
   const selected = options.find((c) => c.id === value);
@@ -60,10 +64,19 @@ export function StudioConnectionPicker({
         className={`rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900 ${className ?? ""}`}
       >
         No data sources yet.{" "}
-        <Link href="/dashboard/connections" className="font-semibold text-indigo-700 hover:underline">
-          Connect a database or file
-        </Link>{" "}
-        to run Studio queries.
+        {canManageConnections ? (
+          <>
+            <Link
+              href="/dashboard/connections"
+              className="font-semibold text-indigo-700 hover:underline"
+            >
+              Connect a database or file
+            </Link>{" "}
+            to run Studio queries.
+          </>
+        ) : (
+          <>Ask an admin or manager to connect a data source before running queries.</>
+        )}
       </div>
     );
   }
