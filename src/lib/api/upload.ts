@@ -4,7 +4,30 @@ import { ApiError } from "./client";
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 const API_PREFIX = "/api/v1";
 
+/**
+ * Default user-facing message for 413 responses — covers both the FastAPI
+ * `payload_too_large` path and bare HTML 413s from nginx (when the file is
+ * bigger than `client_max_body_size`, the request never reaches FastAPI so
+ * the response body is HTML, not JSON).
+ */
+const DEFAULT_413_MESSAGE =
+  "Your file is larger than the 500 MB upload limit. Split or compress the file and try again.";
+
 function parseUploadError(res: Response, body: Record<string, unknown>): ApiError {
+  if (res.status === 413) {
+    const err = body.error as { code?: string; message?: string } | undefined;
+    const detail = body.detail;
+    const message =
+      err?.message ||
+      (typeof detail === "string"
+        ? detail
+        : detail && typeof detail === "object" && !Array.isArray(detail)
+          ? (detail as { message?: string }).message
+          : undefined) ||
+      DEFAULT_413_MESSAGE;
+    return new ApiError(res.status, err?.code ?? "PAYLOAD_TOO_LARGE", message);
+  }
+
   const err = body.error as { code?: string; message?: string } | undefined;
   if (err?.message) {
     return new ApiError(res.status, err.code ?? "UNKNOWN", err.message);

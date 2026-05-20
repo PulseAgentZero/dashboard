@@ -54,7 +54,11 @@ export function FileUploadField({
         continue;
       }
       if (selected.size > maxMb * 1024 * 1024) {
-        toast.error(`${selected.name} must be ${maxMb} MB or smaller`);
+        const actualMb = (selected.size / (1024 * 1024)).toFixed(1);
+        toast.error(
+          `${selected.name} is ${actualMb} MB — the upload limit is ${maxMb} MB. Split or compress the file and try again.`,
+          { duration: 7000 },
+        );
         continue;
       }
       if (next.some((f) => f.name === selected.name && f.size === selected.size)) {

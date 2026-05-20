@@ -1,7 +1,18 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { connectionsFullApi } from "@/lib/api/connections-api";
+import { ApiError } from "@/lib/api/client";
 import { enrichConnectorCatalog } from "@/lib/connectors/catalog-enrich";
+
+function uploadErrorMessage(err: unknown, fallback: string): string {
+  if (err instanceof ApiError) {
+    if (err.status === 413 || err.code === "PAYLOAD_TOO_LARGE") {
+      return err.message || "File exceeds the upload limit";
+    }
+    return err.message || fallback;
+  }
+  return err instanceof Error ? err.message : fallback;
+}
 
 export function useConnections() {
   return useQuery({
@@ -48,9 +59,12 @@ export function useUploadConnection() {
       toast.success("File uploaded and connection created");
     },
     onError: (err: unknown) => {
-      const msg =
-        err instanceof Error ? err.message : "Upload failed";
-      toast.error(msg);
+      const isSize =
+        err instanceof ApiError &&
+        (err.status === 413 || err.code === "PAYLOAD_TOO_LARGE");
+      toast.error(uploadErrorMessage(err, "Upload failed"), {
+        duration: isSize ? 8000 : 5000,
+      });
     },
   });
 }
@@ -76,15 +90,17 @@ export function useUploadConnectionsBatch() {
             : `${n} connections created from uploaded files`,
         );
       }
-      if (data.errors.length > 0) {
-        toast.warning(
-          `${data.errors.length} file${data.errors.length === 1 ? "" : "s"} could not be uploaded`,
-        );
+      for (const failure of data.errors) {
+        toast.error(`${failure.filename}: ${failure.message}`, { duration: 8000 });
       }
     },
     onError: (err: unknown) => {
-      const msg = err instanceof Error ? err.message : "Upload failed";
-      toast.error(msg);
+      const isSize =
+        err instanceof ApiError &&
+        (err.status === 413 || err.code === "PAYLOAD_TOO_LARGE");
+      toast.error(uploadErrorMessage(err, "Upload failed"), {
+        duration: isSize ? 8000 : 5000,
+      });
     },
   });
 }
