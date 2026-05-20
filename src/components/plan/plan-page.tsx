@@ -74,11 +74,7 @@ export function PlanPage() {
   const isGrowth = effectivePlan === "growth";
   const isPro = isProPlan(effectivePlan);
   const nonRenewing = subscription?.status === "non-renewing";
-  const canCancel =
-    cloud &&
-    isPaidPlan(effectivePlan) &&
-    !nonRenewing &&
-    !!subscription?.next_payment_date;
+  const canCancel = cloud && isPaidPlan(effectivePlan) && !nonRenewing;
 
   useEffect(() => {
     if (!reference || verifiedRef.current === reference) return;

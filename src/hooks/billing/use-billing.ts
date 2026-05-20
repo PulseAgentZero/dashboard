@@ -63,6 +63,7 @@ export function useVerifyCloudPayment() {
   return useMutation({
     mutationFn: (reference: string) => billingApi.verifyCloud(reference),
     onSuccess: (data) => {
+      qc.setQueryData(["billing", "subscription"], data);
       void qc.invalidateQueries({ queryKey: ["me"] });
       void qc.invalidateQueries({ queryKey: ["usage"] });
       void qc.invalidateQueries({ queryKey: ["billing", "subscription"] });
@@ -116,6 +117,7 @@ export function useCancelSubscription() {
   return useMutation({
     mutationFn: () => billingApi.cancelSubscription(),
     onSuccess: (data) => {
+      qc.setQueryData(["billing", "subscription"], data);
       void qc.invalidateQueries({ queryKey: ["me"] });
       void qc.invalidateQueries({ queryKey: ["usage"] });
       void qc.invalidateQueries({ queryKey: ["billing", "subscription"] });
@@ -133,6 +135,12 @@ export function useCancelSubscription() {
       }
     },
     onError: (e: unknown) => {
+      if (e instanceof ApiError && e.code === "NO_ACTIVE_SUBSCRIPTION") {
+        toast.error(
+          "Subscription not linked to Paystack yet. Please wait a minute after payment and try again, or contact support.",
+        );
+        return;
+      }
       const msg =
         e instanceof ApiError ? e.message : "Could not cancel subscription";
       toast.error(msg);
