@@ -18,8 +18,12 @@ export const PAGE_MIN_ROLE: Record<string, Role> = {
   "/dashboard/alerts": "manager",
   "/dashboard/team": "manager",
   "/dashboard/audit-logs": "admin",
-  "/dashboard/api-keys": "admin",
   "/dashboard/webhooks": "admin",
+  "/dashboard/plan": "manager",
+  "/dashboard/connections": "manager",
+  "/dashboard/schema-mappings": "manager",
+  "/dashboard/playground": "manager",
+  "/dashboard/api-keys": "manager",
 };
 
 export function canAccessPage(role: string | undefined, href: string): boolean {

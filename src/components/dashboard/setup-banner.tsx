@@ -7,6 +7,8 @@ import { useOrganization } from "@/hooks/org/use-organization";
 import { useConnections } from "@/hooks/connections/use-connections";
 import { useSchemaMappings } from "@/hooks/schema-mappings/use-schema-mappings";
 import { useCompleteSetup } from "@/hooks/org/use-complete-setup";
+import { hasMinRole } from "@/lib/permissions";
+import { useAuth } from "@/providers/auth-provider";
 import {
   hasBusinessContext,
   hasConnection,
@@ -21,11 +23,13 @@ const DISMISS_KEY = "pulse_setup_banner_dismissed";
 
 export function SetupBanner() {
   const { data: org } = useOrganization();
+  const { user } = useAuth();
   const { data: connections } = useConnections();
   const { data: mappings } = useSchemaMappings();
   const { mutate: completeSetup } = useCompleteSetup();
   const [dismissed, setDismissed] = useState(false);
   const [sheetOpen, setSheetOpen] = useState(false);
+  const canManageSetup = hasMinRole(user?.role, "manager");
 
   const needsContext = !hasBusinessContext(org);
   const needsConn = !hasConnection(connections);
@@ -44,7 +48,7 @@ export function SetupBanner() {
   }, []);
 
   useEffect(() => {
-    if (!org || org.onboarding_done) return;
+    if (!canManageSetup || !org || org.onboarding_done) return;
     if (
       hasBusinessContext(org) &&
       hasConnection(connections) &&
@@ -52,7 +56,7 @@ export function SetupBanner() {
     ) {
       completeSetup();
     }
-  }, [org, connections, mappings, completeSetup]);
+  }, [canManageSetup, org, connections, mappings, completeSetup]);
 
   if (!show) return null;
 
@@ -95,7 +99,7 @@ export function SetupBanner() {
 
           {/* Right Side Actions: Forced row layout layout across all formats */}
           <div className="flex flex-row flex-wrap items-center gap-2 w-full lg:w-auto shrink-0">
-            {needsContext && (
+            {canManageSetup && needsContext && (
               <button
                 type="button"
                 onClick={() => setSheetOpen(true)}
@@ -104,7 +108,7 @@ export function SetupBanner() {
                 Add business context
               </button>
             )}
-            {needsConn && (
+            {canManageSetup && needsConn && (
               <Link
                 href="/dashboard/connections/new"
                 className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-lg border border-zinc-200 bg-white px-3 py-1.5 text-xs font-medium text-zinc-700 hover:bg-zinc-50 transition-colors"
@@ -113,7 +117,7 @@ export function SetupBanner() {
                 Connect data
               </Link>
             )}
-            {needsMapping && firstMappableConnection && (
+            {canManageSetup && needsMapping && firstMappableConnection && (
               <Link
                 href={`/dashboard/connections/${firstMappableConnection.id}/map`}
                 className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-lg border border-zinc-200 bg-white px-3 py-1.5 text-xs font-medium text-zinc-700 hover:bg-zinc-50 transition-colors"
@@ -139,14 +143,16 @@ export function SetupBanner() {
         </div>
       </div>
 
-      <BusinessContextSheet
-        open={sheetOpen}
-        onClose={() => setSheetOpen(false)}
-        onSaved={() => {
-          sessionStorage.removeItem(DISMISS_KEY);
-          setDismissed(false);
-        }}
-      />
+      {canManageSetup && (
+        <BusinessContextSheet
+          open={sheetOpen}
+          onClose={() => setSheetOpen(false)}
+          onSaved={() => {
+            sessionStorage.removeItem(DISMISS_KEY);
+            setDismissed(false);
+          }}
+        />
+      )}
     </>
   );
 }

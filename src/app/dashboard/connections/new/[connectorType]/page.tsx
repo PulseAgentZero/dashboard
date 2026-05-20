@@ -1,5 +1,6 @@
 "use client";
 
+import { RequireRole } from "@/components/auth/require-role";
 import { use } from "react";
 import { notFound } from "next/navigation";
 import { Loader2 } from "lucide-react";
@@ -10,7 +11,15 @@ type PageProps = {
   params: Promise<{ connectorType: string }>;
 };
 
-export default function NewConnectionTypePage({ params }: PageProps) {
+export default function Page({ params }: PageProps) {
+  return (
+    <RequireRole minRole="manager">
+      <NewConnectionTypePage params={params} />
+    </RequireRole>
+  );
+}
+
+function NewConnectionTypePage({ params }: PageProps) {
   const { connectorType } = use(params);
   const { data: catalog, isLoading } = useConnectionCatalog();
 

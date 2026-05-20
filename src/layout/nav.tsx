@@ -5,7 +5,9 @@ import Link from "next/link";
 import { Database, Menu } from "lucide-react";
 import SearchInput from "@/components/ui/search-input";
 import { NotificationBell } from "@/components/nav/notification-bell";
+import { hasMinRole } from "@/lib/permissions";
 import { useSidebar } from "@/lib/sidebar-context";
+import { useAuth } from "@/providers/auth-provider";
 
 const pageMeta: Record<string, { title: string; crumb: string }> = {
   "/dashboard": { title: "Dashboard", crumb: "Overview" },
@@ -39,6 +41,8 @@ export default function Nav() {
   const pathname = usePathname();
   const { title, crumb } = getPageMeta(pathname);
   const { toggleMobile } = useSidebar();
+  const { user } = useAuth();
+  const canConnectData = hasMinRole(user?.role, "manager");
 
   return (
     <header className="flex h-16 shrink-0 items-center justify-between border-b border-orange-100 bg-white px-4 lg:px-6">
@@ -77,15 +81,16 @@ export default function Nav() {
           <NotificationBell />
         </div>
 
-        {/* Connect Data — icon-only on mobile, full button on desktop */}
-        <Link
-          href="/dashboard/connections"
-          data-tour="connect-data"
-          className="flex h-9 w-9 items-center justify-center rounded-lg bg-orange-600 text-white shadow-sm shadow-orange-600/15 transition-colors hover:bg-orange-700 active:bg-orange-800 lg:h-10 lg:w-auto lg:gap-2 lg:px-4"
-        >
-          <Database size={14} />
-          <span className="hidden lg:inline text-[13px] font-semibold leading-none">Connect Data</span>
-        </Link>
+        {canConnectData && (
+          <Link
+            href="/dashboard/connections"
+            data-tour="connect-data"
+            className="flex h-9 w-9 items-center justify-center rounded-lg bg-orange-600 text-white shadow-sm shadow-orange-600/15 transition-colors hover:bg-orange-700 active:bg-orange-800 lg:h-10 lg:w-auto lg:gap-2 lg:px-4"
+          >
+            <Database size={14} />
+            <span className="hidden lg:inline text-[13px] font-semibold leading-none">Connect Data</span>
+          </Link>
+        )}
       </div>
     </header>
   );

@@ -66,9 +66,9 @@ const navGroups: NavGroup[] = [
   {
     label: "Data & pipeline",
     items: [
-      { label: "Connections", href: "/dashboard/connections", icon: Cable },
+      { label: "Connections", href: "/dashboard/connections", icon: Cable, minRole: "manager" },
       { label: "Pipeline", href: "/dashboard/pipeline", icon: Cpu },
-      { label: "Data mapping", href: "/dashboard/schema-mappings", icon: Layers },
+      { label: "Data mapping", href: "/dashboard/schema-mappings", icon: Layers, minRole: "manager" },
     ],
   },
   {
@@ -83,7 +83,7 @@ const navGroups: NavGroup[] = [
     items: [
       { label: "Notifications", href: "/dashboard/notifications", icon: Inbox },
       { label: "Usage", href: "/dashboard/usage", icon: Gauge },
-      { label: "Plan & billing", href: "/dashboard/plan", icon: CreditCard },
+      { label: "Plan & billing", href: "/dashboard/plan", icon: CreditCard, minRole: "manager" },
       { label: "Team & roles", href: "/dashboard/team", icon: UserCog, minRole: "manager" },
       { label: "Settings", href: "/dashboard/settings", icon: Settings },
     ],
@@ -91,7 +91,7 @@ const navGroups: NavGroup[] = [
   {
     label: "Developer",
     items: [
-      { label: "Playground", href: "/dashboard/playground", icon: Terminal },
+      { label: "Playground", href: "/dashboard/playground", icon: Terminal, minRole: "manager" },
       { label: "Documentation", href: "/docs", icon: BookOpen },
     ],
   },

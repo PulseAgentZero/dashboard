@@ -1,5 +1,6 @@
 "use client";
 
+import { RequireRole } from "@/components/auth/require-role";
 import { useMemo } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
@@ -10,7 +11,15 @@ import { useConnections } from "@/hooks/connections/use-connections";
 import { useSchemaMappings } from "@/hooks/schema-mappings/use-schema-mappings";
 import { supportsEntityMapping } from "@/lib/connectors/pipeline-supported";
 
-export default function ConnectionMapPage() {
+export default function Page() {
+  return (
+    <RequireRole minRole="manager">
+      <ConnectionMapPage />
+    </RequireRole>
+  );
+}
+
+function ConnectionMapPage() {
   const params = useParams();
   const router = useRouter();
   const connectionId = params.id as string;

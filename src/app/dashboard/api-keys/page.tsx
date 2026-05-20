@@ -3,7 +3,7 @@ import { RequireRole } from "@/components/auth/require-role";
 
 export default function Page() {
   return (
-    <RequireRole minRole="admin">
+    <RequireRole minRole="manager">
       <ApiKeysPage />
     </RequireRole>
   );

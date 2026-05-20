@@ -35,6 +35,7 @@ import {
 } from "@/lib/validation";
 import { FieldError } from "@/components/ui/field-error";
 import { api } from "@/lib/api/client";
+import { hasMinRole } from "@/lib/permissions";
 import { RetakeTourButton } from "@/components/tour/retake-tour-button";
 import { useDeleteConfirm } from "@/hooks/use-delete-confirm";
 import {
@@ -55,9 +56,16 @@ const ALL_TABS = [
 
 type Tab = (typeof ALL_TABS)[number]["id"];
 
-function getVisibleTabs() {
+function getVisibleTabs(role: string | undefined) {
   const cloud = isCloudDeployment();
-  return ALL_TABS.filter((t) => !cloud || !("selfHostedOnly" in t && t.selfHostedOnly));
+  return ALL_TABS.filter((t) => {
+    if (cloud && "selfHostedOnly" in t && t.selfHostedOnly) return false;
+    if (t.id === "apikeys") return hasMinRole(role, "manager");
+    if (t.id === "webhooks" || t.id === "llm" || t.id === "license") {
+      return hasMinRole(role, "admin");
+    }
+    return true;
+  });
 }
 
 const INDUSTRIES = [
@@ -90,9 +98,14 @@ function OrgTab() {
   const { mutate: uploadLogo, isPending: uploadingLogo } = useUploadOrgLogo();
   const { mutate: removeLogo, isPending: removingLogo } = useRemoveOrgLogo();
   const isAdmin = user?.role === "admin";
+  const canManageOrgSettings = hasMinRole(user?.role, "manager");
 
   function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (!canManageOrgSettings) {
+      toast.error("Only admins and managers can update organization settings.");
+      return;
+    }
     const d = new FormData(e.currentTarget);
     const contextFields = {
       industry: (d.get("industry") as string) || undefined,
@@ -168,7 +181,12 @@ function OrgTab() {
           />
         </Field>
         <Field label="Industry">
-          <select name="industry" className={inputCls} defaultValue={org?.industry ?? ""}>
+          <select
+            name="industry"
+            className={inputCls}
+            defaultValue={org?.industry ?? ""}
+            disabled={!canManageOrgSettings}
+          >
             <option value="">Select industry…</option>
             {INDUSTRIES.map((i) => <option key={i} value={i}>{i}</option>)}
           </select>
@@ -181,15 +199,16 @@ function OrgTab() {
           className={`${inputCls} min-h-24 resize-y`}
           defaultValue={org?.business_context ?? ""}
           placeholder="We are a telecom operator managing enterprise accounts across 12 regions…"
+          disabled={!canManageOrgSettings}
         />
       </Field>
 
       <div className="grid gap-5 sm:grid-cols-2">
         <Field label="Entity label" hint="What you call the primary entities Entivia profiles (e.g. Customer, Account, Supplier).">
-          <input name="entity_label" className={inputCls} defaultValue={org?.entity_label ?? ""} placeholder="Customer" />
+          <input name="entity_label" className={inputCls} defaultValue={org?.entity_label ?? ""} placeholder="Customer" disabled={!canManageOrgSettings} />
         </Field>
         <Field label="Goal label" hint="The primary outcome Entivia optimises for (e.g. Reduce churn, Increase ARPU).">
-          <input name="goal_label" className={inputCls} defaultValue={org?.goal_label ?? ""} placeholder="Reduce churn" />
+          <input name="goal_label" className={inputCls} defaultValue={org?.goal_label ?? ""} placeholder="Reduce churn" disabled={!canManageOrgSettings} />
         </Field>
       </div>
 
@@ -217,17 +236,19 @@ function OrgTab() {
       <div className="flex items-center justify-between border-t border-slate-100 pt-4">
         <div className="flex flex-wrap items-center gap-2">
           <RetakeTourButton />
-          <button
-            type="button"
-            onClick={handleExport}
-            className="flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-50"
-          >
-            <Download size={13} /> Export org data
-          </button>
+          {isAdmin && (
+            <button
+              type="button"
+              onClick={handleExport}
+              className="flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-50"
+            >
+              <Download size={13} /> Export org data
+            </button>
+          )}
         </div>
         <button
           type="submit"
-          disabled={isPending}
+          disabled={isPending || !canManageOrgSettings}
           className="flex items-center gap-2 rounded-lg bg-blue-600 px-5 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-50"
         >
           {isPending && <Loader2 size={14} className="animate-spin" />}
@@ -694,7 +715,8 @@ function LicenseTab() {
 // ─── Settings page ────────────────────────────────────────────────────────────
 
 export function SettingsPage() {
-  const visibleTabs = useMemo(() => getVisibleTabs(), []);
+  const { user } = useAuth();
+  const visibleTabs = useMemo(() => getVisibleTabs(user?.role), [user?.role]);
   const [tab, setTab] = useState<Tab>("org");
 
   return (

@@ -1,5 +1,6 @@
 "use client";
 
+import { RequireRole } from "@/components/auth/require-role";
 import Link from "next/link";
 import { AlertTriangle, Layers, Loader2, Pencil, Plus } from "lucide-react";
 import { useConnections } from "@/hooks/connections/use-connections";
@@ -11,7 +12,15 @@ import { useDeleteConfirm } from "@/hooks/use-delete-confirm";
 import { DashboardPageShell } from "@/components/layout/dashboard-page-shell";
 import { supportsEntityMapping } from "@/lib/connectors/pipeline-supported";
 
-export default function SchemaMappingsPage() {
+export default function Page() {
+  return (
+    <RequireRole minRole="manager">
+      <SchemaMappingsPage />
+    </RequireRole>
+  );
+}
+
+function SchemaMappingsPage() {
   const { data: connections, isLoading: loadingConn } = useConnections();
   const { data: mappings, isLoading: loadingMap } = useSchemaMappings();
   const { mutate: remove, isPending: removing, variables: removingId } =
