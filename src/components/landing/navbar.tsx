@@ -106,27 +106,26 @@ export default function Navbar() {
           className={[
             "max-w-7xl mx-auto flex items-center justify-between rounded-full pl-0 pr-0 h-14",
             "border backdrop-blur-md transition-all duration-500 relative z-50",
-            T ? "border-white/20 bg-white/5" : "border-black/10 bg-white/80 shadow-sm",
+            T ? "border-white/20 bg-white/5" : "border-black/10 bg-white/80",
           ].join(" ")}
         >
           <Link
-            href="/"
-            className={[
-              "flex items-center gap-2 h-full px-5 sm:px-6 rounded-l-full border-r",
-              "font-bold tracking-tight text-base transition-all duration-500 shrink-0",
-              T
-                ? "bg-white text-black border-white/20 hover:bg-neutral-100"
-                : "bg-black text-white border-black/10 hover:bg-neutral-800",
-            ].join(" ")}
-          >
-            <BladeFan strokeWidth={3} size={18} />
-            Entivia
-          </Link>
+  href="/"
+  className={[
+    "flex items-center gap-2 h-full px-4 font-bold tracking-tight text-base transition-colors duration-500 shrink-0",
+    T ? "text-white" : "text-black",
+  ].join(" ")}
+>
+  <BladeFan strokeWidth={3} size={25} color={T ? "#ffffff" : "#000000"} />
+ <p className="text-[18px] mb-0.5 font-medium">
+   Entivia
+ </p>
+</Link>
 
           <div className="flex items-center h-full">
             <div
               className={[
-                "hidden lg:flex items-center gap-6 font-medium text-[15px] mr-6 transition-colors duration-500",
+                "hidden lg:flex items-center gap-6 font-medium text-[14px] mr-6 transition-colors duration-500",
                 T ? "text-white" : "text-neutral-800",
               ].join(" ")}
             >

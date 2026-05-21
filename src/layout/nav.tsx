@@ -45,46 +45,40 @@ export default function Nav() {
   const canConnectData = hasMinRole(user?.role, "manager");
 
   return (
-    <header className="flex h-16 shrink-0 items-center justify-between border-b border-orange-100 bg-white px-4 lg:px-6">
-      {/* Left: hamburger (mobile) + breadcrumb */}
-      <div className="flex items-center gap-2 min-w-0">
+    <header className="fixed top-0 left-0 z-40 flex h-14 w-full shrink-0 items-center justify-between border-b border-neutral-200 bg-white px-4">
+      {/* Left: Platform root & Dynamic breadcrumbs */}
+      <div className="flex items-center gap-3 min-w-0">
         <button
           onClick={toggleMobile}
-          className="flex h-9 w-9 items-center justify-center rounded-lg text-slate-500 transition-colors hover:bg-orange-50 hover:text-orange-700 lg:hidden"
+          className="flex h-8 w-8 items-center justify-center rounded-md text-neutral-500 hover:bg-neutral-100 hover:text-neutral-900 lg:hidden"
           aria-label="Open menu"
         >
-          <Menu size={18} />
+          <Menu size={16} />
         </button>
 
-        {/* Mobile: current page name only */}
-        {crumb && (
-          <span className="min-w-0 truncate text-[13px] font-semibold text-slate-700 lg:hidden">
-            {crumb}
-          </span>
-        )}
-
-        {/* Desktop: Entivia / crumb */}
-        <Link
-          href="/"
-          aria-label="Go to Entivia home"
-          className="hidden lg:inline text-xs font-semibold text-orange-600 transition-colors hover:text-orange-700"
-        >
-          Entivia
-        </Link>
-        {crumb && (
-          <span className="hidden lg:flex items-center gap-2">
-            <span className="text-[13px] text-orange-200">/</span>
-            <span className="text-[13px] font-semibold text-slate-700">{crumb}</span>
-          </span>
-        )}
+        <div className="flex items-center gap-2 text-xs font-medium font-sans tracking-tight">
+          <Link
+            href="/"
+            className="font-bold text-neutral-900 transition-colors hover:opacity-80"
+          >
+            Entivia
+          </Link>
+          {crumb && (
+            <>
+              <span className="text-neutral-300 font-normal">/</span>
+              <span className="font-semibold text-neutral-600 truncate max-w-35 sm:max-w-xs">
+                {crumb}
+              </span>
+            </>
+          )}
+        </div>
 
         <h1 className="sr-only">{title}</h1>
       </div>
 
-      {/* Right controls */}
-      <div className="flex items-center gap-2">
-        {/* Desktop-only controls */}
-        <div className="hidden lg:flex items-center gap-2">
+      {/* Right: Operational utility controls */}
+      <div className="flex items-center gap-3">
+        <div className="hidden lg:flex items-center gap-3">
           <SearchInput placeholder="Search recommendations…" />
           <NotificationBell />
         </div>
@@ -93,10 +87,10 @@ export default function Nav() {
           <Link
             href="/dashboard/connections"
             data-tour="connect-data"
-            className="flex h-9 w-9 items-center justify-center rounded-lg bg-orange-600 text-white shadow-sm shadow-orange-600/15 transition-colors hover:bg-orange-700 active:bg-orange-800 lg:h-10 lg:w-auto lg:gap-2 lg:px-4"
+            className="flex h-8 items-center justify-center gap-1.5 rounded-md bg-neutral-900 px-3 text-xs font-semibold text-white transition-colors hover:bg-neutral-800 active:bg-neutral-950 shadow-sm"
           >
-            <Database size={14} />
-            <span className="hidden lg:inline text-[13px] font-semibold leading-none">Connect Data</span>
+            <Database size={13} />
+            <span>Connect Data</span>
           </Link>
         )}
       </div>

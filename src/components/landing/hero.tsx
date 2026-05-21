@@ -39,53 +39,6 @@ export default function Hero() {
           100% { background-position: 0% 50%; }
         }
 
-        @keyframes blob1 {
-          0%, 100% { transform: translate(0px, 0px) scale(1); }
-          30%       { transform: translate(40px, -60px) scale(1.12); }
-          60%       { transform: translate(-30px, 40px) scale(0.92); }
-        }
-
-        @keyframes blob2 {
-          0%, 100% { transform: translate(0px, 0px) scale(1); }
-          35%       { transform: translate(-50px, 30px) scale(1.08); }
-          70%       { transform: translate(30px, -40px) scale(1.15); }
-        }
-
-        @keyframes blob3 {
-          0%, 100% { transform: translate(0px, 0px) scale(1); }
-          40%       { transform: translate(20px, 50px) scale(0.9); }
-          80%       { transform: translate(-40px, -20px) scale(1.1); }
-        }
-
-        .blob-1 { animation: blob1 18s ease-in-out infinite; }
-        .blob-2 { animation: blob2 22s ease-in-out infinite; }
-        .blob-3 { animation: blob3 16s ease-in-out infinite; }
-
-        .grain::after {
-          content: '';
-          position: absolute;
-          inset: 0;
-          background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.045;'/%3E%3C/svg%3E");
-          opacity: 0.045;
-          pointer-events: none;
-          z-index: 1;
-        }
-
-        @keyframes dataScroll {
-          0%   { transform: translateY(0); }
-          100% { transform: translateY(-50%); }
-        }
-        .data-scroll { animation: dataScroll 22s linear infinite; }
-
-        @keyframes dotPulse {
-          0%, 100% { opacity: 1; }
-          50%       { opacity: 0.3; }
-        }
-        .dot-pulse { animation: dotPulse 2s ease-in-out infinite; }
-
-        .hero-cta-glow:hover {
-          box-shadow: 0 4px 28px var(--mk-accent-ring, rgba(234, 88, 12, 0.35));
-        }
       `}</style>
 
       <section
@@ -134,15 +87,15 @@ export default function Hero() {
         </div>
 
         <div className="relative z-10 max-w-5xl mx-auto text-center px-4 sm:px-6 my-auto flex flex-col items-center justify-center grow">
-          <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-serif text-white tracking-tight leading-[1.05] mb-6 drop-shadow-sm">
-            Know every customer.{" "}
-            <br className="hidden sm:block" />
-            <span>Act in time.</span>
-          </h1>
+         <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-serif text-white tracking-tight leading-[1.05] mb-6 drop-shadow-sm">
+  Connect your schema.{" "}
+  <br className="hidden sm:block" />
+  <span>Stream the actions.</span>
+</h1>
 
-          <p className="text-white/90 text-base sm:text-lg md:text-xl font-medium max-w-md sm:max-w-lg leading-relaxed mb-8 px-2">
-            Entivia scores risk on your data and tells your team what to do next.
-          </p>
+<p className="text-white/90 text-base sm:text-lg md:text-xl font-medium max-w-md sm:max-w-lg leading-relaxed mb-8 px-2">
+  Entivia links to your database to turn complex relational tables into structured recommendation queues and instant pipelines.
+</p>
 
           <div className="flex flex-col sm:flex-row items-center gap-3">
             <Link

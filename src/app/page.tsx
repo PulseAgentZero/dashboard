@@ -1,29 +1,33 @@
 import Navbar from "@/components/landing/navbar";
 import Hero from "@/components/landing/hero";
+// import BentoSection from "@/components/landing/bento-section";
+// import ModelingSection from "@/components/landing/taste-section";
+// import HowItWorksSection from "@/components/landing/how-it-works-section";
+// import IndustriesSection from "@/components/landing/industries-section";
+// import PricingTeaserSection from "@/components/landing/pricing-teaser-section";
+// import FinalCTA from "@/components/landing/final-CTA";
 import Footer from "@/components/landing/footer";
-import TrustGrid from "@/components/landing/trust-grid";
-import FeatureExplorer from "@/components/landing/feature-explorer";
-import PhilosophyGrid from "@/components/landing/philosophy-grid";
-import VerticalTimeline from "@/components/landing/vertical-timeline";
-import TasteSection from "@/components/landing/taste-section";
-import SelfHostingSection from "@/components/landing/self-hosting-section";
-import CommunitySection from "@/components/landing/community-section";
-import FinalCTA from "@/components/landing/final-CTA";
+import Problem from "@/components/landing/Problem";
+import Solution from "@/components/landing/Solution";
+import Industries from "@/components/landing/Industries";
+import Pricing from "@/components/landing/Pricing";
 
 export default function Home() {
   return (
-    <div className="marketing-dark min-h-screen bg-[var(--mk-bg)]">
+    <div className="marketing-dark min-h-screen bg-(--mk-bg)">
       <Navbar />
       <main>
         <Hero />
-        <TrustGrid />
-        <FeatureExplorer />
-        <PhilosophyGrid />
-        <VerticalTimeline />
-        <TasteSection />
-        <SelfHostingSection />
-        <CommunitySection />
-        <FinalCTA />
+        <Problem />
+        <Solution />
+        <Industries />
+        <Pricing />
+        {/* <BentoSection />
+        <ModelingSection />
+        <HowItWorksSection />
+        <IndustriesSection />
+        <PricingTeaserSection />
+        <FinalCTA /> */}
       </main>
       <Footer />
     </div>
