@@ -49,7 +49,7 @@ export function DataSourcesConnectorTables() {
                       {row.name}
                     </td>
                     <td className="px-3 py-2 sm:px-4 sm:py-2.5">
-                      <code className="rounded bg-zinc-100 px-1.5 py-0.5 font-mono text-[13px] text-indigo-800 dark:bg-zinc-800 dark:text-indigo-300">
+                      <code className="rounded bg-zinc-100 px-1.5 py-0.5 font-mono text-[13px] text-orange-700 dark:bg-zinc-800 dark:text-orange-300">
                         {row.connectorType}
                       </code>
                     </td>

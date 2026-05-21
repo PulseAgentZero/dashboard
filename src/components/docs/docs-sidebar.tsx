@@ -35,7 +35,7 @@ export function DocsSidebar({ onNavigate }: Props) {
                     onClick={onNavigate}
                     className={`block rounded-md px-3 py-1.5 text-[13px] transition-colors ${
                       active
-                        ? "bg-indigo-50 font-medium text-indigo-700 dark:bg-indigo-950/60 dark:text-indigo-300"
+                        ? "bg-orange-50 font-medium text-orange-700 dark:bg-orange-950/40 dark:text-orange-300"
                         : "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
                     }`}
                   >

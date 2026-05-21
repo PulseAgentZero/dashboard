@@ -59,7 +59,7 @@ export function ApiEndpoint({ endpoint, showPlaygroundLink = true }: Props) {
           Try this in the{" "}
           <Link
             href={appHref("/dashboard/playground")}
-            className="font-medium text-indigo-600 hover:underline dark:text-indigo-400"
+            className="font-medium text-orange-600 hover:underline dark:text-orange-400"
           >
             API Playground
           </Link>{" "}
@@ -85,7 +85,7 @@ function ParamSection({
       <ul className="space-y-1 text-sm text-zinc-600 dark:text-zinc-400">
         {params.map((p) => (
           <li key={p.key}>
-            <code className="rounded bg-zinc-100 px-1 py-0.5 text-xs text-indigo-700 dark:bg-zinc-800 dark:text-indigo-300">
+            <code className="rounded bg-zinc-100 px-1 py-0.5 text-xs text-orange-700 dark:bg-zinc-800 dark:text-orange-300">
               {p.key}
             </code>
             {p.required && (

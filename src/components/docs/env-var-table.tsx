@@ -41,7 +41,7 @@ export function EnvVarTable({ groups }: Props) {
                     key={v.name}
                     className="bg-white dark:bg-zinc-900/50"
                   >
-                    <td className="px-3 py-2 font-mono text-[11px] break-all text-indigo-700 sm:px-4 sm:py-2.5 sm:text-xs dark:text-indigo-300">
+                    <td className="px-3 py-2 font-mono text-[11px] break-all text-orange-700 sm:px-4 sm:py-2.5 sm:text-xs dark:text-orange-300">
                       {v.name}
                       {v.selfHostedOnly && (
                         <span className="ml-1.5 rounded bg-amber-100 px-1 py-0.5 text-[9px] font-semibold uppercase text-amber-800 dark:bg-amber-950/50 dark:text-amber-300">

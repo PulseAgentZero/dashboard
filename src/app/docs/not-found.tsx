@@ -12,11 +12,11 @@ export default function DocsNotFound() {
   return (
     <div className="mx-auto max-w-2xl px-6 py-16">
       <div className="rounded-2xl border border-zinc-200 bg-white p-8 text-center shadow-sm dark:border-zinc-800 dark:bg-zinc-900/40">
-        <div className="mx-auto mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-zinc-900 text-white dark:bg-indigo-600">
+        <div className="mx-auto mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-orange-600 text-white">
           <FileQuestion size={22} />
         </div>
 
-        <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-indigo-600 dark:text-indigo-400">
+        <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-orange-600 dark:text-orange-400">
           404 · Docs not found
         </p>
         <h1 className="mt-2 text-2xl font-bold tracking-tight text-zinc-900 dark:text-white">
@@ -30,7 +30,7 @@ export default function DocsNotFound() {
         <div className="mt-6 flex flex-wrap justify-center gap-2">
           <Link
             href="/docs"
-            className="inline-flex items-center gap-2 rounded-full bg-zinc-900 px-4 py-2 text-xs font-semibold text-white hover:bg-zinc-700 dark:bg-indigo-600 dark:hover:bg-indigo-500"
+            className="inline-flex items-center gap-2 rounded-full bg-orange-600 px-4 py-2 text-xs font-semibold text-white hover:bg-orange-700 dark:bg-orange-600 dark:hover:bg-orange-500"
           >
             Documentation home
             <ArrowRight size={12} />

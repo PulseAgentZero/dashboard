@@ -56,7 +56,7 @@ function TocLinks({
               h.level === 3 ? "pl-5" : "pl-3"
             } ${
               activeId === h.id
-                ? "border-indigo-600 font-medium text-indigo-700 dark:border-indigo-400 dark:text-indigo-300"
+                ? "border-orange-600 font-medium text-orange-700 dark:border-orange-400 dark:text-orange-300"
                 : "border-transparent text-zinc-500 hover:text-zinc-800 dark:text-zinc-500 dark:hover:text-zinc-200"
             }`}
           >

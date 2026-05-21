@@ -58,7 +58,7 @@ export function DocsMarkdown({ content }: Props) {
           a: ({ href, children }) => {
             const isExternal = href?.startsWith("http");
             const className =
-              "font-medium text-indigo-600 hover:underline dark:text-indigo-400";
+              "font-medium text-orange-600 hover:underline dark:text-orange-400";
             if (isExternal) {
               return (
                 <a
@@ -87,7 +87,7 @@ export function DocsMarkdown({ content }: Props) {
             if (inline) {
               return (
                 <code
-                  className="rounded bg-zinc-100 px-1.5 py-0.5 font-mono text-[13px] text-indigo-800 dark:bg-zinc-800 dark:text-indigo-300"
+                  className="rounded bg-zinc-100 px-1.5 py-0.5 font-mono text-[13px] text-orange-700 dark:bg-zinc-800 dark:text-orange-300"
                   {...props}
                 >
                   {children}
@@ -118,7 +118,7 @@ export function DocsMarkdown({ content }: Props) {
             </td>
           ),
           blockquote: ({ children }) => (
-            <blockquote className="my-4 border-l-4 border-indigo-300 pl-4 text-zinc-600 italic dark:border-indigo-600 dark:text-zinc-400">
+            <blockquote className="my-4 border-l-4 border-orange-300 pl-4 text-zinc-600 italic dark:border-orange-600 dark:text-zinc-400">
               {children}
             </blockquote>
           ),

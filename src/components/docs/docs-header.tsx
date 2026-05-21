@@ -49,19 +49,19 @@ export function DocsHeader({ mobileOpen, onToggleMobile }: Props) {
             href={redocUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="hidden text-zinc-600 hover:text-indigo-600 dark:text-zinc-400 dark:hover:text-indigo-400 md:inline"
+            className="hidden text-zinc-600 hover:text-orange-600 dark:text-zinc-400 dark:hover:text-orange-400 md:inline"
           >
             API (ReDoc)
           </a>
           <Link
             href={appHref("/dashboard/playground")}
-            className="hidden text-zinc-600 hover:text-indigo-600 dark:text-zinc-400 dark:hover:text-indigo-400 md:inline"
+            className="hidden text-zinc-600 hover:text-orange-600 dark:text-zinc-400 dark:hover:text-orange-400 md:inline"
           >
             Playground
           </Link>
           <Link
             href={appHref("/auth/login")}
-            className="rounded-full bg-zinc-900 px-3 py-1.5 text-xs font-semibold whitespace-nowrap text-white hover:bg-zinc-700 sm:px-4 dark:bg-indigo-600 dark:hover:bg-indigo-500"
+            className="rounded-full bg-orange-600 px-3 py-1.5 text-xs font-semibold whitespace-nowrap text-white hover:bg-orange-700 sm:px-4 dark:bg-orange-600 dark:hover:bg-orange-500"
           >
             Sign in
           </Link>
