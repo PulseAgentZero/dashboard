@@ -10,72 +10,70 @@ import { EntityCounter } from "@/components/landing/entity-counter";
 
 /**
  * Magazine-style Features page.
- * No eyebrow chips, no italic-orange headline accents, no watermark numbers,
- * no comparison tables, no FAQ. Just a confident long-form read.
+ * Reconstructed with an elegant, smooth slate/zinc dark theme.
  */
 export function FeaturesPage() {
   return (
-    <div className="marketing-dark min-h-screen bg-[var(--mk-bg)] text-[var(--mk-text)]">
+    <div className="min-h-screen bg-zinc-950 text-zinc-100 antialiased selection:bg-zinc-800">
       <Navbar />
 
       <main>
         {/* =============================== HERO =============================== */}
         <section
           data-navbar-theme="dark"
-          className="relative px-6 pt-36 pb-20 md:px-10 md:pt-44 md:pb-24"
+          className="relative px-4 pt-32 pb-16 sm:px-6 md:px-10 md:pt-40 md:pb-24 lg:pt-44"
         >
           <div className="mx-auto max-w-6xl">
-            <div className="grid gap-16 lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:gap-20">
+            <div className="grid gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:gap-16">
               <div>
-                <div className="flex items-center gap-2 text-xs uppercase tracking-[0.3em] text-[var(--mk-text-faint)]">
-                  <span className="h-px w-8 bg-[var(--mk-text-faint)]" />
-                  Features
+                <div className="inline-flex items-center gap-2 font-mono text-[10px] uppercase font-bold tracking-widest text-zinc-500">
+                  <span className="h-px w-6 bg-zinc-800" />
+                  Core Capabilities
                 </div>
 
-                <h1 className="mt-8 text-[2.75rem] font-medium leading-[1.05] tracking-tight text-[var(--mk-text)] sm:text-6xl md:text-7xl lg:text-[5.25rem]">
+                <h1 className="mt-6 font-serif text-4xl font-normal leading-[1.15] sm:leading-[1.1] tracking-tight text-white sm:text-5xl md:text-6xl lg:text-[4.75rem]">
                   Your data already knows.
                   <br />
-                  <span className="text-[var(--mk-text-muted)]">
+                  <span className="text-zinc-400">
                     Entivia surfaces it.
                   </span>
                 </h1>
 
-                <p className="mt-8 max-w-md text-base leading-relaxed text-[var(--mk-text-muted)] sm:text-lg">
-                  An autonomous intelligence layer that plugs into the database
-                  you already run, scores every entity in it, and tells your
-                  team what to do next.
+                <p className="mt-6 max-w-md text-sm sm:text-base leading-relaxed text-zinc-400 font-medium">
+                  An autonomous intelligence layer that plugs securely into your active database cluster, profiles every operational record, and alerts your team what to execute next.
                 </p>
 
-                <div className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-3">
+                <div className="mt-8 flex flex-row items-center gap-4 shrink-0">
                   <Link
                     href="/auth/signup"
-                    className="inline-flex items-center gap-2 rounded-full bg-[var(--mk-accent)] px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-[var(--mk-accent-hover)]"
+                    className="inline-flex items-center gap-2 rounded-full bg-zinc-100 px-5 py-3 text-xs sm:text-sm font-bold font-mono uppercase tracking-wider text-zinc-950 shadow-sm hover:bg-zinc-200 transition-colors"
                   >
                     Start free
                     <ArrowRight size={14} />
                   </Link>
                   <Link
                     href="/products"
-                    className="text-sm font-medium text-[var(--mk-text-muted)] underline underline-offset-4 transition-colors hover:text-[var(--mk-text)]"
+                    className="px-2 py-3 text-xs sm:text-sm font-bold font-mono uppercase tracking-wider text-zinc-400 hover:text-zinc-100 transition-colors"
                   >
                     See every product
                   </Link>
                 </div>
               </div>
 
-              <div className="relative mx-auto w-full max-w-md lg:max-w-none">
+              <div className="relative mx-auto w-full max-w-md lg:max-w-none bg-zinc-900/40 border border-zinc-800/80 rounded-2xl p-4 shadow-xl ring-1 ring-white/5">
                 <TelecomMock />
               </div>
             </div>
 
-            {/* Live counter — single quiet line, not a 3-stat strip */}
-            <p className="mt-20 max-w-2xl font-mono text-sm leading-relaxed text-[var(--mk-text-faint)]">
-              <span className="text-[var(--mk-text)]">
-                <EntityCounter />
-              </span>{" "}
-              entities scored across customers since launch. Counter ticking
-              live.
-            </p>
+            {/* Live counter — minimal single line indicator */}
+            <div className="mt-16 sm:mt-24 border-t border-zinc-900 pt-6">
+              <p className="max-w-2xl font-mono text-xs uppercase tracking-wider text-zinc-500 font-bold flex flex-wrap items-center gap-1.5">
+                <span className="text-orange-400 font-semibold tabular-nums tracking-normal bg-orange-500/5 border border-orange-500/10 px-2 py-0.5 rounded">
+                  <EntityCounter />
+                </span>{" "}
+                records analyzed live across customer environments.
+              </p>
+            </div>
           </div>
         </section>
 
@@ -83,24 +81,18 @@ export function FeaturesPage() {
 
         <Chapter
           number="01"
-          kicker="Reading, not extracting"
-          title="We query your data live. We never copy it."
+          kicker="Direct Pipeline queries"
+          title="We query your data live. We never replicate it."
           body={
             <>
               <p>
-                Most analytics tools start with a 12-week ETL project. Bulk
-                exports, duplicate warehouses, brittle pipelines, and a copy of
-                your sensitive data sitting somewhere it shouldn&apos;t.
+                Most business intelligence stacks demand a complex, multimonth engineering project to get off the ground—requiring heavy infrastructure setups, slow file extractions, and duplicate tables stored in insecure workspaces.
               </p>
               <p>
-                Entivia takes a different approach. We connect read-only to your
-                Postgres, MySQL, MSSQL, or SQLite, and query it directly. Every
-                answer in the product traces back to a row in your database.
-                Nothing is cached, nothing is duplicated, nothing is invented.
+                Entivia maps directly over your architecture. We connect read-only into your Postgres, MySQL, MSSQL, or SQLite environments, translating native schema structures in real time.
               </p>
               <p>
-                On self-hosted deployments, the pipeline runs entirely inside
-                your VPC. Your row data never leaves your network.
+                When self-hosting, the pipeline remains entirely enclosed inside your private virtual cloud layer. Your sensitive table rows never touch external networks.
               </p>
             </>
           }
@@ -108,22 +100,15 @@ export function FeaturesPage() {
 
         <Chapter
           number="02"
-          kicker="The intelligence layer"
-          title="Every customer, patient, SKU, or route gets a score."
+          kicker="Predictive analytics"
+          title="Every transaction, user profile, or product receives a tier."
           body={
             <>
               <p>
-                Once connected, an autonomous pipeline of agents profiles every
-                entity in your database. It learns the signals that matter —
-                usage trends, late payments, occupancy, sell-through, fuel use,
-                whatever your domain looks like — and assigns each entity a
-                tier: critical, high, medium, or healthy.
+                Once initialized, our background agent pipelines cross-reference telemetry indicators continuously. The model traces hidden decay trajectories unique to your sector—including usage velocity changes, localized delays, or structural stock drops.
               </p>
               <p>
-                For everything flagged critical or high, the recommendation
-                agent drafts a next-best action grounded in real patterns from
-                your data. Not generic playbooks. Actions specific to that
-                entity, that week, that store.
+                Every active entry receives an operational tier index: critical, high, medium, or healthy. For entries flashing anomalies, recommendation scripts formulate precise procedural solutions derived directly from raw contextual telemetry patterns.
               </p>
             </>
           }
@@ -132,25 +117,18 @@ export function FeaturesPage() {
 
         <Chapter
           number="03"
-          kicker="Plain-English chat"
-          title="Anyone on your team can ask the data anything."
+          kicker="Semantic processing"
+          title="Anyone on your team can ask the database anything."
           body={
             <>
               <p>
-                Type a question in normal English. The agent translates it to
-                SQL, runs it against your live database, and answers in seconds
-                — citing the rows it pulled from.
+                Execute precise programmatic searches using raw conversation sentences. The analytical core interprets the prompt context, compiles standard transactional queries, and evaluates real-time tables in milliseconds.
               </p>
               <p>
-                &ldquo;Who are my highest-risk customers in Lagos this
-                week?&rdquo; &nbsp;&ldquo;Which SKUs are about to stock
-                out?&rdquo; &nbsp;&ldquo;Why did Ward B&apos;s occupancy spike
-                yesterday?&rdquo;
+                &ldquo;Who are my highest-risk customers in Lagos this week?&rdquo; &nbsp;&ldquo;Which trade SKUs are approaching warehouse thresholds?&rdquo; &nbsp;&ldquo;Why did operational parameters spike yesterday afternoon?&rdquo;
               </p>
               <p>
-                No SQL skills required. No dashboards to build. Answers are
-                grounded in your schema and business context, so they stay on
-                domain.
+                No query engineering experience required. Answers trace back precisely to real source records, preserving extreme consistency while eliminating AI hallucination vectors.
               </p>
             </>
           }
@@ -158,51 +136,46 @@ export function FeaturesPage() {
 
         <Chapter
           number="04"
-          kicker="Find-you-first alerts"
-          title="When risk moves, your team hears about it."
+          kicker="Webhook dispatch systems"
+          title="The moment metrics fluctuate, your engineers know."
           body={
             <>
               <p>
-                Set thresholds on the scores and signals that matter to your
-                business. When something spikes, Entivia pushes to Slack, email,
-                or any webhook on your stack. The alert includes the entity, the
-                signal, and the recommended action — not just a number.
+                Establish explicit automated thresholds over vital risk matrices. The instant data fields cross specified parameters, Entivia drops structured notification payloads directly inside Slack channels, internal engineering endpoints, or third-party monitoring nodes.
               </p>
               <p>
-                Pipelines run on a schedule or on demand. Power users can write
-                SQL in Studio, build dashboards, and share public links when
-                they need to ship a chart fast.
+                Data checks dispatch continuously on custom schedules. Power users can run complex customized queries inside Studio, format clean visualizations instantly, and generate read-only public reference links for immediate syncups.
               </p>
             </>
           }
           reverse
         />
 
-        {/* =============================== HOSTING — single calm sentence =============================== */}
+        {/* =============================== HOSTING =============================== */}
         <section
           data-navbar-theme="dark"
-          className="relative border-t border-[var(--mk-border)] px-6 py-28 md:px-10"
+          className="relative border-t border-zinc-900 bg-zinc-950 px-4 py-20 sm:py-28 md:px-10"
         >
-          <div className="mx-auto max-w-3xl">
-            <p className="text-xs uppercase tracking-[0.3em] text-[var(--mk-text-faint)]">
-              Hosting
+          <div className="mx-auto max-w-3xl text-left sm:text-center">
+            <p className="font-mono text-[10px] font-bold uppercase tracking-widest text-zinc-500">
+              Infrastructure Orchestration
             </p>
-            <p className="mt-6 text-2xl font-medium leading-[1.35] text-[var(--mk-text)] sm:text-3xl md:text-[2rem]">
-              Use{" "}
+            <p className="mt-4 font-serif text-xl sm:text-2xl md:text-3xl font-normal leading-relaxed text-zinc-300">
+              Deploy via{" "}
               <Link
                 href="/pricing"
-                className="text-[var(--mk-accent)] underline underline-offset-[6px] decoration-[var(--mk-accent)]/30 hover:decoration-[var(--mk-accent)]"
+                className="text-orange-400 hover:text-orange-300 transition-colors underline decoration-orange-500/20 underline-offset-4"
               >
                 Entivia Cloud
               </Link>{" "}
-              if you want it now. Run it{" "}
+              for immediate plug-and-play instances, or run our images{" "}
               <Link
                 href="/docs/hosting/self-hosted"
-                className="text-[var(--mk-accent)] underline underline-offset-[6px] decoration-[var(--mk-accent)]/30 hover:decoration-[var(--mk-accent)]"
+                className="text-orange-400 hover:text-orange-300 transition-colors underline decoration-orange-500/20 underline-offset-4"
               >
-                in your own VPC
+                locally inside your VPC
               </Link>{" "}
-              if your data can&apos;t leave. The product is the same either way.
+              if enterprise compliance policies limit data migration. The core engine functions identically.
             </p>
           </div>
         </section>
@@ -232,11 +205,11 @@ function Chapter({
   return (
     <section
       data-navbar-theme="dark"
-      className="relative border-t border-[var(--mk-border)] px-6 py-24 md:px-10 md:py-32"
+      className="relative border-t border-zinc-900 px-4 py-20 sm:px-6 md:px-10 md:py-28"
     >
       <div
         className={[
-          "mx-auto grid max-w-6xl gap-12 lg:grid-cols-[200px_1fr] lg:gap-20",
+          "mx-auto grid max-w-6xl gap-10 lg:grid-cols-[220px_1fr] lg:gap-16",
           reverse ? "lg:[direction:rtl]" : "",
         ].join(" ")}
       >
@@ -247,10 +220,10 @@ function Chapter({
             reverse ? "lg:[direction:ltr]" : "",
           ].join(" ")}
         >
-          <p className="font-mono text-xs tabular-nums text-[var(--mk-accent)]">
-            Ch. {number}
+          <p className="font-mono text-xs tabular-nums text-orange-400 font-bold">
+            Chapter {number}
           </p>
-          <p className="mt-2 text-xs uppercase tracking-[0.25em] text-[var(--mk-text-faint)]">
+          <p className="mt-1 font-mono text-[10px] uppercase tracking-wider text-zinc-500 font-bold">
             {kicker}
           </p>
         </div>
@@ -262,10 +235,10 @@ function Chapter({
             reverse ? "lg:[direction:ltr]" : "",
           ].join(" ")}
         >
-          <h2 className="text-3xl font-medium leading-[1.15] tracking-tight text-[var(--mk-text)] sm:text-4xl md:text-[2.5rem]">
+          <h2 className="font-serif text-2xl sm:text-3xl md:text-4xl font-normal leading-tight text-white tracking-tight">
             {title}
           </h2>
-          <div className="mt-8 space-y-5 text-base leading-[1.75] text-[var(--mk-text-muted)]">
+          <div className="mt-6 space-y-4 text-sm sm:text-base leading-relaxed text-zinc-400 font-medium">
             {body}
           </div>
         </div>

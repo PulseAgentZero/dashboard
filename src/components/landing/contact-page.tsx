@@ -33,42 +33,41 @@ export function ContactPage() {
   }
 
   return (
-    <div className="marketing-dark min-h-screen bg-[var(--mk-bg)] text-[var(--mk-text)]">
+    <div className="min-h-screen bg-zinc-950 text-zinc-100 antialiased selection:bg-zinc-800">
       <Navbar />
 
       <main
         data-navbar-theme="dark"
-        className="relative px-6 pt-36 pb-24 md:px-10 md:pt-44"
+        className="relative px-4 pt-32 pb-24 md:px-10 md:pt-40 lg:pt-44"
       >
         <div className="mx-auto max-w-6xl">
-          <div className="grid gap-16 lg:grid-cols-[1fr_520px] lg:gap-24 lg:items-start">
+          <div className="grid gap-12 lg:grid-cols-[1fr_520px] lg:gap-20 lg:items-start">
+            
             {/* ---------- Left: editorial copy ---------- */}
             <div className="lg:sticky lg:top-32">
-              <div className="flex items-center gap-2 text-xs uppercase tracking-[0.3em] text-[var(--mk-text-faint)]">
-                <span className="h-px w-8 bg-[var(--mk-text-faint)]" />
-                Contact
+              <div className="inline-flex items-center gap-2 font-mono text-[10px] uppercase font-bold tracking-widest text-zinc-500">
+                <span className="h-px w-6 bg-zinc-800" />
+                Inquiries Channel
               </div>
 
-              <h1 className="mt-8 text-[2.75rem] font-medium leading-[1.05] tracking-tight text-[var(--mk-text)] sm:text-6xl md:text-7xl">
+              <h1 className="mt-6 font-serif text-4xl font-normal tracking-tight text-white sm:text-5xl md:text-6xl">
                 Talk to us.
               </h1>
 
-              <p className="mt-8 max-w-md text-base leading-relaxed text-[var(--mk-text-muted)] sm:text-lg">
-                Tell us about your data, your industry, and what good looks
-                like. You&apos;re writing to founders and engineers — not a
-                ticket queue.
+              <p className="mt-6 max-w-md text-sm sm:text-base leading-relaxed text-zinc-400 font-medium">
+                Tell us about your active infrastructure matrix, your industry parameters, and what good logs look like. You are writing directly to founders and platform engineers.
               </p>
 
-              <dl className="mt-14 grid grid-cols-1 gap-y-6 text-sm sm:grid-cols-2 sm:gap-x-8">
+              <dl className="mt-12 grid grid-cols-1 gap-y-6 text-xs sm:grid-cols-2 sm:gap-x-8 border-t border-zinc-900 pt-8">
                 {CHANNELS.map((c) => (
                   <div key={c.label}>
-                    <dt className="text-xs uppercase tracking-[0.2em] text-[var(--mk-text-faint)]">
+                    <dt className="font-mono text-[10px] font-bold uppercase tracking-wider text-zinc-500">
                       {c.label}
                     </dt>
-                    <dd className="mt-1.5">
+                    <dd className="mt-2">
                       <a
                         href={c.href}
-                        className="font-mono text-[var(--mk-text)] underline-offset-4 hover:text-[var(--mk-accent)] hover:underline"
+                        className="font-mono text-xs sm:text-sm font-semibold text-zinc-300 hover:text-orange-400 transition-colors"
                       >
                         {c.value}
                       </a>
@@ -76,75 +75,74 @@ export function ContactPage() {
                   </div>
                 ))}
                 <div>
-                  <dt className="text-xs uppercase tracking-[0.2em] text-[var(--mk-text-faint)]">
-                    Source
+                  <dt className="font-mono text-[10px] font-bold uppercase tracking-wider text-zinc-500">
+                    Source Ecosystem
                   </dt>
-                  <dd className="mt-1.5">
+                  <dd className="mt-2">
                     <a
                       href="https://github.com/entivia"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 font-mono text-[var(--mk-text)] underline-offset-4 hover:text-[var(--mk-accent)] hover:underline"
+                      className="inline-flex items-center gap-2 font-mono text-xs sm:text-sm font-semibold text-zinc-300 hover:text-orange-400 transition-colors"
                     >
-                      <Github />
+                      <Github  />
                       github.com/entivia
                     </a>
                   </dd>
                 </div>
                 <div>
-                  <dt className="text-xs uppercase tracking-[0.2em] text-[var(--mk-text-faint)]">
-                    Where we are
+                  <dt className="font-mono text-[10px] font-bold uppercase tracking-wider text-zinc-500">
+                    Base Core Operations
                   </dt>
-                  <dd className="mt-1.5 text-[var(--mk-text-muted)]">
+                  <dd className="mt-2 font-mono text-xs text-zinc-400 font-semibold">
                     Lagos · WAT (UTC+1)
                   </dd>
                 </div>
               </dl>
 
-              <p className="mt-14 max-w-md border-t border-[var(--mk-border)] pt-6 text-sm text-[var(--mk-text-faint)]">
-                Replies within one business day. We sign NDAs before sharing
-                anything sensitive.
+              <p className="mt-12 max-w-md border-t border-zinc-900 pt-6 font-mono text-[10px] uppercase tracking-wider text-zinc-500 font-bold">
+                Standard processing window within 24 business hours. NDA schedules processed instantly upon corporate requests.
               </p>
             </div>
 
-            {/* ---------- Right: form ---------- */}
-            <div className="rounded-3xl border border-[var(--mk-border)] bg-[var(--mk-surface)] p-6 sm:p-8">
+            {/* ---------- Right: Form Canvas ---------- */}
+            <div className="rounded-2xl border border-zinc-800/80 bg-zinc-900/40 backdrop-blur-sm p-5 sm:p-8 shadow-xl ring-1 ring-white/5">
               {submitted ? (
-                <div className="flex min-h-[480px] flex-col items-center justify-center text-center">
-                  <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-full bg-[var(--mk-accent-soft)] text-[var(--mk-accent)]">
-                    <CheckCircle2 size={28} />
+                <div className="flex min-h-[440px] flex-col items-center justify-center text-center animate-[fadeUp_.45s_ease-out]">
+                  <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-xl border border-orange-500/20 bg-orange-500/5 text-orange-400">
+                    <CheckCircle2 size={22} />
                   </div>
-                  <h2 className="text-2xl font-medium text-[var(--mk-text)] sm:text-3xl">
-                    Message received.
+                  <h2 className="font-serif text-2xl font-normal text-white tracking-tight">
+                    Payload received.
                   </h2>
-                  <p className="mt-3 max-w-sm text-sm leading-relaxed text-[var(--mk-text-muted)]">
-                    Someone from the team will reply within one business day.
+                  <p className="mt-2 max-w-xs text-xs sm:text-sm leading-relaxed text-zinc-400 font-medium">
+                    A technical lead will initialize contact within one operational business day.
                   </p>
                   <Link
                     href="/"
-                    className="mt-8 inline-flex items-center gap-2 rounded-full bg-[var(--mk-accent)] px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-[var(--mk-accent-hover)]"
+                    className="mt-8 inline-flex items-center gap-2 rounded-full bg-zinc-100 px-5 py-3 font-mono text-xs font-bold uppercase tracking-wider text-zinc-950 shadow-sm hover:bg-zinc-200 transition-colors"
                   >
-                    Back home
+                    Return home
                     <ArrowRight size={14} />
                   </Link>
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div>
-                    <p className="text-xs uppercase tracking-[0.2em] text-[var(--mk-text-faint)]">
-                      What&apos;s this about
+                    <p className="font-mono text-[10px] font-bold uppercase tracking-wider text-zinc-500 mb-3">
+                      Routing Parameter
                     </p>
-                    <div className="mt-3 flex flex-wrap gap-1.5">
+                    <div className="flex flex-wrap gap-2">
                       {REASONS.map((r) => (
                         <button
                           key={r.id}
                           type="button"
                           onClick={() => setReason(r.id)}
                           className={[
-                            "rounded-full border px-3 py-1.5 text-xs font-medium transition-all",
+                            "rounded-md border px-3 py-1.5 font-mono text-[10px] uppercase font-bold tracking-wider transition-all",
                             reason === r.id
-                              ? "border-[var(--mk-accent)] bg-[var(--mk-accent)] text-white"
-                              : "border-[var(--mk-border)] bg-[var(--mk-bg)] text-[var(--mk-text-muted)] hover:border-[var(--mk-text-faint)] hover:text-[var(--mk-text)]",
+                              ? "border-orange-500/20 bg-orange-500/10 text-orange-400"
+                              : "border-zinc-800 bg-zinc-950/40 text-zinc-400 hover:border-zinc-700 hover:text-zinc-200",
                           ].join(" ")}
                         >
                           {r.label}
@@ -162,51 +160,52 @@ export function ContactPage() {
                       placeholder="you@company.com"
                       required
                     />
-                    <Field id="company" label="Company" placeholder="Your company" />
-                    <Field id="role" label="Role" placeholder="Ops Manager" />
+                    <Field id="company" label="Company" placeholder="Your enterprise" />
+                    <Field id="role" label="Role" placeholder="Ops Engineer" />
                   </div>
 
                   <div>
                     <label
                       htmlFor="message"
-                      className="mb-2 block text-xs uppercase tracking-[0.2em] text-[var(--mk-text-faint)]"
+                      className="mb-2 block font-mono text-[10px] font-bold uppercase tracking-wider text-zinc-500"
                     >
-                      Message
+                      Context Parameters
                     </label>
                     <textarea
                       id="message"
                       name="message"
                       required
-                      rows={5}
-                      placeholder="What are you trying to figure out about your data?"
-                      className="w-full resize-y rounded-xl border border-[var(--mk-border)] bg-[var(--mk-bg)] px-4 py-3 text-sm text-[var(--mk-text)] placeholder:text-[var(--mk-text-faint)] outline-none transition-colors focus:border-[var(--mk-accent)] focus:ring-1 focus:ring-[var(--mk-accent)]"
+                      rows={4}
+                      placeholder="What telemetry anomalies are you attempting to resolve across your infrastructure data?"
+                      className="w-full resize-y rounded-xl border border-zinc-800 bg-zinc-950/60 px-4 py-3 text-sm text-zinc-200 placeholder:text-zinc-600 outline-none transition-all focus:border-zinc-700 focus:ring-1 focus:ring-zinc-700 font-medium"
                     />
                   </div>
 
                   <button
                     type="submit"
-                    className="group flex w-full items-center justify-between rounded-2xl bg-[var(--mk-accent)] px-6 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-[var(--mk-accent-hover)]"
+                    className="group flex w-full items-center justify-between rounded-xl bg-zinc-100 px-5 py-3.5 font-mono text-xs font-bold uppercase tracking-wider text-zinc-950 shadow-sm hover:bg-zinc-200 transition-colors"
                   >
-                    <span>Send message</span>
+                    <span>Dispatch message</span>
                     <ArrowRight
                       size={14}
                       className="transition-transform group-hover:translate-x-0.5"
                     />
                   </button>
 
-                  <p className="text-[11px] leading-relaxed text-[var(--mk-text-faint)]">
-                    By sending this you agree to our{" "}
+                  <p className="font-mono text-[9px] uppercase tracking-wider text-zinc-600 font-bold leading-normal">
+                    By submitting infrastructure telemetry metrics, you consent to our active{" "}
                     <Link
                       href="/privacy"
-                      className="text-[var(--mk-text-muted)] underline underline-offset-2 hover:text-[var(--mk-accent)]"
+                      className="text-zinc-400 underline underline-offset-2 hover:text-white transition-colors"
                     >
-                      privacy policy
+                      privacy systems
                     </Link>
                     .
                   </p>
                 </form>
               )}
             </div>
+
           </div>
         </div>
       </main>
@@ -233,7 +232,7 @@ function Field({
     <div>
       <label
         htmlFor={id}
-        className="mb-2 block text-xs uppercase tracking-[0.2em] text-[var(--mk-text-faint)]"
+        className="mb-2 block font-mono text-[10px] font-bold uppercase tracking-wider text-zinc-500"
       >
         {label}
       </label>
@@ -243,7 +242,7 @@ function Field({
         type={type}
         required={required}
         placeholder={placeholder}
-        className="w-full rounded-xl border border-[var(--mk-border)] bg-[var(--mk-bg)] px-4 py-2.5 text-sm text-[var(--mk-text)] placeholder:text-[var(--mk-text-faint)] outline-none transition-colors focus:border-[var(--mk-accent)] focus:ring-1 focus:ring-[var(--mk-accent)]"
+        className="w-full rounded-xl border border-zinc-800 bg-zinc-950/60 px-4 py-2.5 text-sm text-zinc-200 placeholder:text-zinc-600 outline-none transition-all focus:border-zinc-700 focus:ring-1 focus:ring-zinc-700 font-medium"
       />
     </div>
   );
