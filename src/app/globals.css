@@ -8,6 +8,20 @@
   --foreground: #13201f;
 }
 
+/* Marketing dark surface — scoped to .marketing-dark so the dashboard stays light */
+.marketing-dark {
+  --mk-bg: #09090b;
+  --mk-surface: #0f0f12;
+  --mk-surface-2: #16161a;
+  --mk-border: #232328;
+  --mk-text: #fafafa;
+  --mk-text-muted: #a1a1aa;
+  --mk-text-faint: #52525b;
+  --mk-accent: #ea580c;
+  --mk-accent-hover: #c2410c;
+  --mk-accent-soft: rgba(234, 88, 12, 0.12);
+  --mk-accent-ring: rgba(234, 88, 12, 0.35);
+}
 
 @theme inline {
   --color-background: var(--background);

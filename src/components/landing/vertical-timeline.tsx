@@ -50,7 +50,7 @@ export default function VerticalTimeline() {
   const lineHeight = useTransform(scrollYProgress, [0, 1], ['0%', '100%']);
 
   return (
-    <div ref={containerRef} className="bg-black text-white font-mono py-20">
+    <div ref={containerRef} data-navbar-theme="dark" className="bg-[var(--mk-bg)] text-[var(--mk-text)] font-mono py-20">
       <div className="max-w-7xl mx-auto border-x border-zinc-900">
         <div className="grid grid-cols-1 md:grid-cols-[3fr_2fr]">
 
@@ -105,7 +105,7 @@ export default function VerticalTimeline() {
 
           {/* RIGHT — Terminal preview */}
           <div className="px-8 pt-10 pb-4 sticky top-20 h-fit">
-            <div className="rounded-xl overflow-hidden border border-zinc-800/80 shadow-2xl shadow-indigo-950/30">
+            <div className="rounded-xl overflow-hidden border border-zinc-800/80 shadow-2xl shadow-black/40">
 
               {/* Title bar */}
               <div className="bg-[#0d0d16] px-4 py-2.5 flex items-center gap-2 border-b border-zinc-800/60">
@@ -130,7 +130,7 @@ export default function VerticalTimeline() {
     <div className="text-zinc-700">.entivia/schema-metadata/</div>
     {['users_table.json', 'transactions.json', 'logs.json'].map(f => (
       <div key={f} className="flex items-center gap-2.5">
-        <span className="bg-indigo-500/20 text-indigo-400 px-1.5 py-px rounded-sm text-[9px] font-bold tracking-wide">INDEX</span>
+        <span className="bg-[var(--mk-accent-soft)] text-[var(--mk-accent)] px-1.5 py-px rounded-sm text-[9px] font-bold tracking-wide">INDEX</span>
         <span className="text-zinc-400">{f}</span>
       </div>
     ))}
@@ -142,7 +142,7 @@ export default function VerticalTimeline() {
       <span>entivia analyze --goal churn</span>
     </div>
     <div className="flex items-center gap-2.5">
-      <span className="bg-purple-500/20 text-purple-400 px-1.5 py-px rounded-sm text-[9px] font-bold tracking-wide">QUERY</span>
+      <span className="bg-[var(--mk-accent-soft)] text-[var(--mk-accent)] px-1.5 py-px rounded-sm text-[9px] font-bold tracking-wide">QUERY</span>
       <span className="text-zinc-600">generating risk scores...</span>
     </div>
     <div className="flex items-center gap-2 text-emerald-400/70">

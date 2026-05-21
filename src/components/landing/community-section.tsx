@@ -43,7 +43,7 @@ export default function TeamSection() {
   ];
 
   return (
-    <section className="bg-black text-white font-sans selection:bg-zinc-800">
+    <section data-navbar-theme="dark" className="bg-[var(--mk-bg)] text-[var(--mk-text)] font-sans selection:bg-zinc-800">
       <div className="max-w-7xl mx-auto border-x border-zinc-900">
         
         {/* Header Section */}
@@ -59,10 +59,15 @@ export default function TeamSection() {
           </div>
 
           <div className="flex flex-col gap-3">
-            <button className="flex items-center justify-between gap-12 px-6 py-2.5 rounded-full border border-zinc-800 bg-zinc-950/50 text-sm font-medium hover:bg-zinc-900 transition-colors group">
+            <a
+              href="https://github.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-between gap-12 px-6 py-2.5 rounded-full border border-zinc-800 bg-zinc-950/50 text-sm font-medium hover:bg-zinc-900 transition-colors group"
+            >
               <span>View on GitHub</span>
               <Github />
-            </button>
+            </a>
           </div>
         </div>
 

@@ -82,16 +82,19 @@ export default function FeatureExplorer() {
           {/* Left Text Content Frame Column */}
           <div className="flex flex-col items-start max-w-xl">
             <span className="text-white/60 font-serif text-xl sm:text-2xl mb-4 tracking-tight">
-              Data Hub
+              Live dashboard
             </span>
             
             <h2 className="text-4xl sm:text-5xl md:text-[54px] font-normal tracking-tight text-white leading-[1.12] mb-10 font-sans">
-              Analyze, collaborate <br /> and build on the <br /> onchain data platform
+              See risk shift the moment <br /> your data changes — <br /> not weeks later
             </h2>
 
-            <button className="bg-white text-black font-mono font-bold tracking-widest text-xs px-7 py-3.5 rounded-full transition-all duration-300 hover:bg-neutral-200 active:scale-95 uppercase shadow-md">
-              Learn More
-            </button>
+            <a
+              href="/features"
+              className="inline-block bg-white text-black font-mono font-bold tracking-widest text-xs px-7 py-3.5 rounded-full transition-all duration-300 hover:bg-neutral-200 active:scale-95 uppercase shadow-md"
+            >
+              See features
+            </a>
           </div>
 
           {/* Right Column Layout: Animated Dashboard Canvas Platform */}
@@ -114,7 +117,7 @@ export default function FeatureExplorer() {
                   <div className="flex items-center justify-between mb-4 border-b border-white/5 pb-3">
                     <div className="flex flex-col">
                       <span className="text-white/40 text-[10px] font-mono tracking-wider uppercase">Active Index</span>
-                      <span className="text-sm font-semibold tracking-tight text-white/90">Level USD</span>
+                      <span className="text-sm font-semibold tracking-tight text-white/90">Risk index</span>
                     </div>
                     <div className="flex items-center gap-1.5 bg-white/5 px-2 py-0.5 rounded-md border border-white/10">
                       <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse-glow" />
@@ -151,7 +154,7 @@ export default function FeatureExplorer() {
                 {/* Secondary Offset Background Card Module Layer (Right Edge Context) */}
                 <div className="absolute top-24 -right-16 w-44 bg-black/30 backdrop-blur-md rounded-xl border border-white/5 p-4 transform rotate-2 opacity-50 pointer-events-none hidden sm:block">
                   <span className="text-[9px] font-mono text-white/40 block mb-1 uppercase tracking-widest">Analytics</span>
-                  <span className="text-xs font-medium text-white/80 block">Onchain Economics</span>
+                  <span className="text-xs font-medium text-white/80 block">Entity trends</span>
                   <div className="w-full h-px bg-white/10 my-2" />
                   <div className="h-4 flex items-center gap-0.5">
                     {[20, 60, 40, 80, 50, 30].map((h, i) => (

@@ -12,8 +12,12 @@ const FOOTER_LINKS: Record<string, string> = {
   "Self-hosted": "/docs/hosting/self-hosted",
   Connectors: "/docs/data-sources",
   Login: "/auth/login",
+  Solutions: "/solutions",
+  Products: "/products",
+  Features: "/features",
   Platform: "/features",
   Pricing: "/pricing",
+  Contact: "/contact",
   Security: "/security",
   "Terms of Service": "/terms",
   "Privacy Policy": "/privacy",
@@ -22,10 +26,10 @@ const FOOTER_LINKS: Record<string, string> = {
 
 export default function MainFooter() {
   const navGroups = [
-    ["Login", "Platform", "Pricing", "Documentation"],
-    ["Documentation", "API Reference", "Self-Hosting", "Connectors"],
-    ["Security", "Terms of Service", "Privacy Policy", "Trust Center"],
-    ["Changelog", "System Status", "Blog", "Open Source"],
+    ["Login", "Solutions", "Products", "Features"],
+    ["Pricing", "Documentation", "API Reference", "Connectors"],
+    ["Self-Hosting", "Security", "Terms of Service", "Privacy Policy"],
+    ["Trust Center", "Contact", "Open Source", "Blog"],
   ];
 
   const socialLinks = [
@@ -48,7 +52,7 @@ export default function MainFooter() {
                   const href = FOOTER_LINKS[item];
                   const inner = (
                     <>
-                      <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-0" />
+                      <div className="absolute inset-0 bg-gradient-to-br from-orange-500/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-0" />
                       <span className="relative z-10 text-sm font-medium tracking-tight">
                         {item}
                       </span>
@@ -94,7 +98,7 @@ export default function MainFooter() {
               <div 
                 className="absolute inset-0 animate-[pulse_4s_ease-in-out_infinite]"
                 style={{
-                  backgroundImage: `radial-gradient(circle, #6366f1 1px, transparent 1px)`,
+                  backgroundImage: `radial-gradient(circle, #ea580c 1px, transparent 1px)`,
                   backgroundSize: '16px 16px',
                   maskImage: 'radial-gradient(circle at center, black, transparent 80%)'
                 }} 

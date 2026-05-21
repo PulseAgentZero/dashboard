@@ -19,29 +19,29 @@ export type MarketingCapability = {
   icon: LucideIcon;
 };
 
-/** Customer-facing outcomes — not dashboard screen names */
+/** Customer-facing outcomes — plain language */
 export const MARKETING_CAPABILITIES: MarketingCapability[] = [
   {
     id: "risk-scoring",
-    title: "Live risk scoring on every entity",
+    title: "Live risk scores on every entity",
     description:
-      "Entivia profiles customers, patients, accounts, or any unit you care about—then scores risk from signals already in your database.",
+      "We learn how each customer, patient, or SKU behaves—then label them high, medium, low, or healthy from signals already in your database.",
     highlights: [
-      "Industry-agnostic: describe your business in plain English",
-      "High, medium, low, and healthy tiers out of the box",
+      "Works for any business you describe in plain English",
+      "High, medium, low, and healthy out of the box",
       "Trends and segments without a data science team",
     ],
     icon: ChartNoAxesCombined,
   },
   {
     id: "recommendations",
-    title: "Recommendations you can act on today",
+    title: "What to do next — ranked for your team",
     description:
-      "Stop staring at dashboards. Entivia surfaces prioritized interventions—retention offers, reallocations, follow-ups—grounded in real behavior.",
+      "Stop staring at dashboards. Entivia surfaces retention offers, reorders, and follow-ups grounded in real behavior.",
     highlights: [
-      "Critical items ranked first",
-      "Draft messages and operational next steps",
-      "Close the loop when an action is taken",
+      "Critical items first",
+      "Draft messages and next steps",
+      "Mark done when your team acts",
     ],
     icon: Target,
   },
@@ -49,11 +49,11 @@ export const MARKETING_CAPABILITIES: MarketingCapability[] = [
     id: "agent",
     title: "Ask your data in plain English",
     description:
-      "No SQL required. Operators and managers ask questions; Entivia translates them into live queries against your connected sources.",
+      "No SQL required. Ask questions; Entivia runs live queries against your connected database—answers backed by your data, not made up.",
     highlights: [
-      "Grounded answers from your schema—not generic AI",
-      "Explore risk, cohorts, and outliers in conversation",
-      "Business context keeps answers relevant to your domain",
+      "Real answers from your schema",
+      "Explore risk, cohorts, and outliers in chat",
+      "Your business context keeps answers relevant",
     ],
     icon: Bot,
   },
@@ -61,35 +61,35 @@ export const MARKETING_CAPABILITIES: MarketingCapability[] = [
     id: "connectors",
     title: "Connect where your data already lives",
     description:
-      "Postgres, Snowflake, BigQuery, spreadsheets, S3, and more. Credentials stay encrypted; read-only access is recommended by default.",
+      "Postgres, MySQL, MSSQL, SQLite, and file uploads. Credentials stay encrypted. Read-only access is recommended.",
     highlights: [
-      "15+ connectors with guided setup",
-      "Your data never needs to leave your environment on self-hosted",
-      "Minutes to first insight, not months of pipeline work",
+      "Guided setup in minutes",
+      "Data stays in your environment on self-hosted",
+      "No bulk export or duplicate data lake",
     ],
     icon: Cable,
   },
   {
     id: "automation",
-    title: "Runs on your schedule—or on demand",
+    title: "Runs on your schedule — or on demand",
     description:
-      "An autonomous pipeline profiles entities, refreshes scores, and generates recommendations automatically. Trigger a run anytime you need a fresh pass.",
+      "An autonomous pipeline profiles entities, refreshes scores, and generates recommendations. Trigger a fresh run anytime.",
     highlights: [
       "Scheduled or one-click runs",
-      "Always working from live source data",
-      "No manual ETL or feature store to maintain",
+      "Always from live source data",
+      "No manual ETL to maintain",
     ],
     icon: Zap,
   },
   {
     id: "studio",
-    title: "Self-serve analytics when you need charts",
+    title: "Charts and SQL when you want them",
     description:
-      "Power users can write SQL, build visualizations, and publish dashboards—or share embed links—without spinning up a separate BI stack.",
+      "Power users can query, visualize, and share dashboards—or embed links—without another BI stack.",
     highlights: [
-      "Query warehouses, databases, and uploaded files",
+      "Query connected databases and files",
       "Dashboards and public share links",
-      "Complements automated intelligence, doesn’t replace it",
+      "Complements automated intelligence",
     ],
     icon: BarChart3,
   },
@@ -97,23 +97,23 @@ export const MARKETING_CAPABILITIES: MarketingCapability[] = [
     id: "alerts",
     title: "Alerts when risk moves",
     description:
-      "Set thresholds on the metrics that matter. When risk spikes or a segment deteriorates, your team hears about it—and webhooks can notify your stack.",
+      "Set rules on the scores that matter. When risk spikes, your team hears about it—and webhooks can notify your stack.",
     highlights: [
       "Rules on scores and key signals",
-      "Email-style delivery plus outbound webhooks",
-      "Fewer surprises in weekly reviews",
+      "In-app and email delivery",
+      "Webhooks to Slack, CRM, or internal tools",
     ],
     icon: Bell,
   },
   {
     id: "sovereignty",
-    title: "Built for teams that can’t ship data out",
+    title: "Built for teams that can't ship data out",
     description:
-      "Run Entivia Cloud for speed, or deploy entirely in your VPC with Docker. Self-hosted teams bring their own models and keep pipeline traffic internal.",
+      "Run Entivia Cloud for speed, or deploy in your VPC with Docker. Self-hosted keeps pipeline traffic internal.",
     highlights: [
       "Read-only database users supported",
       "Self-hosted with optional Pro license",
-      "Public API and webhooks for your existing tools",
+      "Public API and webhooks for your tools",
     ],
     icon: Shield,
   },
@@ -122,35 +122,35 @@ export const MARKETING_CAPABILITIES: MarketingCapability[] = [
 export const HOW_IT_WORKS_STEPS = [
   {
     step: "01",
-    title: "Tell Entivia your business",
+    title: "Tell us your business",
     description:
-      "A short description of what you sell, who you serve, and what “at risk” means—so models stay on-domain.",
+      "A short description of what you sell, who you serve, and what “at risk” means—so everything stays on-domain.",
   },
   {
     step: "02",
     title: "Connect live data",
     description:
-      "Point at the warehouse or database you already use. No bulk export, no duplicate lake required.",
+      "Point at the database you already use. No bulk export. No duplicate lake.",
   },
   {
     step: "03",
-    title: "Entivia profiles and scores",
+    title: "We profile and score",
     description:
-      "The pipeline reads your schema, identifies entities, and produces risk scores and recommendations.",
+      "The pipeline reads your schema, finds entities, and produces risk scores and recommendations.",
   },
   {
     step: "04",
-    title: "Your team decides faster",
+    title: "Your team acts faster",
     description:
-      "Operators act on recommendations, ask the agent follow-ups, and alert the systems that need to know.",
+      "Operators follow recommendations, ask the agent follow-ups, and alert the systems that need to know.",
   },
 ] as const;
 
-/** For API / enterprise callouts in a compact strip */
 export const INTEGRATION_HIGHLIGHTS = [
   {
     title: "Public API",
-    description: "Entities, recommendations, analytics, and pipeline triggers with scoped API keys.",
+    description:
+      "Entities, recommendations, analytics, and pipeline triggers with scoped API keys.",
     icon: Key,
     href: "/docs/api/overview",
   },

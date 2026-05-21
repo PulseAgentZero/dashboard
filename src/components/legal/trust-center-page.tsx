@@ -7,6 +7,7 @@ import {
   Database,
   FileText,
   Lock,
+  Mail,
   Server,
   Shield,
 } from "lucide-react";
@@ -17,7 +18,7 @@ const TRUST_CARDS = [
   {
     title: "Security",
     description:
-      "Encryption, authentication, shared responsibility, and vulnerability disclosure.",
+      "Encryption, authentication, shared responsibility, and how to report a vulnerability.",
     href: "/security",
     icon: Shield,
   },
@@ -52,22 +53,31 @@ const TRUST_CARDS = [
     href: "/docs/hosting/self-hosted#data-privacy",
     icon: Server,
   },
+  {
+    title: "Contact us",
+    description: "Talk to our team about pilots, partnerships, or support.",
+    href: "/contact",
+    icon: Mail,
+  },
 ] as const;
 
 export function TrustCenterPage() {
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="marketing-dark min-h-screen bg-[var(--mk-bg)] text-[var(--mk-text)]">
       <Navbar />
 
-      <main className="mx-auto max-w-5xl px-6 pb-20 pt-28 sm:px-8">
-        <div className="mb-12 border-b border-zinc-900 pb-10">
-          <p className="mb-3 text-xs font-bold uppercase tracking-[0.3em] text-zinc-600">
+      <main
+        data-navbar-theme="dark"
+        className="mx-auto max-w-5xl px-6 pb-20 pt-28 sm:px-8"
+      >
+        <div className="mb-12 border-b border-[var(--mk-border)] pb-10">
+          <p className="mb-3 text-xs font-bold uppercase tracking-[0.3em] text-[var(--mk-accent)]">
             Trust Center
           </p>
-          <h1 className="text-3xl font-black tracking-tight text-white sm:text-4xl">
+          <h1 className="text-3xl font-black tracking-tight text-[var(--mk-text)] sm:text-4xl">
             Security, privacy, and compliance resources
           </h1>
-          <p className="mt-4 max-w-2xl text-sm leading-7 text-zinc-400 sm:text-[15px]">
+          <p className="mt-4 max-w-2xl text-sm leading-7 text-[var(--mk-text-muted)] sm:text-[15px]">
             Entivia is built for regulated and operationally sensitive environments.
             Use the resources below to understand how we protect your data and how
             you stay in control—especially on self-hosted deployments.
@@ -81,14 +91,18 @@ export function TrustCenterPage() {
               <Link
                 key={card.href}
                 href={card.href}
-                className="group relative flex flex-col border border-zinc-900 bg-zinc-950/50 p-6 transition-colors hover:border-zinc-700 hover:bg-zinc-900/40"
+                className="group relative flex flex-col rounded-2xl border border-[var(--mk-border)] bg-[var(--mk-surface)] p-6 transition-colors hover:border-[var(--mk-accent)]/40 hover:bg-[var(--mk-surface-2)]"
               >
                 <div className="mb-4 flex items-center justify-between">
-                  <Icon className="h-5 w-5 text-indigo-400" strokeWidth={1.5} />
-                  <ArrowRight className="h-4 w-4 text-zinc-600 transition-transform group-hover:translate-x-0.5 group-hover:text-zinc-400" />
+                  <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[var(--mk-accent-soft)] text-[var(--mk-accent)]">
+                    <Icon size={18} strokeWidth={1.75} />
+                  </div>
+                  <ArrowRight className="h-4 w-4 text-[var(--mk-text-faint)] transition-transform group-hover:translate-x-0.5 group-hover:text-[var(--mk-accent)]" />
                 </div>
-                <h2 className="text-lg font-semibold text-white">{card.title}</h2>
-                <p className="mt-2 text-sm leading-6 text-zinc-500">
+                <h2 className="text-lg font-semibold text-[var(--mk-text)]">
+                  {card.title}
+                </h2>
+                <p className="mt-2 text-sm leading-6 text-[var(--mk-text-muted)]">
                   {card.description}
                 </p>
               </Link>
@@ -96,27 +110,27 @@ export function TrustCenterPage() {
           })}
         </div>
 
-        <p className="mt-12 text-center text-sm text-zinc-500">
+        <p className="mt-12 text-center text-sm text-[var(--mk-text-muted)]">
           Questions?{" "}
           <a
-            href="mailto:security@pulsedata.io"
-            className="text-indigo-400 hover:text-indigo-300"
+            href="mailto:security@entivia.online"
+            className="text-[var(--mk-accent)] hover:underline"
           >
-            security@pulsedata.io
+            security@entivia.online
           </a>
           {" · "}
           <a
-            href="mailto:privacy@pulsedata.io"
-            className="text-indigo-400 hover:text-indigo-300"
+            href="mailto:privacy@entivia.online"
+            className="text-[var(--mk-accent)] hover:underline"
           >
-            privacy@pulsedata.io
+            privacy@entivia.online
           </a>
           {" · "}
           <a
-            href="mailto:legal@pulsedata.io"
-            className="text-indigo-400 hover:text-indigo-300"
+            href="mailto:legal@entivia.online"
+            className="text-[var(--mk-accent)] hover:underline"
           >
-            legal@pulsedata.io
+            legal@entivia.online
           </a>
         </p>
       </main>

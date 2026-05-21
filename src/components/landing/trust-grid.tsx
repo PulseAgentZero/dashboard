@@ -12,14 +12,14 @@ const GRID: Array<"H" | "M" | "L" | "G"> = [
 const CELL_COLOR: Record<"H" | "M" | "L" | "G", string> = {
   H: "bg-rose-400",
   M: "bg-amber-400",
-  L: "bg-blue-400",
+  L: "bg-orange-400",
   G: "bg-emerald-500",
 };
 
 const LEGEND = [
   { key: "H", dot: "bg-rose-400",    label: "High risk" },
   { key: "M", dot: "bg-amber-400",   label: "Medium"    },
-  { key: "L", dot: "bg-blue-400",    label: "Low"       },
+  { key: "L", dot: "bg-orange-400",  label: "Low"       },
   { key: "G", dot: "bg-emerald-500", label: "Healthy"   },
 ] as const;
 
@@ -94,8 +94,8 @@ export default function TrustGrid() {
             Entivia Engine
           </span>
           <h2 className="text-3xl sm:text-5xl md:text-6xl font-normal tracking-tight max-w-3xl leading-[1.15] text-neutral-100 font-sans">
-            Built for every data-rich industry.{" "}
-            <span className="text-white/30">No exceptions.</span>
+            Works for telecom, hospitals, retail, and more.{" "}
+            <span className="text-white/30">Same engine. Your data.</span>
           </h2>
         </div>
 

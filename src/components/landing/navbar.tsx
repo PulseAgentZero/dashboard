@@ -2,20 +2,26 @@
 
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
-import { ChevronDown, Search, Menu, X } from "lucide-react";
+import { usePathname } from "next/navigation";
+import { ChevronDown, Menu, X } from "lucide-react";
 import { BladeFan } from "../../../public/icon/bladeFan";
 
+export const NAV_LINKS = [
+  { label: "Solutions", href: "/solutions" },
+  { label: "Products", href: "/products" },
+  { label: "Features", href: "/features" },
+  { label: "Documentation", href: "/docs" },
+  { label: "Pricing", href: "/pricing" },
+  { label: "Contact", href: "/contact" },
+] as const;
+
 export default function Navbar() {
-  // dark=true  → hero / colored section → white text
-  // dark=false → light section          → black text
+  const pathname = usePathname();
   const [dark, setDark] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
   const [visible, setVisible] = useState(true);
-  
-  // Use a ref to keep track of previous scroll position without triggering re-renders
   const lastScrollY = useRef(0);
 
-  // Theme observer effect
   useEffect(() => {
     const sections = document.querySelectorAll<HTMLElement>("[data-navbar-theme]");
     if (!sections.length) return;
@@ -40,22 +46,15 @@ export default function Navbar() {
     return () => observer.disconnect();
   }, []);
 
-  // Scroll direction detection effect (Hide on scroll down, show on scroll up)
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
 
-      // Always show navbar if we are near the very top of the page (with a 10px buffer)
       if (currentScrollY < 10) {
         setVisible(true);
-      } 
-      // If scrolling down and passed a minimal threshold, hide it
-      else if (currentScrollY > lastScrollY.current && currentScrollY > 50) {
-        // Only hide if the mobile menu drawer isn't open
+      } else if (currentScrollY > lastScrollY.current && currentScrollY > 50) {
         if (!isOpen) setVisible(false);
-      } 
-      // If scrolling up, show it
-      else if (currentScrollY < lastScrollY.current) {
+      } else if (currentScrollY < lastScrollY.current) {
         setVisible(true);
       }
 
@@ -66,25 +65,41 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [isOpen]);
 
-  // Prevent background scrolling when mobile navigation drawer is active
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "unset";
     }
-    return () => { document.body.style.overflow = "unset"; };
+    return () => {
+      document.body.style.overflow = "unset";
+    };
   }, [isOpen]);
 
   const T = dark;
 
+  function navLinkClass(href: string, mobile = false) {
+    const active = pathname === href || pathname.startsWith(`${href}/`);
+
+    if (mobile) {
+      return [
+        "flex items-center justify-between border-b border-current/10 pb-3 text-left w-full group transition",
+        active ? "text-[var(--mk-accent)]" : "opacity-90 group-hover:opacity-100",
+      ].join(" ");
+    }
+
+    return [
+      "relative transition opacity-80 hover:opacity-100",
+      active ? "opacity-100 text-[var(--mk-accent)]" : "",
+    ].join(" ");
+  }
+
   return (
     <>
-      {/* Wrapper navigation tag controls the Y-axis slide translation animation smoothly */}
-      <nav 
+      <nav
         className={[
           "fixed top-0 left-0 right-0 z-50 px-4 sm:px-6 pt-6 transition-transform duration-300 ease-in-out",
-          visible ? "translate-y-0" : "-translate-y-28"
+          visible ? "translate-y-0" : "-translate-y-28",
         ].join(" ")}
       >
         <div
@@ -94,7 +109,6 @@ export default function Navbar() {
             T ? "border-white/20 bg-white/5" : "border-black/10 bg-white/80 shadow-sm",
           ].join(" ")}
         >
-          {/* Logo capsule */}
           <Link
             href="/"
             className={[
@@ -109,7 +123,6 @@ export default function Navbar() {
             Entivia
           </Link>
 
-          {/* Right Action Containers */}
           <div className="flex items-center h-full">
             <div
               className={[
@@ -117,17 +130,23 @@ export default function Navbar() {
                 T ? "text-white" : "text-neutral-800",
               ].join(" ")}
             >
-              {(["Solutions", "Products", "Documentation"] as const).map((label) => (
-                <button
-                  key={label}
-                  className="flex items-center gap-1 opacity-80 hover:opacity-100 transition"
+              {NAV_LINKS.map(({ label, href }) => (
+                <Link
+                  key={href}
+                  href={href}
+                  className={navLinkClass(href)}
                 >
-                  {label}
-                </button>
+                  <span className="relative">
+                    {label}
+                    {(pathname === href || pathname.startsWith(`${href}/`)) && (
+                      <span
+                        className="absolute -bottom-1 left-0 right-0 h-0.5 rounded-full bg-[var(--mk-accent,#ea580c)]"
+                        aria-hidden
+                      />
+                    )}
+                  </span>
+                </Link>
               ))}
-              <Link href="/pricing" className="opacity-80 hover:opacity-100 transition">
-                Pricing
-              </Link>
               <span className={T ? "text-white/20" : "text-black/15"}>|</span>
               <Link href="/auth/login" className="opacity-80 hover:opacity-100 transition">
                 Log in
@@ -143,12 +162,14 @@ export default function Navbar() {
               <Link href="/auth/login" className="opacity-80 hover:opacity-100 transition">
                 Log in
               </Link>
-              <Link href="/auth/signup" className="opacity-80 hover:opacity-100 transition-opacity hidden md:inline-block">
+              <Link
+                href="/auth/signup"
+                className="opacity-80 hover:opacity-100 transition-opacity hidden md:inline-block"
+              >
                 Sign up
               </Link>
             </div>
 
-            {/* Right edge capsule - Action Button */}
             <Link
               href="/auth/signup"
               className={[
@@ -162,14 +183,14 @@ export default function Navbar() {
               Get started
             </Link>
 
-            {/* Mobile/Tablet Toggle Trigger */}
             <button
+              type="button"
               onClick={() => setIsOpen(!isOpen)}
               className={[
                 "flex lg:hidden items-center justify-center h-full px-5 border-l transition-all duration-500 rounded-r-full",
-                T 
-                  ? "border-white/20 text-white hover:bg-white/5" 
-                  : "border-black/10 text-neutral-800 hover:bg-black/5"
+                T
+                  ? "border-white/20 text-white hover:bg-white/5"
+                  : "border-black/10 text-neutral-800 hover:bg-black/5",
               ].join(" ")}
               aria-label="Toggle navigation menu"
             >
@@ -179,59 +200,42 @@ export default function Navbar() {
         </div>
       </nav>
 
-      {/* Fullscreen Mobile/Tablet Menu Overlay Drawer */}
       <div
         className={[
-          "fixed inset-0 z-40 lg:hidden flex flex-col justify-between pt-28 px-6 sm:px-10 pb-10 transition-all duration-300",
-          isOpen ? "opacity-100 pointer-events-auto translate-y-0" : "opacity-0 pointer-events-none -translate-y-4",
-          T ? "bg-neutral-950/95 text-white backdrop-blur-xl" : "bg-white/95 text-neutral-900 backdrop-blur-xl"
+          "fixed inset-0 z-40 lg:hidden flex flex-col justify-between pt-28 px-6 sm:px-10 pb-10 transition-all duration-300 marketing-dark",
+          isOpen
+            ? "opacity-100 pointer-events-auto translate-y-0"
+            : "opacity-0 pointer-events-none -translate-y-4",
+          "bg-[var(--mk-bg)]/95 text-[var(--mk-text)] backdrop-blur-xl",
         ].join(" ")}
       >
-        {/* Navigation Link Stack */}
         <div className="flex flex-col gap-5 text-lg sm:text-xl font-medium overflow-y-auto max-h-[60vh] pt-4">
-          {(["Solutions", "Products", "Discover", "Resources"] as const).map((label) => (
-            <button
-              key={label}
+          {NAV_LINKS.map(({ label, href }) => (
+            <Link
+              key={href}
+              href={href}
               onClick={() => setIsOpen(false)}
-              className="flex items-center justify-between border-b border-current/10 pb-3 text-left w-full group"
+              className={navLinkClass(href, true)}
             >
-              <span className="opacity-90 group-hover:opacity-100 transition">{label}</span>
+              <span>{label}</span>
               <ChevronDown className="w-5 h-5 opacity-60 -rotate-90" />
-            </button>
+            </Link>
           ))}
-          <Link 
-            href="/pricing" 
-            onClick={() => setIsOpen(false)}
-            className="border-b border-current/10 pb-3 opacity-90 hover:opacity-100 transition"
-          >
-            Pricing
-          </Link>
-          
-          <button 
-            className="flex items-center gap-3 opacity-60 text-left pt-2 text-base sm:text-lg"
-            onClick={() => setIsOpen(false)}
-          >
-            <Search className="w-5 h-5" /> Search platform
-          </button>
         </div>
 
-        {/* Dynamic Footer Context Links */}
-        <div className="flex flex-col gap-3 border-t border-current/10 pt-6 mt-auto">
+        <div className="flex flex-col gap-3 border-t border-[var(--mk-border)] pt-6 mt-auto">
           <div className="flex sm:hidden gap-3">
             <Link
               href="/auth/login"
               onClick={() => setIsOpen(false)}
-              className="flex-1 py-3 text-center text-sm font-medium rounded-full border border-current/20 hover:bg-current/5 transition"
+              className="flex-1 py-3 text-center text-sm font-medium rounded-full border border-[var(--mk-border)] hover:bg-[var(--mk-surface)] transition"
             >
               Log in
             </Link>
             <Link
               href="/auth/signup"
               onClick={() => setIsOpen(false)}
-              className={[
-                "flex-1 py-3 text-center text-sm font-medium rounded-full transition",
-                T ? "bg-white text-black" : "bg-black text-white"
-              ].join(" ")}
+              className="flex-1 py-3 text-center text-sm font-medium rounded-full bg-[var(--mk-accent)] text-white transition hover:bg-[var(--mk-accent-hover)]"
             >
               Sign up
             </Link>
@@ -240,12 +244,7 @@ export default function Navbar() {
           <Link
             href="/auth/signup"
             onClick={() => setIsOpen(false)}
-            className={[
-              "w-full py-3.5 text-center font-mono font-bold tracking-wider text-xs uppercase rounded-full border hidden sm:block md:hidden",
-              T
-                ? "border-white/20 bg-white text-black hover:bg-neutral-100"
-                : "border-black/10 bg-black text-white hover:bg-neutral-800",
-            ].join(" ")}
+            className="w-full py-3.5 text-center font-mono font-bold tracking-wider text-xs uppercase rounded-full border border-[var(--mk-border)] bg-white text-black hover:bg-neutral-100 hidden sm:block md:hidden"
           >
             Get started
           </Link>

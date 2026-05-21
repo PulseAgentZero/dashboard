@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 const DATA_LINES = [
   { tag: "ENTITY", val: "C-004821", sub: "HIGH risk" },
   { tag: "SCORED", val: "12,400", sub: "just now" },
@@ -80,25 +82,29 @@ export default function Hero() {
           50%       { opacity: 0.3; }
         }
         .dot-pulse { animation: dotPulse 2s ease-in-out infinite; }
+
+        .hero-cta-glow:hover {
+          box-shadow: 0 4px 28px var(--mk-accent-ring, rgba(234, 88, 12, 0.35));
+        }
       `}</style>
 
       <section
         data-navbar-theme="dark"
         className="hero-gradient grain relative min-h-screen flex flex-col justify-between pt-26 sm:pt-30 md:pt-34 overflow-hidden"
       >
-        {/* Floating blob layer */}
         <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
           <div className="blob-1 absolute top-[-20%] left-[-10%] w-[80%] sm:w-[70%] h-[90%] rounded-full bg-[#ff1a4b]/50 blur-[80px] md:blur-[100px]" />
           <div className="blob-2 absolute bottom-[-15%] right-[-5%] w-[75%] sm:w-[65%] h-[85%] rounded-full bg-[#c9260c]/60 blur-[90px] md:blur-[110px]" />
           <div className="blob-3 absolute top-[30%] left-[20%] sm:left-[35%] w-[55%] h-[60%] rounded-full bg-[#ffaa00]/40 blur-[70px] md:blur-[90px]" />
         </div>
 
-        {/* Right — Scrolling Entity Feed */}
         <div
           className="absolute right-7 top-0 bottom-0 z-10 hidden xl:flex items-start overflow-hidden pointer-events-none w-36"
           style={{
-            maskImage: "linear-gradient(to bottom, transparent 0%, black 18%, black 82%, transparent 100%)",
-            WebkitMaskImage: "linear-gradient(to bottom, transparent 0%, black 18%, black 82%, transparent 100%)",
+            maskImage:
+              "linear-gradient(to bottom, transparent 0%, black 18%, black 82%, transparent 100%)",
+            WebkitMaskImage:
+              "linear-gradient(to bottom, transparent 0%, black 18%, black 82%, transparent 100%)",
           }}
         >
           <div className="data-scroll flex flex-col gap-4 pt-24 text-right w-full">
@@ -107,48 +113,50 @@ export default function Hero() {
                 <span className="font-mono text-[7px] uppercase tracking-[0.18em] text-white/30">
                   {line.tag}
                 </span>
-                <span className={[
-                  "font-mono text-[11px] font-medium",
-                  line.sub.includes("HIGH") ? "text-rose-300/80" :
-                  line.sub.includes("MED") ? "text-amber-300/80" :
-                  line.sub.includes("HEALTHY") || line.sub.includes("LOW") ? "text-emerald-300/80" :
-                  "text-white/65"
-                ].join(" ")}>
+                <span
+                  className={[
+                    "font-mono text-[11px] font-medium",
+                    line.sub.includes("HIGH")
+                      ? "text-rose-300/80"
+                      : line.sub.includes("MED")
+                        ? "text-amber-300/80"
+                        : line.sub.includes("HEALTHY") || line.sub.includes("LOW")
+                          ? "text-emerald-300/80"
+                          : "text-white/65",
+                  ].join(" ")}
+                >
                   {line.val}
                 </span>
-                <span className="font-mono text-[8px] text-white/30">
-                  {line.sub}
-                </span>
+                <span className="font-mono text-[8px] text-white/30">{line.sub}</span>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Content Container */}
         <div className="relative z-10 max-w-5xl mx-auto text-center px-4 sm:px-6 my-auto flex flex-col items-center justify-center grow">
-          <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-serif text-white tracking-tight leading-[1.15] sm:leading-[1.1] mb-6 drop-shadow-sm">
-            Know every entity. <br className="hidden sm:block" />
-            <span className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl">
-              Act before it&apos;s too late.
-            </span>
+          <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-serif text-white tracking-tight leading-[1.05] mb-6 drop-shadow-sm">
+            Know every customer.{" "}
+            <br className="hidden sm:block" />
+            <span>Act in time.</span>
           </h1>
 
-          <p className="text-white/90 text-base sm:text-lg md:text-xl font-medium max-w-md sm:max-w-xl leading-relaxed mb-8 px-2">
-            Entivia profiles your customers, patients, & distributors
-            scoring risk & recommending the next best action.
-            <br />
-            <span className="opacity-70 text-sm sm:text-base md:text-lg">
-              No data science team required.
-            </span>
+          <p className="text-white/90 text-base sm:text-lg md:text-xl font-medium max-w-md sm:max-w-lg leading-relaxed mb-8 px-2">
+            Entivia scores risk on your data and tells your team what to do next.
           </p>
 
-          <div className="flex items-center gap-3">
-            <button className="bg-white text-black font-mono font-bold tracking-wider text-xs sm:text-sm px-6 sm:px-8 py-3.5 sm:py-4 rounded-full shadow-xl hover:bg-black hover:text-white active:scale-98 transition-all duration-300 uppercase">
+          <div className="flex flex-col sm:flex-row items-center gap-3">
+            <Link
+              href="/auth/signup"
+              className="hero-cta-glow bg-white text-black font-mono font-bold tracking-wider text-xs sm:text-sm px-6 sm:px-8 py-3.5 sm:py-4 rounded-full shadow-xl hover:bg-black hover:text-white active:scale-98 transition-all duration-300 uppercase"
+            >
               Get started free
-            </button>
-            <button className="text-white/80 font-medium text-sm sm:text-base hover:text-white transition underline underline-offset-4 decoration-white/30 hover:decoration-white/60">
+            </Link>
+            <Link
+              href="/features"
+              className="text-white/80 font-medium text-sm sm:text-base hover:text-white transition underline underline-offset-4 decoration-white/30 hover:decoration-white/60"
+            >
               See how it works →
-            </button>
+            </Link>
           </div>
         </div>
       </section>
