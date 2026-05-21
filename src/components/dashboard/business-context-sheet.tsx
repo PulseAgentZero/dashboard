@@ -16,7 +16,7 @@ const INDUSTRIES = [
 ];
 
 const inputCls =
-  "w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 placeholder:text-slate-400";
+  "w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-100 placeholder:text-slate-400 disabled:bg-slate-50 transition-all";
 
 type BusinessContextSheetProps = {
   open: boolean;
@@ -75,38 +75,38 @@ export function BusinessContextSheet({ open, onClose, onSaved }: BusinessContext
   }
 
   const contextInputCls = fieldErrors.business_context
-    ? `${inputCls} border-rose-300 focus:border-rose-400 focus:ring-rose-400`
+    ? `${inputCls} border-rose-300 focus:border-rose-500 focus:ring-rose-100`
     : inputCls;
 
   return (
   <>
     <button
       type="button"
-      aria-label="Close"
-      className="fixed inset-0 z-40 bg-slate-900/30"
+      aria-label="Close panel"
+      className="fixed inset-0 z-40 bg-slate-900/30 backdrop-blur-xs transition-opacity"
       onClick={onClose}
     />
-    <aside className="fixed inset-y-0 right-0 z-50 flex w-full max-w-md flex-col border-l border-slate-200 bg-white shadow-xl">
+    <aside className="fixed inset-x-0 bottom-0 top-16 z-50 flex w-full flex-col border-t border-slate-200 bg-white shadow-xl transition-transform duration-350 ease-out sm:bottom-0 sm:left-auto sm:right-0 sm:top-0 sm:max-w-md sm:border-l sm:border-t-0">
       <div className="flex items-center justify-between border-b border-slate-100 px-5 py-4">
         <div>
-          <h2 className="text-base font-semibold text-slate-900">Business context</h2>
+          <h2 className="text-sm font-bold uppercase tracking-wider text-slate-700">Business context</h2>
           <p className="mt-0.5 text-xs text-slate-500">
-            Help Entivia understand your business and goals.
+            Help Entivia understand your business profile.
           </p>
         </div>
         <button
           type="button"
           onClick={onClose}
-          className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 hover:bg-slate-100"
+          className="flex h-8 w-8 items-center justify-center rounded-xl text-slate-400 hover:bg-slate-50 transition-colors"
         >
           <X size={16} />
         </button>
       </div>
 
-      <form onSubmit={handleSubmit} className="flex flex-1 flex-col overflow-y-auto px-5 py-5">
-        <div className="space-y-4">
-          <div>
-            <label className="mb-1 block text-xs font-semibold text-slate-700">Industry</label>
+      <form onSubmit={handleSubmit} className="flex flex-1 flex-col overflow-y-auto px-5 py-5 space-y-5">
+        <div className="flex-1 space-y-4">
+          <div className="space-y-1.5">
+            <label className="block text-xs font-semibold text-slate-600">Industry</label>
             <select name="industry" className={inputCls} defaultValue={org?.industry ?? ""}>
               <option value="">Select industry…</option>
               {INDUSTRIES.map((i) => (
@@ -115,14 +115,14 @@ export function BusinessContextSheet({ open, onClose, onSaved }: BusinessContext
             </select>
           </div>
 
-          <div>
-            <label className="mb-1 block text-xs font-semibold text-slate-700">
+          <div className="space-y-1.5">
+            <label className="block text-xs font-semibold text-slate-600">
               Business context <span className="text-rose-500">*</span>
             </label>
             <textarea
               name="business_context"
               required
-              className={`${contextInputCls} min-h-28 resize-y`}
+              className={`${contextInputCls} min-h-[120px] resize-y`}
               defaultValue={org?.business_context ?? ""}
               placeholder="We are a telecom operator managing enterprise accounts…"
               aria-invalid={Boolean(fieldErrors.business_context)}
@@ -130,9 +130,9 @@ export function BusinessContextSheet({ open, onClose, onSaved }: BusinessContext
             <FieldError message={fieldErrors.business_context} />
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div>
-              <label className="mb-1 block text-xs font-semibold text-slate-700">Entity label</label>
+          <div className="grid gap-4 grid-cols-1 sm:grid-cols-2">
+            <div className="space-y-1.5">
+              <label className="block text-xs font-semibold text-slate-600">Entity label</label>
               <input
                 name="entity_label"
                 className={inputCls}
@@ -140,8 +140,8 @@ export function BusinessContextSheet({ open, onClose, onSaved }: BusinessContext
                 placeholder="Customer"
               />
             </div>
-            <div>
-              <label className="mb-1 block text-xs font-semibold text-slate-700">Goal label</label>
+            <div className="space-y-1.5">
+              <label className="block text-xs font-semibold text-slate-600">Goal label</label>
               <input
                 name="goal_label"
                 className={inputCls}
@@ -150,28 +150,29 @@ export function BusinessContextSheet({ open, onClose, onSaved }: BusinessContext
               />
             </div>
           </div>
-
-          <p className="text-[11px] text-slate-400">
-            You can also edit these anytime under Settings → Organization.
-          </p>
         </div>
 
-        <div className="mt-auto flex justify-end gap-2 border-t border-slate-100 pt-4">
-          <button
-            type="button"
-            onClick={onClose}
-            className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-50"
-          >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            disabled={isPending}
-            className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-50"
-          >
-            {isPending && <Loader2 size={14} className="animate-spin" />}
-            Save
-          </button>
+        <div className="space-y-4 pt-4 border-t border-slate-100">
+          <p className="text-[11px] text-slate-400 text-center sm:text-left">
+            You can also update these properties anytime under Settings → Organization.
+          </p>
+          <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+            <button
+              type="button"
+              onClick={onClose}
+              className="w-full sm:w-auto rounded-xl border border-slate-200 px-5 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={isPending}
+              className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-xl bg-orange-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-orange-700 disabled:opacity-50 transition-colors shadow-sm"
+            >
+              {isPending && <Loader2 size={15} className="animate-spin" />}
+              Save changes
+            </button>
+          </div>
         </div>
       </form>
     </aside>
