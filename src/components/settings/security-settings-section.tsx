@@ -171,7 +171,7 @@ export function DeleteAccountSection() {
   <div>
     <p className="text-xs font-bold uppercase tracking-wider text-slate-700">Delete account</p>
     <p className="mt-0.5 text-xs text-slate-500 leading-normal">
-      Permanently deactivate your account. Type DELETE to confirm.
+      Permanently delete your account and remove your personal data. This cannot be undone. Type DELETE to confirm.
     </p>
   </div>
 
