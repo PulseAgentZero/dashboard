@@ -64,6 +64,25 @@ html.docs-dark body {
   box-sizing: border-box;
 }
 
+/* ─── Page transition animations ────────────────────────────────────────── */
+@keyframes page-enter {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes page-exit {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(-6px); }
+}
+
+::view-transition-old(root) {
+  animation: 180ms ease-in page-exit;
+}
+
+::view-transition-new(root) {
+  animation: 280ms ease-out page-enter;
+}
+
 /* ─── Driver.js product tour — brand override ───────────────────────────── */
 .driver-popover {
   all: unset;
