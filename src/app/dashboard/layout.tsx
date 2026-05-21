@@ -9,6 +9,7 @@ import { InactivityMonitor } from "@/components/auth/inactivity-monitor";
 import VerifyEmailBanner from "@/components/auth/verify-email-banner";
 import { SetupBanner } from "@/components/dashboard/setup-banner";
 import { ProductTour } from "@/components/tour/product-tour";
+import { FirstRunOverlay } from "@/components/tour/first-run-overlay";
 
 function useDashboardLightTheme() {
   useLayoutEffect(() => {
@@ -34,6 +35,7 @@ export default function DashboardLayout({
           <div className="flex min-h-0 min-w-0 flex-1 flex-col">
             <VerifyEmailBanner />
             <SetupBanner />
+            <FirstRunOverlay />
             <ProductTour />
             <Nav />
             <main className="flex-1 overflow-y-auto overflow-x-hidden p-4 lg:p-6">

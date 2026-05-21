@@ -70,47 +70,46 @@ export function PricingCloudPage() {
   const checkoutDisabled = checkoutPending || authLoading || verifying || selfHosted;
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-zinc-950 text-white antialiased">
       <Navbar />
 
-      <main className="pt-28 pb-20">
+      <main className="pt-32 pb-24">
         {selfHosted && (
-          <div className="mx-auto mb-8 max-w-5xl px-6">
+          <div className="mx-auto mb-10 max-w-5xl px-6">
             <SelfHostedBanner />
           </div>
         )}
 
         {verifying && (
-          <div className="mx-auto mb-8 flex max-w-md items-center justify-center gap-2 rounded-xl border border-zinc-800 bg-zinc-900/80 px-5 py-4 text-sm text-zinc-300">
-            <Loader2 size={16} className="animate-spin" />
-            Verifying payment…
+          <div className="mx-auto mb-10 flex max-w-md items-center justify-center gap-2.5 rounded-xl border border-zinc-800 bg-zinc-900/60 px-5 py-3.5 text-sm text-zinc-400">
+            <Loader2 size={15} className="animate-spin text-orange-500" />
+            Verifying payment connection…
           </div>
         )}
 
-        <div className="mx-auto max-w-5xl px-6 text-center">
-          <p className="text-xs font-semibold uppercase tracking-widest text-zinc-500">
+        <div className="mx-auto max-w-3xl px-6 text-center space-y-3">
+          <p className="text-xs font-bold uppercase tracking-widest text-orange-500">
             Entivia Cloud
           </p>
-          <h1 className="mt-3 text-4xl font-bold tracking-tight md:text-5xl">
+          <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl text-zinc-100">
             Simple pricing for growing teams
           </h1>
-          <p className="mx-auto mt-4 max-w-2xl text-lg text-zinc-400">
-            Start free, scale with Growth, or go unlimited on Pro. Billed monthly via
-            Paystack.
+          <p className="mx-auto max-w-xl text-sm text-zinc-400 leading-relaxed">
+            Start free, scale with Growth, or unlock unlimited possibilities on Pro. Billed monthly via Paystack.
           </p>
         </div>
 
-        <div className="mx-auto mt-14 grid max-w-6xl gap-6 px-6 lg:grid-cols-3">
+        <div className="mx-auto mt-16 grid max-w-5xl gap-6 px-6 md:grid-cols-3 items-stretch">
           <PricingTierCard
             name="Free"
             price="₦0"
-            priceSub="Forever"
+            priceSub="Forever free"
             features={FREE_PLAN_FEATURES}
             isCurrent={effectivePlan === "free"}
             cta={
               <Link
                 href="/auth/signup"
-                className="mt-8 block rounded-full border border-zinc-700 py-3 text-center text-sm font-semibold text-white hover:bg-zinc-900"
+                className="mt-8 block rounded-xl border border-zinc-800 py-3 text-center text-sm font-semibold text-zinc-300 hover:bg-zinc-900 hover:text-white transition-colors"
               >
                 Get started free
               </Link>
@@ -120,10 +119,9 @@ export function PricingCloudPage() {
           <PricingTierCard
             name="Growth"
             price={GROWTH_PRICE_DISPLAY.replace("/month", "")}
-            priceSub="per month"
+            priceSub="Per month"
             features={GROWTH_PLAN_FEATURES}
             isCurrent={isGrowth}
-            highlight={!isGrowth && !isPro}
             badge={!isGrowth && !isPro ? "Scale up" : undefined}
             cta={
               isGrowth ? (
@@ -142,10 +140,9 @@ export function PricingCloudPage() {
           <PricingTierCard
             name="Pro"
             price={PRO_PRICE_DISPLAY.replace("/month", "")}
-            priceSub="per month"
+            priceSub="Per month"
             features={PRO_PLAN_FEATURES}
             isCurrent={isPro}
-            highlight={!isPro}
             badge="Popular"
             accent
             cta={
@@ -164,33 +161,35 @@ export function PricingCloudPage() {
           />
         </div>
 
-        <div className="mx-auto mt-16 max-w-5xl overflow-hidden rounded-2xl border border-zinc-800 px-6">
-          <table className="w-full text-left text-sm">
-            <thead>
-              <tr className="border-b border-zinc-800 text-zinc-500">
-                <th className="py-4 pr-4 font-medium">Limit</th>
-                <th className="py-4 pr-4 font-medium">Free</th>
-                <th className="py-4 pr-4 font-medium">Growth</th>
-                <th className="py-4 font-medium">Pro</th>
-              </tr>
-            </thead>
-            <tbody>
-              {PLAN_COMPARISON.map((row) => (
-                <tr key={row.label} className="border-b border-zinc-900 text-zinc-300">
-                  <td className="py-3 pr-4">{row.label}</td>
-                  <td className="py-3 pr-4 text-zinc-400">{row.free}</td>
-                  <td className="py-3 pr-4 text-zinc-300">{row.growth}</td>
-                  <td className="py-3 text-white">{row.pro}</td>
+        <div className="mx-auto mt-20 max-w-5xl px-6">
+          <div className="overflow-x-auto rounded-xl border border-zinc-900 bg-zinc-900/20">
+            <table className="w-full text-left text-sm border-collapse">
+              <thead>
+                <tr className="border-b border-zinc-900 text-xs font-bold uppercase tracking-wider text-zinc-500">
+                  <th className="p-4 font-semibold">Platform limits</th>
+                  <th className="p-4 font-semibold">Free</th>
+                  <th className="p-4 font-semibold">Growth</th>
+                  <th className="p-4 font-semibold">Pro</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-zinc-900/60">
+                {PLAN_COMPARISON.map((row) => (
+                  <tr key={row.label} className="text-zinc-300 hover:bg-zinc-900/10 transition-colors">
+                    <td className="p-4 text-zinc-400 font-medium">{row.label}</td>
+                    <td className="p-4 text-zinc-500">{row.free}</td>
+                    <td className="p-4 text-zinc-300">{row.growth}</td>
+                    <td className="p-4 text-white font-medium">{row.pro}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
 
-        <p className="mx-auto mt-10 max-w-2xl text-center text-sm text-zinc-500">
+        <p className="mx-auto mt-12 max-w-2xl text-center text-xs text-zinc-500">
           Self-hosting on your own infrastructure?{" "}
-          <Link href="/pricing/self-hosted" className="text-zinc-300 underline hover:text-white">
-            View license pricing
+          <Link href="/pricing/self-hosted" className="text-zinc-400 font-medium underline underline-offset-4 hover:text-orange-500 transition-colors">
+            View license models
           </Link>
           .
         </p>
@@ -201,16 +200,13 @@ export function PricingCloudPage() {
   );
 }
 
-
 function SelfHostedBanner() {
   return (
-    <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 px-5 py-4 text-sm text-amber-100">
-      You are running a self-hosted deployment. Cloud subscriptions apply to Entivia Cloud
-      only.{" "}
-      <Link href="/pricing/self-hosted" className="font-semibold underline hover:text-white">
-        Purchase a self-hosted license
+    <div className="rounded-xl border border-orange-500/20 bg-orange-500/5 px-5 py-3.5 text-sm text-orange-200/90 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+      <span>You are currently managing a self-hosted instance. Cloud tiers apply to Entivia Cloud hosting environments only.</span>
+      <Link href="/pricing/self-hosted" className="font-semibold text-orange-400 underline shrink-0 hover:text-orange-300 transition-colors">
+        Purchase keys
       </Link>
-      .
     </div>
   );
 }
@@ -222,7 +218,6 @@ function PricingTierCard({
   features,
   isCurrent,
   cta,
-  highlight,
   badge,
   accent,
 }: {
@@ -232,52 +227,50 @@ function PricingTierCard({
   features: string[];
   isCurrent: boolean;
   cta: React.ReactNode;
-  highlight?: boolean;
   badge?: string;
   accent?: boolean;
 }) {
   return (
     <div
-      className={`relative flex flex-col rounded-2xl border p-8 ${
+      className={`flex flex-col rounded-xl border p-6 bg-zinc-900/40 transition-all ${
         accent
-          ? "border-indigo-500/50 bg-gradient-to-b from-indigo-950/40 to-zinc-950 shadow-lg shadow-indigo-500/10"
-          : highlight
-            ? "border-zinc-600 bg-zinc-950/80"
-            : "border-zinc-800 bg-zinc-950/80"
+          ? "border-orange-500/40 shadow-xs"
+          : "border-zinc-900"
       }`}
     >
-      {badge && (
-        <span
-          className={`absolute -top-3 left-1/2 -translate-x-1/2 rounded-full px-3 py-0.5 text-[11px] font-bold uppercase tracking-wide text-white ${
-            accent ? "bg-indigo-500" : "bg-zinc-600"
-          }`}
-        >
-          {badge}
-        </span>
-      )}
-      <p
-        className={`text-sm font-semibold uppercase tracking-wide ${
-          accent ? "text-indigo-300" : "text-zinc-500"
-        }`}
-      >
-        {name}
-      </p>
-      <p className="mt-4 text-4xl font-bold">{price}</p>
-      <p className="mt-1 text-sm text-zinc-500">{priceSub}</p>
-      <ul className="mt-8 flex-1 space-y-3">
+      <div className="flex items-center justify-between min-h-[24px]">
+        <p className={`text-xs font-bold uppercase tracking-wider ${accent ? "text-orange-500" : "text-zinc-500"}`}>
+          {name}
+        </p>
+        {badge && (
+          <span className={`rounded-md px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-wide border ${
+            accent ? "bg-orange-500/10 text-orange-400 border-orange-500/20" : "bg-zinc-800 text-zinc-400 border-zinc-700/50"
+          }`}>
+            {badge}
+          </span>
+        )}
+      </div>
+
+      <div className="mt-4 flex items-baseline gap-1.5">
+        <span className="text-4xl font-extrabold text-zinc-100">{price}</span>
+        <span className="text-xs text-zinc-500">{priceSub}</span>
+      </div>
+
+      <ul className="mt-8 flex-1 space-y-3.5">
         {features.map((f) => (
-          <li key={f} className="flex items-start gap-2 text-sm text-zinc-300">
+          <li key={f} className="flex items-start gap-2.5 text-sm text-zinc-400">
             <Check
-              size={16}
-              className={`mt-0.5 shrink-0 ${accent ? "text-indigo-400" : "text-emerald-400"}`}
+              size={15}
+              className={`mt-0.5 shrink-0 ${accent ? "text-orange-500" : "text-zinc-500"}`}
             />
-            {f}
+            <span className="leading-normal">{f}</span>
           </li>
         ))}
       </ul>
-      {isCurrent && !accent && (
-        <p className="mt-4 text-center text-xs font-semibold text-emerald-400">
-          Current plan
+
+      {isCurrent && (
+        <p className="mt-4 text-center text-xs font-bold uppercase tracking-wider text-orange-500">
+          Active Environment
         </p>
       )}
       {cta}
@@ -291,10 +284,10 @@ function CurrentPlanBadge({
   subscription: { next_payment_date?: string | null; status?: string } | undefined;
 }) {
   return (
-    <div className="mt-8 rounded-full bg-emerald-500/20 py-3 text-center text-sm font-semibold text-emerald-300">
-      Current plan
+    <div className="mt-8 rounded-xl bg-zinc-900 border border-zinc-800 py-3 text-center text-sm font-semibold text-zinc-400">
+      Current tier
       {subscription?.next_payment_date && (
-        <span className="mt-1 block text-xs font-normal text-emerald-400/80">
+        <span className="mt-0.5 block text-xs font-medium text-zinc-500">
           Renews {new Date(subscription.next_payment_date).toLocaleDateString()}
         </span>
       )}
@@ -320,10 +313,10 @@ function UpgradeButton({
       type="button"
       onClick={onClick}
       disabled={disabled}
-      className={`mt-8 flex w-full items-center justify-center gap-2 rounded-full py-3 text-sm font-bold disabled:opacity-50 ${
+      className={`mt-8 flex w-full items-center justify-center gap-2 rounded-xl py-3 text-sm font-semibold transition-all disabled:opacity-40 ${
         primary
-          ? "bg-white text-black hover:bg-zinc-200"
-          : "border border-zinc-600 text-white hover:bg-zinc-900"
+          ? "bg-orange-600 text-white hover:bg-orange-700 shadow-sm"
+          : "border border-zinc-800 text-zinc-300 hover:bg-zinc-900 hover:border-zinc-700"
       }`}
     >
       {loading && <Loader2 size={14} className="animate-spin" />}

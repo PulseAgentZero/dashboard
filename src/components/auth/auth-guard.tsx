@@ -12,10 +12,10 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
   const hasToken = typeof window !== "undefined" && !!tokens.getAccess();
 
   useEffect(() => {
-    if (!hasToken || isError) {
+    if (!hasToken || isError || (!isLoading && !isAuthenticated)) {
       router.replace("/auth/login");
     }
-  }, [router, isError, hasToken]);
+  }, [router, isError, hasToken, isLoading, isAuthenticated]);
 
   if (!hasToken) {
     return (
