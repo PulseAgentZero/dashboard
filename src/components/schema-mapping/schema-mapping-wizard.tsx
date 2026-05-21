@@ -28,7 +28,7 @@ import {
 import { isFileEntityMappingConnector } from "@/lib/connectors/pipeline-supported";
 
 const inputCls =
-  "w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 shadow-sm outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20";
+  "w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-900 shadow-sm outline-none transition focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20";
 
 type Props = {
   connectionId: string;
@@ -79,9 +79,6 @@ export function SchemaMappingWizard({
     existingMapping?.signal_columns ?? {},
   );
 
-  // For single-table sources (CSV uploads, single-sheet Google Sheets), the
-  // "Choose table" step is meaningless — auto-select and advance the user to
-  // the identity step where the real decisions are.
   useEffect(() => {
     if (step !== "table") return;
     if (tables.length !== 1) return;
@@ -189,8 +186,8 @@ export function SchemaMappingWizard({
 
   if (isLoading) {
     return (
-      <div className="flex min-h-[420px] flex-col items-center justify-center rounded-2xl border border-slate-200 bg-white shadow-sm">
-        <Loader2 size={32} className="animate-spin text-indigo-500" />
+      <div className="flex min-h-[420px] flex-col items-center justify-center rounded-2xl border border-slate-200 bg-white p-6 text-center shadow-sm">
+        <Loader2 size={32} className="animate-spin text-orange-500" />
         <p className="mt-4 text-sm font-medium text-slate-700">Reading schema from {connectionName}</p>
         <p className="mt-1 text-xs text-slate-500">This may take a few seconds on large databases</p>
       </div>
@@ -199,9 +196,9 @@ export function SchemaMappingWizard({
 
   if (isError) {
     return (
-      <div className="rounded-2xl border border-rose-200 bg-rose-50 p-8 text-center shadow-sm">
+      <div className="rounded-2xl border border-rose-200 bg-rose-50 p-6 md:p-8 text-center shadow-sm">
         <p className="text-sm font-semibold text-rose-900">Could not read schema</p>
-        <p className="mx-auto mt-2 max-w-md text-sm text-rose-800/90">
+        <p className="mx-auto mt-2 max-w-md text-sm text-rose-800/90 leading-relaxed">
           {isFileSource
             ? "We couldn't read this file or workbook. Re-upload it from Connections and try again."
             : "Test the connection from Connections, then try again."}
@@ -211,39 +208,40 @@ export function SchemaMappingWizard({
   }
 
   return (
-    <div className="grid gap-6 md:grid-cols-[minmax(260px,300px)_1fr] md:items-start">
+    <div className="grid gap-6 lg:grid-cols-[280px_1fr] items-start">
       {/* Sidebar — progress & context */}
-      <aside className="space-y-4 lg:sticky lg:top-6">
+      <aside className="space-y-4 lg:sticky lg:top-6 order-first">
         <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-          <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">
+          <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
             Connection
           </p>
           <div className="mt-2 flex items-center gap-3">
             {connectorType ? (
-              <ConnectorIcon connectorType={connectorType} size={40} className="shrink-0" />
+              <ConnectorIcon connectorType={connectorType} size={36} className="shrink-0" />
             ) : (
-              <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-slate-100 text-slate-500">
-                <Database size={20} />
+              <div className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-slate-100 text-slate-500">
+                <Database size={18} />
               </div>
             )}
             <div className="min-w-0">
-              <p className="truncate font-semibold text-slate-900">{connectionName}</p>
+              <p className="truncate text-sm font-bold text-slate-900">{connectionName}</p>
               <p className="text-xs text-slate-500">
                 {tables.length} table{tables.length === 1 ? "" : "s"} available
               </p>
             </div>
           </div>
           {entityTable && (
-            <div className="mt-4 rounded-lg bg-indigo-50/80 px-3 py-2.5">
-              <p className="text-[10px] font-semibold uppercase text-indigo-600">Selected table</p>
-              <p className="mt-0.5 truncate font-mono text-sm font-medium text-indigo-900">
+            <div className="mt-4 rounded-xl bg-orange-50/60 border border-orange-100/50 px-3 py-2.5">
+              <p className="text-[10px] font-bold uppercase text-orange-700">Selected table</p>
+              <p className="mt-0.5 truncate font-mono text-xs font-semibold text-orange-900">
                 {entityTable}
               </p>
             </div>
           )}
         </div>
 
-        <nav className="rounded-2xl border border-slate-200 bg-white p-2 shadow-sm" aria-label="Steps">
+        {/* Steps display - dynamic orientation layout */}
+        <nav className="flex gap-2 overflow-x-auto no-scrollbar rounded-2xl border border-slate-200 bg-white p-2 shadow-sm lg:flex-col lg:overflow-x-visible" aria-label="Steps">
           {STEPS.map((s, i) => {
             const done = i < stepIndex;
             const active = s.id === step;
@@ -258,9 +256,9 @@ export function SchemaMappingWizard({
                 type="button"
                 disabled={!reachable && !done && !active}
                 onClick={() => reachable && setStep(s.id)}
-                className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left transition ${
+                className={`flex shrink-0 items-center gap-3 rounded-xl px-4 py-2.5 text-left transition-all lg:w-full lg:shrink-1 ${
                   active
-                    ? "bg-indigo-600 text-white shadow-sm"
+                    ? "bg-orange-600 text-white shadow-md shadow-orange-600/10"
                     : done
                       ? "text-slate-700 hover:bg-slate-50"
                       : reachable
@@ -269,7 +267,7 @@ export function SchemaMappingWizard({
                 }`}
               >
                 <span
-                  className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold ${
+                  className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold transition-colors ${
                     active
                       ? "bg-white/20 text-white"
                       : done
@@ -277,17 +275,17 @@ export function SchemaMappingWizard({
                         : "bg-slate-100 text-slate-500"
                   }`}
                 >
-                  {done && !active ? <Check size={14} /> : i + 1}
+                  {done && !active ? <Check size={12} strokeWidth={2.5} /> : i + 1}
                 </span>
-                <span className="min-w-0 flex-1">
-                  <span className="block text-sm font-semibold">{s.label}</span>
+                <span className="min-w-0 pr-2 lg:pr-0">
+                  <span className="block text-xs sm:text-sm font-bold whitespace-nowrap lg:whitespace-normal">{s.label}</span>
                   <span
-                    className={`block text-[11px] ${active ? "text-indigo-100" : "text-slate-400"}`}
+                    className={`hidden sm:block text-[10px] lg:text-[11px] ${active ? "text-orange-100" : "text-slate-400"}`}
                   >
                     {s.description}
                   </span>
                 </span>
-                {active && <ChevronRight size={16} className="shrink-0 opacity-80" />}
+                {active && <ChevronRight size={16} className="hidden lg:block ml-auto shrink-0 opacity-80" />}
               </button>
             );
           })}
@@ -296,25 +294,25 @@ export function SchemaMappingWizard({
 
       {/* Main panel */}
       <div className="min-w-0 space-y-5">
-        <header>
-          <p className="text-xs font-semibold uppercase tracking-wide text-indigo-600">
+        <header className="px-1 lg:px-0">
+          <p className="text-xs font-bold uppercase tracking-wide text-orange-600">
             Data mapping
           </p>
-          <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-900">
+          <h1 className="mt-1 text-xl font-extrabold tracking-tight text-slate-900 sm:text-2xl">
             Map your {entityLabelPlural}
           </h1>
-          <p className="mt-2 text-sm leading-relaxed text-slate-600">
+          <p className="mt-2 text-xs sm:text-sm leading-relaxed text-slate-600">
             Choose which table represents one {entityLabel} per row, then pick ID and signal
             columns. Entivia uses this on every pipeline run and in recommendations.
           </p>
         </header>
 
-        <div className="rounded-2xl border border-slate-200 bg-white shadow-sm">
-          <div className="border-b border-slate-100 px-5 py-4 sm:px-6">
-            <h2 className="text-base font-semibold text-slate-900">
+        <div className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+          <div className="border-b border-slate-100 px-4 py-4 sm:px-6">
+            <h2 className="text-base font-bold text-slate-900">
               {STEPS[stepIndex]?.label}
             </h2>
-            <p className="mt-0.5 text-sm text-slate-500">
+            <p className="mt-0.5 text-xs sm:text-sm text-slate-500">
               {step === "table" &&
                 "Select the primary table that stores your entities."}
               {step === "identity" &&
@@ -326,21 +324,23 @@ export function SchemaMappingWizard({
             </p>
           </div>
 
-          <div className="p-5 sm:p-6">
+          <div className="p-4 sm:p-6">
             {step === "table" && (
               <div className="space-y-4">
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-                  <input
-                    className={`${inputCls} flex-1`}
-                    placeholder="Search tables…"
-                    value={tableSearch}
-                    onChange={(e) => setTableSearch(e.target.value)}
-                  />
+                  <div className="w-full min-w-0">
+                    <input
+                      className={inputCls}
+                      placeholder="Search tables…"
+                      value={tableSearch}
+                      onChange={(e) => setTableSearch(e.target.value)}
+                    />
+                  </div>
                   <button
                     type="button"
                     onClick={applyInference}
                     disabled={tables.length === 0}
-                    className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl border border-indigo-200 bg-indigo-50 px-4 py-2.5 text-sm font-semibold text-indigo-700 hover:bg-indigo-100 disabled:opacity-50"
+                    className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl border border-orange-200 bg-orange-50 px-4 py-2.5 text-sm font-bold text-orange-700 hover:bg-orange-100/80 active:scale-[0.98] transition-all disabled:opacity-50"
                   >
                     <Sparkles size={16} />
                     Auto-suggest
@@ -358,22 +358,22 @@ export function SchemaMappingWizard({
                           key={t.name}
                           type="button"
                           onClick={() => selectTable(t.name)}
-                          className={`group relative flex flex-col rounded-xl border p-4 text-left transition ${
+                          className={`group relative flex flex-col rounded-xl border p-4 text-left transition-all ${
                             selected
-                              ? "border-indigo-500 bg-indigo-50/50 ring-2 ring-indigo-500/20"
-                              : "border-slate-200 bg-white hover:border-indigo-200 hover:shadow-md"
+                              ? "border-orange-500 bg-orange-50/30 ring-2 ring-orange-500/20"
+                              : "border-slate-200 bg-white hover:border-orange-200 hover:shadow-md"
                           }`}
                         >
                           {selected && (
-                            <span className="absolute right-3 top-3 text-indigo-600">
+                            <span className="absolute right-3 top-3 text-orange-600">
                               <Check size={18} strokeWidth={2.5} />
                             </span>
                           )}
                           <Table2
-                            size={20}
-                            className={selected ? "text-indigo-600" : "text-slate-400"}
+                            size={18}
+                            className={selected ? "text-orange-600" : "text-slate-400"}
                           />
-                          <p className="mt-3 font-mono text-sm font-semibold text-slate-900 break-all">
+                          <p className="mt-3 font-mono text-xs font-bold text-slate-900 break-all leading-normal">
                             {t.name}
                           </p>
                           <p className="mt-1 text-xs text-slate-500">
@@ -388,7 +388,7 @@ export function SchemaMappingWizard({
             )}
 
             {step === "identity" && !selectedTable && (
-              <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-6 text-sm text-amber-900">
+              <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-5 text-xs sm:text-sm text-amber-900">
                 <p className="font-semibold">Pick a table first</p>
                 <p className="mt-1 text-amber-800/90">
                   Use the step list on the left or go back to choose a table.
@@ -397,8 +397,8 @@ export function SchemaMappingWizard({
             )}
 
             {step === "identity" && selectedTable && (
-              <div className="space-y-6">
-                <div className="grid gap-4 md:grid-cols-2">
+              <div className="space-y-5">
+                <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-1 xl:grid-cols-2">
                   <Field
                     label="Unique ID column"
                     hint={`Required — stable identifier per ${entityLabel}`}
@@ -430,11 +430,11 @@ export function SchemaMappingWizard({
 
             {step === "signals" && selectedTable && (
               <div className="space-y-4">
-                <p className="text-sm text-slate-600">
+                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
                   Select metrics Entivia should weigh for risk. You can skip this and add signals
                   later.
                 </p>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-2 max-h-[260px] overflow-y-auto p-0.5 rounded-lg">
                   {numericColumns(selectedTable).map((col) => {
                     const on = isSignalSelected(col.name);
                     return (
@@ -442,9 +442,9 @@ export function SchemaMappingWizard({
                         key={col.name}
                         type="button"
                         onClick={() => toggleSignal(col.name)}
-                        className={`max-w-full break-all rounded-lg border px-3 py-2 font-mono text-xs font-medium transition ${
+                        className={`max-w-full break-all rounded-lg border px-3 py-1.5 font-mono text-xs font-medium transition-all ${
                           on
-                            ? "border-indigo-400 bg-indigo-50 text-indigo-800 shadow-sm"
+                            ? "border-orange-400 bg-orange-50 text-orange-800 shadow-sm"
                             : "border-slate-200 bg-slate-50 text-slate-600 hover:border-slate-300 hover:bg-white"
                         }`}
                       >
@@ -454,7 +454,7 @@ export function SchemaMappingWizard({
                   })}
                 </div>
                 {numericColumns(selectedTable).length === 0 && (
-                  <p className="rounded-lg border border-dashed border-slate-200 py-8 text-center text-sm text-slate-500">
+                  <p className="rounded-xl border border-dashed border-slate-200 py-8 text-center text-xs sm:text-sm text-slate-500">
                     No numeric columns on this table — you can continue without signals.
                   </p>
                 )}
@@ -492,13 +492,13 @@ export function SchemaMappingWizard({
             )}
           </div>
 
-          <footer className="flex flex-col-reverse gap-3 border-t border-slate-100 px-5 py-4 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:px-6">
+          <footer className="flex flex-col-reverse gap-3 border-t border-slate-100 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
             <div>
               {onBack && step === "table" ? (
                 <button
                   type="button"
                   onClick={onBack}
-                  className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-600 hover:text-slate-900"
+                  className="inline-flex items-center justify-center gap-1.5 text-sm font-medium text-slate-600 hover:text-slate-900 w-full sm:w-auto py-2 sm:py-0"
                 >
                   <ArrowLeft size={16} />
                   Connections
@@ -511,14 +511,14 @@ export function SchemaMappingWizard({
                       step === "review" ? "signals" : step === "signals" ? "identity" : "table",
                     )
                   }
-                  className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-600 hover:text-slate-900"
+                  className="inline-flex items-center justify-center gap-1.5 text-sm font-medium text-slate-600 hover:text-slate-900 w-full sm:w-auto py-2 sm:py-0"
                 >
                   <ArrowLeft size={16} />
                   Previous
                 </button>
               ) : null}
             </div>
-            <div className="flex w-full gap-2 sm:w-auto">
+            <div className="w-full sm:w-auto">
               {step !== "review" ? (
                 <button
                   type="button"
@@ -531,7 +531,7 @@ export function SchemaMappingWizard({
                       step === "table" ? "identity" : step === "identity" ? "signals" : "review",
                     )
                   }
-                  className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700 disabled:opacity-50 sm:w-auto"
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-orange-600 px-5 py-2.5 text-sm font-bold text-white shadow-sm hover:bg-orange-700 active:scale-[0.99] transition-all disabled:opacity-50"
                 >
                   Continue
                   <ArrowRight size={16} />
@@ -541,7 +541,7 @@ export function SchemaMappingWizard({
                   type="button"
                   disabled={saving}
                   onClick={handleSave}
-                  className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700 disabled:opacity-50 sm:w-auto"
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-orange-600 px-5 py-2.5 text-sm font-bold text-white shadow-sm hover:bg-orange-700 active:scale-[0.99] transition-all disabled:opacity-50"
                 >
                   {saving && <Loader2 size={16} className="animate-spin" />}
                   {existingMapping ? "Save changes" : "Save mapping"}
@@ -566,7 +566,7 @@ function ColumnPreview({
   const more = table.columns.length - show.length;
   return (
     <div className="rounded-xl border border-slate-100 bg-slate-50/80 p-4">
-      <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+      <p className="text-[10px] font-bold uppercase tracking-wide text-slate-500">
         Column preview
       </p>
       <ul className="mt-2 flex flex-wrap gap-2">
@@ -575,19 +575,19 @@ function ColumnPreview({
           return (
             <li
               key={c.name}
-              className={`max-w-full break-all rounded-md border px-2 py-1 font-mono text-[11px] ${
+              className={`max-w-full break-all rounded-md border px-2 py-1 font-mono text-[11px] leading-normal transition-all ${
                 on
-                  ? "border-indigo-300 bg-indigo-50 text-indigo-800"
+                  ? "border-orange-300 bg-orange-50/60 text-orange-900 font-bold"
                   : "border-slate-200 bg-white text-slate-600"
               }`}
             >
               {c.name}
-              <span className="ml-1 font-sans text-slate-400">{c.data_type}</span>
+              <span className="ml-1 font-sans text-[10px] text-slate-400 font-normal">{c.data_type}</span>
             </li>
           );
         })}
         {more > 0 && (
-          <li className="px-2 py-1 text-xs text-slate-400">+{more} more</li>
+          <li className="px-2 py-1 text-xs text-slate-400 font-medium">+{more} more</li>
         )}
       </ul>
     </div>
@@ -603,14 +603,14 @@ function ReviewCard({
 }) {
   return (
     <div className="rounded-xl border border-slate-100 bg-slate-50/50 p-4">
-      <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">{title}</p>
+      <p className="text-[10px] font-bold uppercase tracking-wide text-slate-500">{title}</p>
       <dl className="mt-3 space-y-2">
         {rows.map((row) => (
-          <div key={row.label} className="flex justify-between gap-4 text-sm">
-            <dt className="text-slate-500">{row.label}</dt>
+          <div key={row.label} className="flex items-center justify-between gap-4 text-xs sm:text-sm">
+            <dt className="text-slate-500 shrink-0">{row.label}</dt>
             <dd
-              className={`min-w-0 break-all text-right font-medium text-slate-900 sm:max-w-[60%] sm:truncate ${
-                row.mono ? "font-mono text-xs" : ""
+              className={`min-w-0 break-all text-right font-semibold text-slate-900 sm:max-w-[70%] truncate ${
+                row.mono ? "font-mono text-xs text-orange-800" : ""
               }`}
             >
               {row.value}
@@ -640,27 +640,29 @@ function Field({
   icon?: ReactNode;
 }) {
   return (
-    <div className="rounded-xl border border-slate-100 bg-slate-50/30 p-4">
-      <label className="mb-2 flex items-center gap-2 text-sm font-semibold text-slate-800">
-        {icon}
-        {label}
-        {required && <span className="text-rose-500">*</span>}
-      </label>
-      <select
-        className={inputCls}
-        value={value}
-        required={required}
-        onChange={(e) => onChange(e.target.value)}
-      >
-        {required && <option value="">Select column…</option>}
-        {!required && <option value="">— Optional —</option>}
-        {options.map((o) => (
-          <option key={o} value={o}>
-            {o}
-          </option>
-        ))}
-      </select>
-      <p className="mt-2 text-xs text-slate-500">{hint}</p>
+    <div className="rounded-xl border border-slate-100 bg-slate-50/30 p-4 flex flex-col justify-between">
+      <div>
+        <label className="mb-2 flex items-center gap-2 text-xs sm:text-sm font-bold text-slate-800">
+          <span className="text-slate-400 shrink-0">{icon}</span>
+          <span className="truncate">{label}</span>
+          {required && <span className="text-rose-500 font-bold">*</span>}
+        </label>
+        <select
+          className={inputCls}
+          value={value}
+          required={required}
+          onChange={(e) => onChange(e.target.value)}
+        >
+          {required && <option value="">Select column…</option>}
+          {!required && <option value="">— Optional —</option>}
+          {options.map((o) => (
+            <option key={o} value={o}>
+              {o}
+            </option>
+          ))}
+        </select>
+      </div>
+      <p className="mt-2 text-[11px] text-slate-500 leading-normal">{hint}</p>
     </div>
   );
 }
