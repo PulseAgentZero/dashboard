@@ -50,21 +50,20 @@ export default function SignupPage() {
   }
 
   return (
-    <AuthSplitLayout
-      title="Create an account"
-      subtitle="Get started with Entivia in minutes."
-      footer={
-        <p className="text-center text-[13px] text-slate-600">
-          Already have an account?{" "}
-          <a href="/auth/login" className="font-medium text-blue-600 hover:text-blue-500">
-            Sign in
-          </a>
-        </p>
-      }
-    >
-      {isLoading ? <p className="text-[13px] text-slate-500">Loading…</p> : null}
+      <AuthSplitLayout
+        title="Create an account"
+        subtitle="Get started with Entivia in minutes."
+        footer={
+          <p className="text-center text-[13px] text-slate-600">
+            Already have an account?{" "}
+            <a href="/auth/login" className="font-medium text-orange-600 hover:text-orange-500">
+              Sign in
+            </a>
+          </p>
+        }
+      >
 
-      {registrationOpen && !isLoading ? (
+      {registrationOpen &&  (
         <form className="space-y-6" onSubmit={handleSubmit}>
           <div className="space-y-4">
             <FormField
@@ -108,7 +107,7 @@ export default function SignupPage() {
               type="checkbox"
               checked={termsAccepted}
               onChange={(e) => setTermsAccepted(e.target.checked)}
-              className="mt-0.5 h-4 w-4 shrink-0 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+              className="mt-0.5 h-4 w-4 shrink-0 rounded border-slate-300 text-orange-600 focus:ring-orange-500"
             />
             <label htmlFor="accept-terms" className="text-[13px] leading-snug text-slate-600">
               I agree to the{" "}
@@ -116,7 +115,7 @@ export default function SignupPage() {
                 href="/terms"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="font-medium text-blue-600 hover:text-blue-500"
+                className="font-medium text-orange-600 hover:text-orange-500"
               >
                 Terms of Service
               </Link>{" "}
@@ -125,7 +124,7 @@ export default function SignupPage() {
                 href="/privacy"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="font-medium text-blue-600 hover:text-blue-500"
+                className="font-medium text-orange-600 hover:text-orange-500"
               >
                 Privacy Policy
               </Link>
@@ -136,7 +135,7 @@ export default function SignupPage() {
           <button
             type="submit"
             disabled={isPending || !termsAccepted}
-            className="flex w-full justify-center rounded-xl border border-transparent bg-blue-600 px-4 py-3 text-[13px] font-semibold text-white shadow-sm transition duration-150 hover:bg-blue-700 focus:ring-1 focus:ring-blue-500 focus:ring-offset-1 focus:outline-none disabled:cursor-not-allowed disabled:opacity-60"
+            className="flex w-full justify-center rounded-xl border border-transparent bg-orange-600 px-4 py-3 text-[13px] font-semibold text-white shadow-sm transition duration-150 hover:bg-orange-700 focus:ring-1 focus:ring-orange-500 focus:ring-offset-1 focus:outline-none disabled:cursor-not-allowed disabled:opacity-60"
           >
             {isPending ? "Creating account…" : "Create account"}
           </button>
@@ -163,7 +162,7 @@ export default function SignupPage() {
             Sign up with Google
           </button>
         </form>
-      ) : null}
+      )}
 
       {!registrationOpen && !isLoading ? (
         <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-[13px] text-amber-900">

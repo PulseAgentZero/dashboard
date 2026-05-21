@@ -31,7 +31,7 @@ const OP_LABELS: Record<string, string> = {
 const CHANNEL_TYPES = ["email", "slack", "webhook", "in_app"] as const;
 
 const inputCls =
-  "w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs sm:text-sm text-slate-900 outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 placeholder:text-slate-400 transition-colors";
+  "w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 placeholder:text-slate-400 transition-colors";
 
 function RuleCard({ rule, onDelete, deleting }: {
   rule: AlertRule; onDelete: () => void; deleting: boolean;
@@ -307,7 +307,7 @@ export function AlertsPage() {
     <div className="mx-auto max-w-7xl space-y-5">
       <div>
         <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900">Alerts</h1>
-        <p className="mt-0.5 text-xs sm:text-sm text-slate-500 leading-relaxed">
+        <p className="mt-0.5 text-sm text-slate-500 leading-relaxed">
           Configure threshold rules and notification channels for operational events.
         </p>
       </div>

@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-// useQueryClient used in OrgSecuritySection
 import { Loader2, Shield } from "lucide-react";
 import { toast } from "sonner";
 import { authApi } from "@/lib/api/auth";
@@ -14,7 +13,7 @@ import { useAuth } from "@/providers/auth-provider";
 import { useOrganization } from "@/hooks/org/use-organization";
 
 const inputCls =
-  "w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500";
+  "w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-100 placeholder:text-slate-400 disabled:bg-slate-50 transition-all";
 
 export function TwoFactorAccountSection() {
   const { user, refetch } = useAuth();
@@ -60,63 +59,67 @@ export function TwoFactorAccountSection() {
   const enabled = user?.totp_enabled;
 
   return (
-    <section>
-      <p className="mb-4 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-slate-400">
-        <Shield size={14} /> Two-factor authentication
+    <section className="space-y-4 py-4 sm:p-5 sm:bg-white sm:border sm:border-slate-200 sm:rounded-xl">
+      <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-700">
+        <Shield size={14} className="text-slate-400" /> Two-factor authentication
       </p>
       {recoveryCodes ? (
-        <div className="space-y-2 rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm">
+        <div className="space-y-2 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm">
           <p className="font-semibold text-amber-900">Save these recovery codes</p>
-          <ul className="font-mono text-xs">
+          <ul className="font-mono text-xs text-amber-800 space-y-1">
             {recoveryCodes.map((c) => (
               <li key={c}>{c}</li>
             ))}
           </ul>
         </div>
       ) : enabled ? (
-        <div className="space-y-3">
+        <div className="space-y-3.5">
           <p className="text-sm text-slate-600">2FA is enabled on your account.</p>
-          <input
-            className={inputCls}
-            placeholder="Authenticator or recovery code"
-            value={code}
-            onChange={(e) => setCode(e.target.value)}
-          />
-          <input
-            type="password"
-            className={inputCls}
-            placeholder="Password (if you use email sign-in)"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
+          <div className="space-y-3">
+            <input
+              className={inputCls}
+              placeholder="Authenticator or recovery code"
+              value={code}
+              onChange={(e) => setCode(e.target.value)}
+            />
+            <input
+              type="password"
+              className={inputCls}
+              placeholder="Password (if you use email sign-in)"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
           <button
             type="button"
             disabled={disabling || !code}
             onClick={() => disable()}
-            className="rounded-lg border border-rose-200 px-4 py-2 text-sm font-semibold text-rose-700 hover:bg-rose-50"
+            className="w-full sm:w-auto rounded-xl border border-rose-200 px-4 py-2.5 text-sm font-semibold text-rose-700 hover:bg-rose-50 disabled:opacity-50 transition-colors"
           >
             {disabling ? "Disabling…" : "Disable 2FA"}
           </button>
         </div>
       ) : (
-        <div className="space-y-3">
-          <p className="text-sm text-slate-600">
+        <div className="space-y-3.5">
+          <p className="text-sm text-slate-600 leading-normal">
             Protect your account with an authenticator app (Google Authenticator, 1Password, etc.).
           </p>
           {setupUri && (
-            <p className="break-all text-xs text-slate-500">{setupUri}</p>
+            <p className="break-all rounded-xl border border-slate-200 bg-slate-50 p-3 font-mono text-xs text-slate-500">
+              {setupUri}
+            </p>
           )}
           {!setupUri ? (
             <button
               type="button"
               disabled={settingUp}
               onClick={() => setup()}
-              className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white"
+              className="w-full sm:w-auto rounded-xl bg-orange-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-orange-700 disabled:opacity-50 transition-colors shadow-sm"
             >
               {settingUp ? "Starting…" : "Set up 2FA"}
             </button>
           ) : (
-            <>
+            <div className="space-y-3.5">
               <input
                 className={inputCls}
                 placeholder="6-digit code"
@@ -127,11 +130,11 @@ export function TwoFactorAccountSection() {
                 type="button"
                 disabled={enabling || code.length < 6}
                 onClick={() => enable()}
-                className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white"
+                className="w-full sm:w-auto rounded-xl bg-orange-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-orange-700 disabled:opacity-50 transition-colors shadow-sm"
               >
                 {enabling ? "Enabling…" : "Confirm and enable"}
               </button>
-            </>
+            </div>
           )}
         </div>
       )}
@@ -164,43 +167,46 @@ export function DeleteAccountSection() {
   if (user?.is_org_owner) return null;
 
   return (
-    <section className="rounded-lg border border-rose-200 bg-rose-50/50 p-4">
-      <p className="text-sm font-semibold text-rose-900">Delete my account</p>
-      <p className="mt-1 text-xs text-rose-800">
-        Permanently deactivate your account. Type DELETE to confirm.
-      </p>
-      <div className="mt-3 space-y-2">
-        <input
-          className={inputCls}
-          placeholder="Type DELETE"
-          value={confirm}
-          onChange={(e) => setConfirm(e.target.value)}
-        />
-        <input
-          type="password"
-          className={inputCls}
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        {user?.totp_enabled && (
-          <input
-            className={inputCls}
-            placeholder="2FA code"
-            value={totpCode}
-            onChange={(e) => setTotpCode(e.target.value)}
-          />
-        )}
-        <button
-          type="button"
-          disabled={isPending || confirm !== "DELETE"}
-          onClick={() => mutate()}
-          className="rounded-lg bg-rose-600 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
-        >
-          {isPending ? "Deleting…" : "Delete account"}
-        </button>
-      </div>
-    </section>
+    <section className="space-y-4 py-4 sm:p-5 sm:bg-white sm:border sm:border-slate-200 sm:rounded-xl">
+  <div>
+    <p className="text-xs font-bold uppercase tracking-wider text-slate-700">Delete account</p>
+    <p className="mt-0.5 text-xs text-slate-500 leading-normal">
+      Permanently deactivate your account. Type DELETE to confirm.
+    </p>
+  </div>
+
+  <div className="space-y-3">
+    <input
+      className={inputCls}
+      placeholder="Type DELETE"
+      value={confirm}
+      onChange={(e) => setConfirm(e.target.value)}
+    />
+    <input
+      type="password"
+      className={inputCls}
+      placeholder="Password"
+      value={password}
+      onChange={(e) => setPassword(e.target.value)}
+    />
+    {user?.totp_enabled && (
+      <input
+        className={inputCls}
+        placeholder="2FA code"
+        value={totpCode}
+        onChange={(e) => setTotpCode(e.target.value)}
+      />
+    )}
+    <button
+      type="button"
+      disabled={isPending || confirm !== "DELETE"}
+      onClick={() => mutate()}
+      className="w-full sm:w-auto rounded-xl bg-orange-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-orange-700 disabled:opacity-50 transition-colors shadow-sm"
+    >
+      {isPending ? "Deleting…" : "Delete account"}
+    </button>
+  </div>
+</section>
   );
 }
 
@@ -208,8 +214,7 @@ export function OrgSecuritySection() {
   const { user } = useAuth();
   const { data: org, refetch } = useOrganization();
   const qc = useQueryClient();
-  const canManage =
-    user?.is_org_owner || user?.role === "admin";
+  const canManage = user?.is_org_owner || user?.role === "admin";
 
   const { mutate, isPending } = useMutation({
     mutationFn: (require_2fa: boolean) => securityApi.patchOrgSecurity(require_2fa),
@@ -224,26 +229,29 @@ export function OrgSecuritySection() {
   if (!canManage) return null;
 
   return (
-    <div className="rounded-lg border border-slate-200 p-4">
+    <div className="py-4 sm:p-5 sm:bg-white sm:border sm:border-slate-200 sm:rounded-xl">
       <label className="flex cursor-pointer items-start gap-3">
         <input
           type="checkbox"
-          className="mt-1"
+          className="mt-1 h-4 w-4 rounded border-slate-300 text-orange-600 focus:ring-orange-500 focus:ring-offset-0 transition-colors"
           checked={Boolean(org?.require_2fa)}
           disabled={isPending}
           onChange={(e) => mutate(e.target.checked)}
         />
-        <span>
-          <span className="text-sm font-semibold text-slate-800">
+        <span className="min-w-0 flex-1">
+          <span className="text-sm font-semibold text-slate-800 block">
             Require two-factor authentication
           </span>
-          <span className="mt-1 block text-xs text-slate-500">
+          <span className="mt-1 block text-xs text-slate-500 leading-normal">
             All members must set up an authenticator app before they can sign in.
           </span>
         </span>
       </label>
       {isPending && (
-        <Loader2 size={14} className="mt-2 animate-spin text-slate-400" />
+        <div className="mt-3 flex items-center gap-1.5 text-xs text-slate-400">
+          <Loader2 size={14} className="animate-spin text-orange-500" />
+          <span>Updating settings...</span>
+        </div>
       )}
     </div>
   );
@@ -278,9 +286,9 @@ export function DeleteOrgSection() {
   if (!org?.is_org_owner) return null;
 
   return (
-    <div className="rounded-lg border border-rose-300 bg-rose-50 p-4">
-      <p className="text-sm font-semibold text-rose-900">Delete organization</p>
-      <p className="mt-1 text-xs text-rose-800">
+    <div className="rounded-xl border border-rose-200 bg-rose-50 p-4 sm:p-5">
+      <p className="text-sm font-semibold text-rose-950">Delete organization</p>
+      <p className="mt-0.5 text-xs text-rose-800 leading-normal">
         Permanently deletes {org.name} and deactivates all members. This cannot be undone.
       </p>
       {step === "idle" ? (
@@ -288,14 +296,14 @@ export function DeleteOrgSection() {
           type="button"
           disabled={requesting}
           onClick={() => requestCode()}
-          className="mt-3 rounded-lg border border-rose-400 px-4 py-2 text-sm font-semibold text-rose-800"
+          className="w-full sm:w-auto mt-4 rounded-xl border border-rose-300 bg-white px-4 py-2.5 text-sm font-semibold text-rose-800 hover:bg-rose-50 transition-colors"
         >
           {requesting ? "Sending code…" : "Email me a confirmation code"}
         </button>
       ) : (
-        <div className="mt-3 flex flex-wrap items-center gap-2">
+        <div className="mt-4 flex flex-col sm:flex-row sm:items-center gap-3">
           <input
-            className={`${inputCls} max-w-[140px]`}
+            className={`${inputCls} sm:max-w-[160px]`}
             placeholder="6-digit code"
             value={code}
             onChange={(e) => setCode(e.target.value)}
@@ -304,7 +312,7 @@ export function DeleteOrgSection() {
             type="button"
             disabled={confirming || code.length < 6}
             onClick={() => confirm()}
-            className="rounded-lg bg-rose-600 px-4 py-2 text-sm font-semibold text-white"
+            className="w-full sm:w-auto rounded-xl bg-rose-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-rose-700 disabled:opacity-50 transition-colors shadow-sm"
           >
             {confirming ? "Deleting…" : "Confirm delete"}
           </button>

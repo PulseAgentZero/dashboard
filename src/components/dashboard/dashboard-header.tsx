@@ -10,7 +10,8 @@ export function DashboardHeader() {
     hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
 
   return (
-    <div className="flex items-start justify-between gap-4">
+    // Switch from stack layout on mobile to row layout on desktop, aligning items nicely
+    <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
       <div>
         <h1 className="text-lg md:text-xl font-semibold text-slate-900">
           {greeting}{user?.full_name ? `, ${user.full_name.split(" ")[0]}` : ""}
@@ -19,12 +20,14 @@ export function DashboardHeader() {
           Here&apos;s what&apos;s happening across your data today.
         </p>
       </div>
+      
       {org && (
-        <div className="flex shrink-0 flex-wrap items-center gap-2">
-          <span className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-medium text-slate-600">
+        // Adjusted padding, layout flow, and alignment for a natural mobile presentation
+        <div className="flex shrink-0 flex-wrap items-center gap-2 mt-1 md:mt-0">
+          <span className="rounded-full border border-slate-200 bg-white px-2.5 py-1 text-xs font-medium text-slate-600 shadow-xs">
             {org.name}
           </span>
-          <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-600 capitalize">
+          <span className="rounded-full bg-blue-50 px-2.5 py-1 text-xs font-semibold text-blue-600 capitalize">
             {org.plan}
           </span>
         </div>

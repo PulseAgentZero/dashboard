@@ -33,9 +33,9 @@ const ROLES = ["admin", "manager", "analyst", "viewer"] as const;
 type Role = (typeof ROLES)[number];
 
 const ROLE_META: Record<string, { label: string; color: string; icon: React.ElementType }> = {
-  admin: { label: "Admin", color: "bg-rose-50 text-rose-700", icon: Crown },
-  manager: { label: "Manager", color: "bg-amber-50 text-amber-700", icon: Shield },
-  analyst: { label: "Analyst", color: "bg-orange-50 text-orange-700", icon: Users },
+  admin: { label: "Admin", color: "bg-orange-50 text-orange-700", icon: Crown },
+  manager: { label: "Manager", color: "bg-slate-100 text-slate-700", icon: Shield },
+  analyst: { label: "Analyst", color: "bg-slate-100 text-slate-700", icon: Users },
   viewer: { label: "Viewer", color: "bg-slate-100 text-slate-600", icon: Users },
 };
 
@@ -43,8 +43,8 @@ function RoleBadge({ role }: { role: string }) {
   const meta = ROLE_META[role.toLowerCase()] ?? { label: role, color: "bg-slate-100 text-slate-600", icon: Users };
   const Icon = meta.icon;
   return (
-    <span className={`inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[11px] font-semibold capitalize ${meta.color}`}>
-      <Icon size={10} />
+    <span className={`inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-medium capitalize ${meta.color}`}>
+      <Icon size={12} />
       {meta.label}
     </span>
   );
@@ -53,7 +53,7 @@ function RoleBadge({ role }: { role: string }) {
 function Initial({ name, email }: { name: string; email: string }) {
   const letter = name?.charAt(0)?.toUpperCase() || email?.charAt(0)?.toUpperCase() || "?";
   return (
-    <div className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-slate-100 text-xs font-bold text-slate-700 select-none border border-slate-200">
+    <div className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-slate-100 text-sm font-bold text-slate-700 select-none border border-slate-200">
       {letter}
     </div>
   );
@@ -78,23 +78,23 @@ function UserRow({
   const isSelf = member.id === currentUserId;
 
   return (
-    <tr className="group hover:bg-slate-50/50 text-sm">
-      <td className="border-b border-slate-100 px-5 py-3.5">
+    <tr className="group hover:bg-slate-50/40 transition-colors">
+      <td className="border-b border-slate-100 px-6 py-4">
         <div className="flex items-center gap-3">
           <Initial name={member.full_name} email={member.email} />
           <div>
-            <div className="flex items-center gap-1.5">
-              <p className="font-medium text-slate-900">{member.full_name}</p>
+            <div className="flex items-center gap-2">
+              <p className="text-sm font-medium text-slate-900">{member.full_name}</p>
               {isSelf && (
-                <span className="rounded bg-orange-50 px-1.5 py-px text-[10px] font-semibold text-orange-700">You</span>
+                <span className="rounded-md bg-orange-50 px-2 py-0.5 text-[10px] font-bold text-orange-700 uppercase tracking-wider">You</span>
               )}
             </div>
-            <p className="text-[11px] text-slate-400">{member.email}</p>
+            <p className="text-xs text-slate-400 mt-0.5">{member.email}</p>
           </div>
         </div>
       </td>
 
-      <td className="border-b border-slate-100 px-5 py-3.5">
+      <td className="border-b border-slate-100 px-6 py-4">
         {isSelf ? (
           <RoleBadge role={member.role} />
         ) : (
@@ -103,7 +103,7 @@ function UserRow({
               disabled={updatingRole}
               value={member.role.toLowerCase()}
               onChange={(e) => onRoleChange(member.id, e.target.value)}
-              className="w-full appearance-none rounded-lg border border-slate-200 bg-white pl-2.5 pr-8 py-1.5 text-xs font-medium text-slate-700 outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-100 disabled:opacity-50 transition-all"
+              className="w-full appearance-none rounded-lg border border-slate-200 bg-white pl-3 pr-8 py-1.5 text-xs font-medium text-slate-700 outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-100 disabled:opacity-50 transition-all"
             >
               {ROLES.map((r) => (
                 <option key={r} value={r}>{ROLE_META[r]?.label ?? r}</option>
@@ -118,37 +118,37 @@ function UserRow({
         )}
       </td>
 
-      <td className="border-b border-slate-100 px-5 py-3.5">
+      <td className="border-b border-slate-100 px-6 py-4">
         {member.is_active ? (
-          <span className="flex items-center gap-1 text-xs font-medium text-emerald-600">
-            <CheckCircle2 size={13} /> Active
+          <span className="flex items-center gap-1.5 text-xs font-medium text-emerald-600">
+            <CheckCircle2 size={14} /> Active
           </span>
         ) : (
-          <span className="flex items-center gap-1 text-xs font-medium text-slate-400">
-            <XCircle size={13} /> Inactive
+          <span className="flex items-center gap-1.5 text-xs font-medium text-slate-400">
+            <XCircle size={14} /> Inactive
           </span>
         )}
       </td>
 
-      <td className="border-b border-slate-100 px-5 py-3.5 text-xs text-slate-500">
+      <td className="border-b border-slate-100 px-6 py-4 text-xs text-slate-500">
         {member.last_login_at
           ? new Date(member.last_login_at).toLocaleDateString(undefined, { dateStyle: "medium" })
           : "Never"}
       </td>
 
-      <td className="border-b border-slate-100 px-5 py-3.5 text-right">
+      <td className="border-b border-slate-100 px-6 py-4 text-right">
         {!isSelf && (
           <div className="relative inline-block">
             <button
               onClick={() => setMenuOpen((o) => !o)}
-              className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-400 hover:text-slate-600 hover:bg-slate-50 shadow-sm"
+              className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-400 hover:text-slate-600 hover:bg-slate-50"
             >
               <MoreHorizontal size={15} />
             </button>
             {menuOpen && (
               <>
                 <div className="fixed inset-0 z-10" onClick={() => setMenuOpen(false)} />
-                <div className="absolute right-0 top-9 z-20 w-44 rounded-xl border border-slate-200 bg-white py-1 shadow-md">
+                <div className="absolute right-0 top-9 z-20 w-44 rounded-xl border border-slate-200 bg-white py-1 shadow-sm">
                   <button
                     disabled={deactivating}
                     onClick={() => {
@@ -193,16 +193,16 @@ function MobileMemberRow({
       <div className="flex min-w-0 items-center gap-3">
         <Initial name={member.full_name} email={member.email} />
         <div className="min-w-0">
-          <p className="truncate font-medium text-slate-900">{member.full_name}</p>
-          <p className="truncate text-[11px] text-slate-400">{member.email}</p>
-          <div className="mt-1.5">
+          <p className="truncate text-sm font-medium text-slate-900">{member.full_name}</p>
+          <p className="truncate text-xs text-slate-400 mt-0.5">{member.email}</p>
+          <div className="mt-2">
             <RoleBadge role={member.role} />
           </div>
         </div>
       </div>
       <div className="flex shrink-0 flex-col items-end gap-2">
         <span
-          className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${
+          className={`rounded-md px-2 py-0.5 text-[11px] font-medium ${
             member.is_active ? "bg-emerald-50 text-emerald-700" : "bg-slate-100 text-slate-500"
           }`}
         >
@@ -221,7 +221,7 @@ function MobileMemberRow({
             {menuOpen && (
               <>
                 <div className="fixed inset-0 z-10" onClick={() => setMenuOpen(false)} />
-                <div className="absolute right-0 top-10 z-20 w-52 rounded-xl border border-slate-200 bg-white py-2 shadow-md">
+                <div className="absolute right-0 top-10 z-20 w-52 rounded-xl border border-slate-200 bg-white py-2 shadow-sm">
                   <p className="px-3 pb-1 text-[10px] font-semibold uppercase tracking-wide text-slate-400">
                     Change role
                   </p>
@@ -233,7 +233,7 @@ function MobileMemberRow({
                         onRoleChange(member.id, e.target.value);
                         setMenuOpen(false);
                       }}
-                      className="w-full rounded-lg border border-slate-200 bg-white px-2.5 py-2 text-xs font-medium text-slate-700 outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-100 disabled:opacity-50"
+                      className="w-full rounded-lg border border-slate-200 bg-white px-2.5 py-2 text-xs font-medium text-slate-700 outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-100 disabled:opacity-50"
                     >
                       {ROLES.map((r) => (
                         <option key={r} value={r}>
@@ -285,10 +285,10 @@ function InviteForm({ onClose }: { onClose: () => void }) {
   }
 
   return (
-    <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+    <div className="rounded-xl border border-slate-200 bg-white p-5">
       <div className="mb-4 flex items-center justify-between">
         <p className="text-sm font-semibold text-slate-900">Invite a team member</p>
-        <button type="button" onClick={onClose} className="text-xs font-semibold text-slate-500 hover:text-slate-800">Cancel</button>
+        <button type="button" onClick={onClose} className="text-xs font-semibold text-slate-400 hover:text-slate-700 transition-colors">Cancel</button>
       </div>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4 sm:flex-row sm:items-end">
         <div className="flex-1">
@@ -330,7 +330,7 @@ function InviteForm({ onClose }: { onClose: () => void }) {
         <button
           type="submit"
           disabled={isPending || !email}
-          className="flex items-center justify-center gap-2 rounded-lg bg-orange-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-orange-700 disabled:opacity-50 transition-colors shadow-sm"
+          className="flex items-center justify-center gap-2 rounded-lg bg-orange-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-orange-700 disabled:opacity-50 transition-colors sm:shrink-0"
         >
           {isPending && <Loader2 size={14} className="animate-spin" />}
           {isPending ? "Sending…" : "Send invite"}
@@ -344,7 +344,7 @@ function SkeletonRow() {
   return (
     <tr className="animate-pulse">
       {[240, 100, 80, 100, 40].map((w, i) => (
-        <td key={i} className="border-b border-slate-100 px-5 py-4">
+        <td key={i} className="border-b border-slate-100 px-6 py-4.5">
           <div className="h-3.5 rounded bg-slate-100" style={{ width: w }} />
         </td>
       ))}
@@ -377,7 +377,7 @@ export function TeamPage() {
         <button
           onClick={() => setShowInvite(true)}
           disabled={showInvite}
-          className="flex items-center justify-center gap-2 rounded-lg bg-orange-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-orange-700 disabled:opacity-50 transition-colors shadow-sm sm:shrink-0"
+          className="flex items-center justify-center gap-2 rounded-lg bg-orange-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-orange-700 disabled:opacity-50 transition-colors sm:shrink-0"
         >
           <Plus size={16} />
           Invite member
@@ -387,12 +387,12 @@ export function TeamPage() {
       {showInvite && <InviteForm onClose={() => setShowInvite(false)} />}
 
       {/* Members table */}
-      <div className="rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden">
-        <div className="border-b border-slate-100 px-5 py-4 bg-slate-50/50">
+      <div className="rounded-xl border border-slate-200 bg-white overflow-hidden">
+        <div className="border-b border-slate-100 px-6 py-4 bg-slate-50/50">
           <div className="flex items-center justify-between">
             <p className="text-sm font-semibold text-slate-900">Members</p>
             {!loadingMembers && (
-              <span className="rounded-full border border-slate-200 bg-white px-2.5 py-0.5 text-xs font-medium text-slate-500 shadow-sm">
+              <span className="rounded-full border border-slate-200 bg-white px-2.5 py-0.5 text-xs font-medium text-slate-500">
                 {activeMembers.length} active
               </span>
             )}
@@ -431,11 +431,11 @@ export function TeamPage() {
         <div className="hidden overflow-x-auto md:block">
           <table className="w-full min-w-[720px] border-separate border-spacing-0">
             <thead>
-              <tr className="text-[11px] font-semibold uppercase tracking-wide text-slate-400">
+              <tr className="text-xs font-semibold uppercase tracking-wider text-slate-400">
                 {["Member", "Role", "Status", "Last login", ""].map((col, i) => (
                   <th
                     key={i}
-                    className={`border-b border-slate-100 px-5 pb-3 pt-4 text-left font-semibold ${i === 4 ? "text-right" : ""}`}
+                    className={`border-b border-slate-100 px-6 pb-3 pt-4 text-left font-semibold ${i === 4 ? "text-right" : ""}`}
                   >
                     {col}
                   </th>
@@ -477,8 +477,8 @@ export function TeamPage() {
       </div>
 
       {/* Pending invitations */}
-      <div className="rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden">
-        <div className="border-b border-slate-100 px-5 py-4 bg-slate-50/50">
+      <div className="rounded-xl border border-slate-200 bg-white overflow-hidden">
+        <div className="border-b border-slate-100 px-6 py-4 bg-slate-50/50">
           <div className="flex items-center justify-between">
             <p className="text-sm font-semibold text-slate-900">Pending invitations</p>
             {!loadingInvites && invitations.length > 0 && (
@@ -509,15 +509,15 @@ export function TeamPage() {
           )}
 
           {invitations.map((inv) => (
-            <div key={inv.invitation_id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-5 py-4">
+            <div key={inv.invitation_id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-6 py-4">
               <div className="flex items-center gap-3">
-                <div className="grid h-8 w-8 place-items-center rounded-lg bg-slate-100 text-xs font-bold text-slate-500 border border-slate-200">
+                <div className="grid h-8 w-8 place-items-center rounded-xl bg-slate-100 text-xs font-bold text-slate-500 border border-slate-200">
                   {inv.email.charAt(0).toUpperCase()}
                 </div>
                 <div>
                   <p className="text-sm font-medium text-slate-900">{inv.email}</p>
-                  <p className="text-[11px] text-slate-400 flex items-center gap-1 mt-0.5">
-                    <Clock size={11} />
+                  <p className="text-xs text-slate-400 flex items-center gap-1.5 mt-0.5">
+                    <Clock size={12} className="text-slate-400" />
                     Expires {new Date(inv.expires_at).toLocaleDateString(undefined, { dateStyle: "medium" })}
                   </p>
                 </div>
@@ -534,7 +534,7 @@ export function TeamPage() {
                       onConfirm: () => revokeInv(inv.invitation_id),
                     })
                   }
-                  className="flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:border-rose-200 hover:bg-rose-50 hover:text-rose-600 disabled:opacity-50 shadow-sm transition-colors"
+                  className="flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 hover:border-rose-200 hover:bg-rose-50 hover:text-rose-600 disabled:opacity-50 transition-colors"
                 >
                   {revoking && revokingId === inv.invitation_id
                     ? <Loader2 size={12} className="animate-spin" />
@@ -548,9 +548,9 @@ export function TeamPage() {
       </div>
 
       {/* Role legend */}
-      <div className="rounded-xl border border-slate-200 bg-slate-50/60 px-5 py-5">
+      <div className="rounded-xl border border-slate-200 bg-slate-50/60 p-6">
         <p className="mb-4 text-xs font-bold uppercase tracking-wider text-slate-400">Role permissions reference</p>
-        <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
           {[
             { role: "admin", desc: "Full root access to configure pipelines, invite users, update plans, and control workspace settings." },
             { role: "manager", desc: "Access dashboards, generate metrics, handle data exports, and submit complex agent workflows." },
@@ -560,7 +560,7 @@ export function TeamPage() {
             const meta = ROLE_META[role];
             const Icon = meta.icon;
             return (
-              <div key={role} className="rounded-xl bg-white p-3.5 border border-slate-200 shadow-sm flex flex-col justify-between">
+              <div key={role} className="rounded-xl bg-white p-4 border border-slate-200 flex flex-col justify-between">
                 <div>
                   <div className="flex items-center gap-2 mb-2">
                     <div className={`flex h-6 w-6 items-center justify-center rounded-md ${meta.color}`}>
@@ -568,7 +568,7 @@ export function TeamPage() {
                     </div>
                     <span className="text-xs font-bold text-slate-800 capitalize">{meta.label}</span>
                   </div>
-                  <p className="text-[11px] leading-normal text-slate-500">{desc}</p>
+                  <p className="text-xs leading-normal text-slate-500">{desc}</p>
                 </div>
               </div>
             );

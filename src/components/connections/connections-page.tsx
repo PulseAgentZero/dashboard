@@ -151,7 +151,7 @@ function ConnectionCard({
             className="mt-3 flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50/90 px-3 py-2 text-xs font-semibold text-amber-900 hover:bg-amber-100"
           >
             <Layers size={14} className="shrink-0 text-amber-700" />
-            Map your user table to enable the pipeline
+            <span className="line-clamp-2 md:line-clamp-none">Map your user table to enable the pipeline</span>
             <ArrowRight size={12} className="ml-auto shrink-0" />
           </Link>
         )}
@@ -159,7 +159,7 @@ function ConnectionCard({
         <dl className="mt-4 grid grid-cols-2 gap-2 text-[11px]">
           <div className="rounded-lg bg-slate-50 px-2.5 py-2">
             <dt className="font-medium text-slate-400">Last test</dt>
-            <dd className="mt-0.5 font-medium text-slate-700">
+            <dd className="mt-0.5 font-medium text-slate-700 truncate">
               {conn.last_tested_at
                 ? new Date(conn.last_tested_at).toLocaleString(undefined, {
                     dateStyle: "short",
@@ -170,7 +170,7 @@ function ConnectionCard({
           </div>
           <div className="rounded-lg bg-slate-50 px-2.5 py-2">
             <dt className="font-medium text-slate-400">Added</dt>
-            <dd className="mt-0.5 font-medium text-slate-700">
+            <dd className="mt-0.5 font-medium text-slate-700 truncate">
               {new Date(conn.created_at).toLocaleDateString(undefined, {
                 dateStyle: "medium",
               })}
@@ -179,11 +179,12 @@ function ConnectionCard({
         </dl>
       </div>
 
+      {/* Action Footer: Fluid layouts wrap cleaner across mobile dimensions */}
       <div className="flex flex-wrap items-center justify-end gap-2 border-t border-slate-100 bg-slate-50/60 px-4 py-3">
         {needsMapping && (
           <Link
             href={`/dashboard/connections/${conn.id}/map`}
-            className="mr-auto inline-flex items-center gap-1.5 rounded-lg bg-indigo-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-indigo-700"
+            className="w-full sm:w-auto sm:mr-auto inline-flex items-center justify-center gap-1.5 rounded-lg bg-orange-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-orange-700"
           >
             <Layers size={12} />
             Configure mapping
@@ -193,7 +194,7 @@ function ConnectionCard({
           type="button"
           disabled={testing}
           onClick={onTest}
-          className="flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 shadow-sm hover:bg-slate-50 disabled:opacity-50"
+          className="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 shadow-sm hover:bg-slate-50 disabled:opacity-50"
         >
           {testing ? (
             <Loader2 size={12} className="animate-spin" />
@@ -205,7 +206,7 @@ function ConnectionCard({
         <button
           type="button"
           onClick={onDelete}
-          className="flex items-center gap-1.5 rounded-lg border border-rose-200 bg-white px-3 py-1.5 text-xs font-semibold text-rose-600 shadow-sm hover:bg-rose-50"
+          className="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 rounded-lg border border-rose-200 bg-white px-3 py-1.5 text-xs font-semibold text-rose-600 shadow-sm hover:bg-rose-50"
         >
           <Trash2 size={12} />
           Remove
@@ -262,12 +263,12 @@ export function ConnectionsPage() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-[1400px] space-y-6">
-      {/* Header */}
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+    <div className="mx-auto w-full max-w-[1400px] space-y-6 px-1 sm:px-0">
+      {/* Header Layout adjustments */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <div className="flex items-center gap-2">
-            <div className="grid h-9 w-9 place-items-center rounded-lg bg-indigo-600 text-white">
+            <div className="grid h-9 w-9 place-items-center rounded-lg bg-orange-600 text-white">
               <Database size={18} />
             </div>
             <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
@@ -285,10 +286,10 @@ export function ConnectionsPage() {
         <Link
           href="/dashboard/connections/new"
           data-tour="connect-data"
-          className={`inline-flex shrink-0 items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold shadow-sm transition-colors ${
+          className={`inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold shadow-sm transition-colors w-full sm:w-auto shrink-0 ${
             atLimit
               ? "cursor-not-allowed border border-slate-200 bg-slate-100 text-slate-400"
-              : "bg-indigo-600 text-white hover:bg-indigo-700"
+              : "bg-orange-600 text-white hover:bg-orange-700"
           }`}
           aria-disabled={atLimit}
           onClick={(e) => atLimit && e.preventDefault()}
@@ -298,19 +299,20 @@ export function ConnectionsPage() {
         </Link>
       </div>
 
+      {/* Grid Breakpoints: Adjusted layout handling for dense display blocks */}
       {!isLoading && list.length > 0 && (
-        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        <div className="grid gap-3 grid-cols-2 xl:grid-cols-4">
           <SummaryPill label="Total" value={stats.total} sub="Active data sources" />
           <SummaryPill
             label="Healthy"
             value={stats.healthy}
-            sub="Passed last connection test"
+            sub="Passed test"
             accent={stats.healthy === stats.total ? "success" : "default"}
           />
           <SummaryPill
             label="Needs attention"
             value={stats.failed}
-            sub="Failed or unreachable"
+            sub="Failed errors"
             accent={stats.failed > 0 ? "danger" : "success"}
           />
           <SummaryPill
@@ -318,12 +320,12 @@ export function ConnectionsPage() {
             value={
               isUnlimited || connectionSlot?.limit == null
                 ? "∞"
-                : `${connectionSlot.used} / ${connectionSlot.limit}`
+                : `${connectionSlot.used}/${connectionSlot.limit}`
             }
             sub={
               isUnlimited
-                ? "Pro — unlimited connections"
-                : `${planDisplayName(plan)} plan connection slots`
+                ? "Unlimited slots"
+                : `${planDisplayName(plan)} plan`
             }
             accent={atLimit ? "warning" : isUnlimited ? "success" : "default"}
           />
@@ -331,7 +333,7 @@ export function ConnectionsPage() {
       )}
 
       {atLimit && (
-        <div className="flex flex-col gap-3 rounded-2xl border border-amber-200 bg-gradient-to-r from-amber-50 via-orange-50/80 to-amber-50 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-4 rounded-2xl border border-amber-200 bg-gradient-to-r from-amber-50 via-orange-50/80 to-amber-50 px-5 py-4 md:flex-row md:items-center md:justify-between">
           <div className="flex gap-3">
             <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-amber-100">
               <AlertTriangle size={18} className="text-amber-700" />
@@ -346,7 +348,7 @@ export function ConnectionsPage() {
           </div>
           <Link
             href="/dashboard/plan"
-            className="inline-flex shrink-0 items-center justify-center gap-1.5 rounded-xl bg-amber-700 px-4 py-2 text-xs font-bold text-white hover:bg-amber-800"
+            className="inline-flex shrink-0 items-center justify-center gap-1.5 rounded-xl bg-amber-700 px-4 py-2 text-xs font-bold text-white hover:bg-amber-800 w-full md:w-auto"
           >
             Upgrade plan
             <ArrowRight size={14} />
@@ -370,7 +372,7 @@ export function ConnectionsPage() {
           {!isLoading && list.length > 0 && (
             <Link
               href="/dashboard/connections/new"
-              className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-sm hover:bg-slate-50"
+              className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-sm hover:bg-slate-50 w-full sm:w-auto"
             >
               <Plus size={13} />
               Add another
@@ -378,7 +380,7 @@ export function ConnectionsPage() {
           )}
         </div>
 
-        <div className="p-5">
+        <div className="p-4 sm:p-5">
           {isLoading && (
             <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
               {Array.from({ length: 3 }).map((_, i) => (
@@ -391,9 +393,9 @@ export function ConnectionsPage() {
           )}
 
           {!isLoading && list.length === 0 && (
-            <div className="flex flex-col items-center px-4 py-16 text-center">
-              <div className="grid h-16 w-16 place-items-center rounded-2xl bg-indigo-50 ring-1 ring-indigo-100">
-                <Database size={32} className="text-indigo-400" />
+            <div className="flex flex-col items-center px-4 py-12 sm:py-16 text-center">
+              <div className="grid h-16 w-16 place-items-center rounded-2xl bg-orange-50 ring-1 ring-orange-100">
+                <Database size={32} className="text-orange-500" />
               </div>
               <p className="mt-5 text-base font-semibold text-slate-800">No connections yet</p>
               <p className="mt-1 max-w-md text-sm text-slate-500">
@@ -402,7 +404,7 @@ export function ConnectionsPage() {
               </p>
               <Link
                 href="/dashboard/connections/new"
-                className="mt-6 inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-indigo-600/20 hover:bg-indigo-700"
+                className="mt-6 inline-flex items-center justify-center gap-2 rounded-xl bg-orange-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-orange-600/20 hover:bg-orange-700 w-full sm:w-auto"
               >
                 <Plus size={16} />
                 Add your first connection
@@ -413,15 +415,15 @@ export function ConnectionsPage() {
                   <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-400">
                     Popular sources
                   </p>
-                  <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                  <div className="mt-3 grid gap-2 grid-cols-2">
                     {popularConnectors.map((item) => (
                       <Link
                         key={item.connector_type}
                         href={`/dashboard/connections/new/${item.connector_type}`}
-                        className="flex items-center gap-2.5 rounded-xl border border-slate-200 bg-slate-50/50 px-3 py-2.5 text-left transition-colors hover:border-indigo-200 hover:bg-indigo-50/40"
+                        className="flex items-center gap-2.5 rounded-xl border border-slate-200 bg-slate-50/50 px-3 py-2.5 text-left transition-colors hover:border-orange-200 hover:bg-orange-50/40 min-w-0"
                       >
-                        <ConnectorIcon connectorType={item.connector_type} size={22} />
-                        <span className="text-xs font-semibold text-slate-700">
+                        <ConnectorIcon connectorType={item.connector_type} size={22} className="shrink-0" />
+                        <span className="text-xs font-semibold text-slate-700 truncate">
                           {item.display_name}
                         </span>
                       </Link>
@@ -457,19 +459,20 @@ export function ConnectionsPage() {
         </div>
       </section>
 
-      <div className="flex flex-col gap-3 rounded-2xl border border-slate-200 bg-slate-50/80 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
+      {/* Secondary Bottom Card Section */}
+      <div className="flex flex-col gap-4 rounded-2xl border border-slate-200 bg-slate-50/80 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex gap-3 text-sm text-slate-600">
           <div className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-white shadow-sm ring-1 ring-slate-200">
             <Lock size={16} className="text-emerald-600" />
           </div>
-          <p className="max-w-2xl leading-relaxed">
+          <p className="max-w-2xl leading-relaxed text-xs sm:text-sm">
             Credentials are encrypted at rest. Use SELECT-only database users. Self-hosted
             deployments keep query traffic inside your network.
           </p>
         </div>
         <DashboardDocsLink
           href="/docs/data-sources"
-          className="inline-flex shrink-0 items-center gap-1 text-xs font-semibold text-indigo-600 hover:text-indigo-700"
+          className="inline-flex shrink-0 items-center gap-1 text-xs font-semibold text-orange-600 hover:text-orange-700"
         >
           Data sources docs
           <ArrowRight size={12} />

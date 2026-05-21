@@ -113,7 +113,7 @@ export function PlanPage() {
       <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div>
           <div className="flex items-center gap-2">
-            <div className="grid h-9 w-9 place-items-center rounded-lg bg-indigo-600 text-white">
+            <div className="grid h-9 w-9 place-items-center rounded-lg bg-orange-600 text-white">
               <CreditCard size={18} />
             </div>
             <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
@@ -129,16 +129,16 @@ export function PlanPage() {
         </div>
         <Link
           href="/dashboard/usage"
-          className="inline-flex shrink-0 items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm hover:bg-slate-50"
+          className="inline-flex shrink-0 items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50"
         >
-          <Zap size={16} className="text-indigo-600" />
+          <Zap size={16} className="text-orange-600" />
           View usage meters
           <ArrowRight size={14} className="text-slate-400" />
         </Link>
       </div>
 
       {verifying && (
-        <div className="flex items-center gap-3 rounded-2xl border border-indigo-200 bg-indigo-50 px-5 py-4 text-sm text-indigo-800">
+        <div className="flex items-center gap-3 rounded-2xl border border-orange-200 bg-orange-50 px-5 py-4 text-sm text-orange-800">
           <Loader2 size={18} className="animate-spin shrink-0" />
           Confirming your payment…
         </div>
@@ -187,7 +187,6 @@ export function PlanPage() {
             features={GROWTH_PLAN_FEATURES}
             isCurrent={isGrowth}
             variant="growth"
-            highlighted={!isPaidPlan(effectivePlan)}
             badge={isGrowth ? "Current plan" : undefined}
             footer={
               isGrowth ? (
@@ -216,7 +215,6 @@ export function PlanPage() {
             features={PRO_PLAN_FEATURES}
             isCurrent={isPro}
             variant="pro"
-            highlighted={!isPro}
             badge={isPro ? "Current plan" : "Recommended"}
             footer={
               isPro ? (
@@ -242,7 +240,7 @@ export function PlanPage() {
 
       {/* Self-hosted license (on-prem only) */}
       {selfHosted && !cloud && (
-        <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
           <div className="border-b border-slate-100 bg-slate-50/80 px-6 py-4">
             <h2 className="text-base font-semibold text-slate-900">Self-hosted license</h2>
             <p className="mt-0.5 text-sm text-slate-500">
@@ -253,7 +251,7 @@ export function PlanPage() {
             <ul className="grid gap-2 sm:grid-cols-2">
               {SELF_HOSTED_LICENSE_FEATURES.map((f) => (
                 <li key={f} className="flex items-start gap-2 text-sm text-slate-600">
-                  <Check size={14} className="mt-0.5 shrink-0 text-emerald-600" />
+                  <Check size={14} className="mt-0.5 shrink-0 text-orange-600" />
                   {f}
                 </li>
               ))}
@@ -265,7 +263,7 @@ export function PlanPage() {
                 value={licenseEmail ?? user?.email ?? ""}
                 onChange={(e) => setLicenseEmail(e.target.value)}
                 placeholder="License delivery email"
-                className="w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+                className="w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-100"
               />
               <button
                 type="submit"
@@ -278,7 +276,7 @@ export function PlanPage() {
             </form>
           </div>
           {isPro && (
-            <div className="border-t border-emerald-100 bg-emerald-50/60 px-6 py-3 text-sm text-emerald-800">
+            <div className="border-t border-orange-100 bg-orange-50/60 px-6 py-3 text-sm text-orange-800">
               <BadgeCheck size={16} className="mr-1.5 inline -mt-0.5" />
               License active — Pro-equivalent limits apply.
             </div>
@@ -287,7 +285,7 @@ export function PlanPage() {
       )}
 
       {/* Limits comparison */}
-      <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+      <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
         <div className="border-b border-slate-100 px-6 py-5">
           <h2 className="text-base font-semibold text-slate-900">Limits at a glance</h2>
           <p className="mt-0.5 text-sm text-slate-500">
@@ -301,7 +299,7 @@ export function PlanPage() {
                 <th className="px-6 py-3.5 font-semibold">Resource</th>
                 <th className="px-6 py-3.5 font-semibold">Free</th>
                 <th className="px-6 py-3.5 font-semibold">Growth</th>
-                <th className="bg-indigo-50/80 px-6 py-3.5 font-semibold text-indigo-700">
+                <th className="bg-orange-50/50 px-6 py-3.5 font-semibold text-orange-700">
                   Pro
                 </th>
               </tr>
@@ -315,7 +313,7 @@ export function PlanPage() {
                   <td className="px-6 py-3.5 font-medium text-slate-800">{row.label}</td>
                   <td className="px-6 py-3.5 text-slate-500">{row.free}</td>
                   <td className="px-6 py-3.5 text-slate-600">{row.growth}</td>
-                  <td className="bg-indigo-50/30 px-6 py-3.5 font-semibold text-indigo-700">
+                  <td className="bg-orange-50/20 px-6 py-3.5 font-semibold text-orange-700">
                     {row.pro}
                   </td>
                 </tr>
@@ -330,7 +328,7 @@ export function PlanPage() {
           Cloud billing applies to hosted Entivia. For on-prem licenses, see{" "}
           <Link
             href="/pricing/self-hosted"
-            className="font-semibold text-indigo-600 hover:underline"
+            className="font-semibold text-orange-600 hover:underline"
           >
             self-hosted pricing
           </Link>
@@ -340,7 +338,7 @@ export function PlanPage() {
 
       <p className="text-center text-xs text-slate-400">
         Marketing details and FAQs on{" "}
-        <Link href="/pricing" className="font-medium text-indigo-600 hover:underline">
+        <Link href="/pricing" className="font-medium text-orange-600 hover:underline">
           Entivia pricing
         </Link>
         .
@@ -382,7 +380,6 @@ function TierCard({
   features,
   isCurrent,
   variant,
-  highlighted,
   badge,
   footer,
 }: {
@@ -393,94 +390,57 @@ function TierCard({
   features: string[];
   isCurrent: boolean;
   variant: "free" | "growth" | "pro";
-  highlighted?: boolean;
   badge?: string;
   footer?: React.ReactNode;
 }) {
   const isPro = variant === "pro";
   const isGrowth = variant === "growth";
-  const isPaid = isPro || isGrowth;
+
+  // Flat unique border styling colors mapping
+  const borderClass = isCurrent
+    ? isPro
+      ? "border-orange-500 ring-1 ring-orange-500/30 bg-white"
+      : isGrowth
+        ? "border-amber-500 ring-1 ring-amber-500/30 bg-white"
+        : "border-slate-400 ring-1 ring-slate-400/20 bg-white"
+    : "border-slate-200 bg-white";
 
   return (
-    <article
-      className={`relative flex flex-col overflow-hidden rounded-2xl border shadow-sm transition-shadow ${
-        isPaid && isCurrent
-          ? isPro
-            ? "border-indigo-300 bg-gradient-to-br from-indigo-600 via-indigo-600 to-violet-700 text-white shadow-indigo-600/20"
-            : "border-teal-300 bg-gradient-to-br from-teal-600 to-emerald-700 text-white shadow-teal-600/20"
-          : isPaid && highlighted
-            ? isPro
-              ? "border-indigo-200 bg-white ring-2 ring-indigo-500/20"
-              : "border-teal-200 bg-white ring-2 ring-teal-500/20"
-            : isCurrent
-              ? "border-slate-300 bg-white ring-2 ring-slate-300/50"
-              : "border-slate-200 bg-white"
-      }`}
-    >
-      {isPaid && isCurrent && (
-        <div className="pointer-events-none absolute -right-12 -top-12 h-40 w-40 rounded-full bg-white/10" />
-      )}
-
-      <div className="relative flex flex-1 flex-col p-6">
+    <article className={`relative flex flex-col overflow-hidden rounded-2xl border p-6 transition-all ${borderClass}`}>
+      <div className="flex flex-1 flex-col">
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-center gap-3">
             <div
               className={`grid h-11 w-11 place-items-center rounded-xl ${
-                isPaid && isCurrent
-                  ? "bg-white/20"
-                  : isPro
-                    ? "bg-indigo-100"
-                    : isGrowth
-                      ? "bg-teal-100"
-                      : "bg-slate-100"
+                isPro
+                  ? "bg-orange-50"
+                  : isGrowth
+                    ? "bg-amber-50"
+                    : "bg-slate-50"
               }`}
             >
-              {isPaid ? (
+              {variant !== "free" ? (
                 <Crown
                   size={20}
-                  className={
-                    isCurrent
-                      ? "text-amber-300"
-                      : isPro
-                        ? "text-indigo-600"
-                        : "text-teal-600"
-                  }
+                  className={isPro ? "text-orange-600" : "text-amber-600"}
                 />
               ) : (
-                <Shield size={20} className="text-slate-600" />
+                <Shield size={20} className="text-slate-500" />
               )}
             </div>
             <div>
-              <h2
-                className={`text-lg font-bold ${
-                  isPaid && isCurrent ? "text-white" : "text-slate-900"
-                }`}
-              >
-                {name}
-              </h2>
-              <p
-                className={`text-xs ${
-                  isPaid && isCurrent
-                    ? isPro
-                      ? "text-indigo-200"
-                      : "text-teal-100"
-                    : "text-slate-500"
-                }`}
-              >
-                {tagline}
-              </p>
+              <h2 className="text-lg font-bold text-slate-900">{name}</h2>
+              <p className="text-xs text-slate-500">{tagline}</p>
             </div>
           </div>
           {badge && (
             <span
               className={`shrink-0 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide ${
-                isPaid && isCurrent
-                  ? "bg-white/20 text-white"
-                  : isPro
-                    ? "bg-indigo-600 text-white"
-                    : isGrowth
-                      ? "bg-teal-600 text-white"
-                      : "bg-slate-200 text-slate-700"
+                isPro
+                  ? "bg-orange-100 text-orange-800"
+                  : isGrowth
+                    ? "bg-amber-100 text-amber-800"
+                    : "bg-slate-100 text-slate-700"
               }`}
             >
               {badge}
@@ -489,48 +449,23 @@ function TierCard({
         </div>
 
         <div className="mt-5 flex items-baseline gap-1.5">
-          <span
-            className={`text-3xl font-bold tracking-tight ${
-              isPro && isCurrent ? "text-white" : "text-slate-900"
-            }`}
-          >
+          <span className="text-3xl font-bold tracking-tight text-slate-900">
             {price}
           </span>
-          <span
-            className={`text-sm ${
-              isPaid && isCurrent
-                ? isPro
-                  ? "text-indigo-200"
-                  : "text-teal-100"
-                : "text-slate-500"
-            }`}
-          >
-            {priceSub}
-          </span>
+          <span className="text-sm text-slate-500">{priceSub}</span>
         </div>
 
         <ul className="mt-5 flex-1 space-y-2.5">
           {features.map((f) => (
-            <li
-              key={f}
-              className={`flex items-start gap-2 text-sm ${
-                isPaid && isCurrent
-                  ? isPro
-                    ? "text-indigo-50"
-                    : "text-teal-50"
-                  : "text-slate-600"
-              }`}
-            >
+            <li key={f} className="flex items-start gap-2 text-sm text-slate-600">
               <Check
                 size={14}
                 className={`mt-0.5 shrink-0 ${
-                  isPaid && isCurrent
-                    ? "text-emerald-300"
-                    : isPro
-                      ? "text-indigo-600"
-                      : isGrowth
-                        ? "text-teal-600"
-                        : "text-slate-400"
+                  isPro
+                    ? "text-orange-600"
+                    : isGrowth
+                      ? "text-amber-600"
+                      : "text-slate-400"
                 }`}
               />
               {f}
@@ -556,15 +491,15 @@ function PaidUpgradeFooter({
   primary?: boolean;
 }) {
   const btnClass = primary
-    ? "bg-indigo-600 shadow-indigo-600/25 hover:bg-indigo-700"
-    : "bg-teal-600 shadow-teal-600/25 hover:bg-teal-700";
+    ? "bg-orange-600 hover:bg-orange-700"
+    : "bg-slate-900 hover:bg-slate-800";
   return (
     <>
       <button
         type="button"
         onClick={onUpgrade}
         disabled={loading}
-        className={`flex w-full items-center justify-center gap-2 rounded-xl py-3.5 text-sm font-bold text-white shadow-lg disabled:opacity-50 ${btnClass}`}
+        className={`flex w-full items-center justify-center gap-2 rounded-xl py-3.5 text-sm font-bold text-white disabled:opacity-50 ${btnClass}`}
       >
         {loading ? (
           <Loader2 size={16} className="animate-spin" />
@@ -594,38 +529,39 @@ function PaidActiveFooter({
   cancelling: boolean;
   onCancel: () => void;
 }) {
-  const unlimited = planLabel === "Pro";
+  const isPro = planLabel === "Pro";
   const nonRenewing = subscription?.status === "non-renewing";
   const endsAt = subscription?.next_payment_date
     ? new Date(subscription.next_payment_date).toLocaleDateString(undefined, {
         dateStyle: "medium",
       })
     : null;
+    
   return (
-    <div className="rounded-xl border border-white/20 bg-white/10 px-4 py-3">
-      <p className="text-sm font-medium text-white">You&apos;re on {planLabel}</p>
-      <p className="mt-0.5 text-xs text-indigo-100">
-        {unlimited
+    <div className={`rounded-xl border px-4 py-3 ${isPro ? "border-orange-100 bg-orange-50/50" : "border-amber-100 bg-amber-50/50"}`}>
+      <p className="text-sm font-semibold text-slate-900">You&apos;re on {planLabel}</p>
+      <p className="mt-0.5 text-xs text-slate-600">
+        {isPro
           ? "Unlimited usage across all workspace meters."
           : "Growth limits apply — upgrade to Pro for unlimited usage and audit logs."}
       </p>
       {subscription && (
-        <dl className="mt-3 space-y-1 text-xs text-indigo-100">
+        <dl className="mt-3 space-y-1 text-xs text-slate-600">
           <div className="flex justify-between gap-4">
             <dt>Status</dt>
-            <dd className="font-semibold capitalize text-white">{subscription.status}</dd>
+            <dd className="font-semibold capitalize text-slate-900">{subscription.status}</dd>
           </div>
           {subscription.next_payment_date && (
             <div className="flex justify-between gap-4">
               <dt>{nonRenewing ? "Ends on" : "Next billing"}</dt>
-              <dd className="font-semibold text-white">{endsAt}</dd>
+              <dd className="font-semibold text-slate-900">{endsAt}</dd>
             </div>
           )}
         </dl>
       )}
 
       {nonRenewing && endsAt && (
-        <p className="mt-3 rounded-lg bg-white/15 px-3 py-2 text-[11px] leading-relaxed text-white/90">
+        <p className="mt-3 rounded-lg bg-white border border-slate-200 px-3 py-2 text-[11px] leading-relaxed text-slate-600">
           Auto-renewal is off. {planLabel} access continues until {endsAt}, then
           this workspace will be downgraded to Free.
         </p>
@@ -634,7 +570,7 @@ function PaidActiveFooter({
       <div className="mt-4 flex items-center justify-between gap-3">
         <Link
           href="/dashboard/usage"
-          className="inline-flex items-center gap-1 text-xs font-semibold text-white hover:underline"
+          className={`inline-flex items-center gap-1 text-xs font-semibold hover:underline ${isPro ? "text-orange-600" : "text-amber-700"}`}
         >
           View usage
           <ArrowRight size={12} />
@@ -644,7 +580,7 @@ function PaidActiveFooter({
             type="button"
             onClick={onCancel}
             disabled={cancelling}
-            className="inline-flex items-center gap-1.5 rounded-lg border border-white/30 px-2.5 py-1.5 text-[11px] font-semibold text-white/90 hover:bg-white/15 disabled:opacity-50"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-[11px] font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-50"
           >
             {cancelling && <Loader2 size={11} className="animate-spin" />}
             Cancel subscription
