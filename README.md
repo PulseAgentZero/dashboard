@@ -1,5 +1,11 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Environment
+
+Copy [`.env.example`](.env.example) to `.env.local` and set `NEXT_PUBLIC_API_URL` to your Entivia API (default `http://localhost:8000`).
+
+On the API, set `FRONTEND_URL` to this app’s origin (e.g. `http://localhost:3000` for `npm run dev`) so CORS and auth email links work. Verification and password-reset emails also need `REDIS_URL` and `RESEND_API_KEY` on the API.
+
 ## Getting Started
 
 First, run the development server:

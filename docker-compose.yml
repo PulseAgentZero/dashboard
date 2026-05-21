@@ -1,0 +1,54 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# Entivia Frontend — standalone compose
+#
+# Use this to run only the frontend while pointing at an existing API instance.
+#
+# Setup:
+#   1. cp .env.example .env  (or create .env manually)
+#   2. Set NEXT_PUBLIC_API_URL in .env to your running API URL
+#   3. docker compose up --build
+#
+# The API (backend) is NOT started here — run it separately or use the full
+# cloud compose at api/docker/compose/cloud/docker-compose.yml.
+# ─────────────────────────────────────────────────────────────────────────────
+
+services:
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        # URL of the Entivia API — baked into the JS bundle at build time.
+        # For local dev pointing at the cloud compose API: http://localhost:8000
+        # For production: https://api.yourpulse.io
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8000}
+        NEXT_PUBLIC_DEPLOYMENT_MODE: cloud
+        # Optional: absolute URLs used by the docs subdomain so cross-origin
+        # links (Sign in, dashboard, etc.) escape the /docs rewrite. Leave
+        # unset for local dev to keep links relative.
+        NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-}
+        NEXT_PUBLIC_MARKETING_URL: ${NEXT_PUBLIC_MARKETING_URL:-}
+    image: entivia/entivia-frontend:${IMAGE_TAG:-latest}
+    ports:
+      - "${FRONTEND_PORT:-3096}:3000"
+    environment:
+      NODE_ENV: production
+    restart: unless-stopped
+    networks:
+      default:
+      reverse-proxy_nginx-network:
+        aliases:
+          - pulse-frontend
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:3000/ || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
+
+networks:
+  default:
+  reverse-proxy_nginx-network:
+    external: true

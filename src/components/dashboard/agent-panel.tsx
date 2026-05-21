@@ -1,5 +1,5 @@
 import { SendHorizonal } from "lucide-react";
-import { agentMessages } from "@/lib/demo-data";
+import { agentMessages } from "@/lib/demo.data";
 
 export function AgentPanel() {
   return (
@@ -8,7 +8,7 @@ export function AgentPanel() {
         <div className="flex items-center justify-between gap-4">
           <div>
             <p className="text-xs font-semibold uppercase tracking-wide text-emerald-300">
-              Pulse agent
+              Entivia agent
             </p>
             <h2 className="mt-1 text-lg font-semibold">
               Ask live operations

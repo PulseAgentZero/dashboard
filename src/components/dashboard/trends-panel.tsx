@@ -1,42 +1,116 @@
-import { SectionHeading } from "@/components/shared/section-heading";
-import { trend } from "@/lib/demo-data";
+"use client";
+
+import { useAnalyticsRiskTrend } from "@/hooks/analytics/use-analytics";
+import { useDashboardOverview } from "@/hooks/dashboard/use-dashboard-overview";
+
+function toPercentScores(
+  points: Array<{ avg_risk_score?: number }>,
+): number[] {
+  return points.map((p) => Math.round((p.avg_risk_score ?? 0) * 100));
+}
 
 export function TrendsPanel() {
-  return (
-    <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-      <SectionHeading eyebrow="Analytics" title="Risk movement" action="Export" />
+  const {
+    data: trend,
+    isLoading: trendLoading,
+    isError: trendError,
+  } = useAnalyticsRiskTrend("30d", "week");
+  const { data: overview, isLoading: overviewLoading } = useDashboardOverview();
 
-      <div className="flex h-60 items-end gap-2 rounded-xl border border-slate-100 bg-slate-50 px-4 pb-4 pt-6">
-        {trend.map((value, index) => (
-          <div
-            key={`${value}-${index}`}
-            className="flex h-full flex-1 flex-col justify-end gap-2"
-          >
-            <div
-              className="rounded-t-lg bg-blue-600"
-              style={{ height: `${value}%` }}
-            />
-            <span className="text-center text-[10px] font-semibold text-slate-400">
-              {index + 1}
-            </span>
+  const isLoading = trendLoading || overviewLoading;
+
+  const raw: number[] = (() => {
+    if (trend?.series?.length) {
+      return toPercentScores(trend.series);
+    }
+    if (overview?.risk_trend?.length) {
+      return toPercentScores(overview.risk_trend);
+    }
+    return [];
+  })();
+
+  const max = Math.max(...raw, 1);
+  const peak = raw.length > 0 ? Math.max(...raw) : 0;
+  const last = raw[raw.length - 1] ?? 0;
+  const first = raw[0] ?? 0;
+  const change = raw.length > 1 ? last - first : 0;
+
+  return (
+    <div className="w-full rounded-xl border border-slate-200 bg-white p-4 sm:p-5">
+      {/* Header: Flexes to column layout on mobile to prevent clipping */}
+      <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+            Analytics
+          </p>
+          <h2 className="mt-1 text-base font-semibold text-slate-900">
+            Risk score trend
+          </h2>
+        </div>
+        {trendError && (
+          <span className="self-start rounded-md bg-amber-50 px-2 py-1 text-[11px] font-medium text-amber-700">
+            Live data unavailable
+          </span>
+        )}
+      </div>
+
+      {isLoading ? (
+        <div className="h-48 animate-pulse rounded-lg bg-slate-100 md:h-64" />
+      ) : raw.length === 0 ? (
+        <div className="flex h-48 flex-col items-center justify-center rounded-lg bg-slate-50 px-4 text-center md:h-64">
+          <p className="text-sm font-medium text-slate-600">No trend data yet</p>
+          <p className="mt-1 text-xs text-slate-400">
+            Run a pipeline to populate weekly risk scores.
+          </p>
+        </div>
+      ) : (
+        /* Chart container: added relative group for future touch-tooltips if needed */
+        <div className="flex h-48 items-end gap-1 rounded-lg bg-slate-50 px-3 pb-3 pt-4 md:h-64">
+          {raw.map((v, i) => (
+            <div key={i} className="flex h-full flex-1 flex-col justify-end">
+              <div
+                className="rounded-sm bg-blue-500 transition-all duration-300 hover:bg-blue-600"
+                style={{ height: `${(v / max) * 100}%` }}
+                title={`${v}%`}
+              />
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Stats Grid: Single column on mobile, 3 columns on tablet/desktop */}
+      <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
+        {[
+          { label: "Peak", value: raw.length ? `${peak}%` : "—", color: "text-slate-900" },
+          {
+            label: "30d change",
+            value:
+              raw.length < 2
+                ? "—"
+                : change === 0
+                  ? "0%"
+                  : `${change > 0 ? "+" : ""}${change}%`,
+            color:
+              raw.length < 2
+                ? "text-slate-500"
+                : change > 0
+                  ? "text-rose-600"
+                  : change < 0
+                    ? "text-emerald-600"
+                    : "text-slate-500",
+          },
+          {
+            label: "Data points",
+            value: raw.length ? raw.length.toString() : "—",
+            color: "text-slate-900",
+          },
+        ].map(({ label, value, color }) => (
+          <div key={label} className="flex justify-between items-center rounded-lg bg-slate-50 p-3 sm:block">
+            <p className="text-[11px] text-slate-400">{label}</p>
+            <p className={`mt-0.5 text-sm font-bold sm:mt-1 ${color}`}>{value}</p>
           </div>
         ))}
       </div>
-
-      <div className="mt-4 grid grid-cols-3 gap-3 text-sm">
-        <div className="rounded-xl bg-slate-50 p-3">
-          <p className="text-slate-500">Peak risk</p>
-          <p className="mt-1 font-semibold text-slate-950">81%</p>
-        </div>
-        <div className="rounded-xl bg-emerald-50 p-3">
-          <p className="text-slate-500">30-day change</p>
-          <p className="mt-1 font-semibold text-emerald-700">-6.8%</p>
-        </div>
-        <div className="rounded-xl bg-rose-50 p-3">
-          <p className="text-slate-500">Anomalies</p>
-          <p className="mt-1 font-semibold text-rose-700">7 open</p>
-        </div>
-      </div>
-    </section>
+    </div>
   );
 }

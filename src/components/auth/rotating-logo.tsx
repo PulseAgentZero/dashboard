@@ -12,7 +12,7 @@ interface PulseFanRotateProps {
 const PulseFanRotate = ({ 
   size = 160, 
   iconSize = 72, 
-  text = "PULSE", 
+  text = "ENTIVIA", 
   radius = 46,
   color = "#ffffff" // Default to white
 }: PulseFanRotateProps) => {

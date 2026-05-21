@@ -1,8 +1,26 @@
 @import "tailwindcss";
 
+/* Docs dark mode only — must not use `html.dark` or dashboard text inherits light colors on white UI */
+@custom-variant dark (&:is(.docs-dark, .docs-dark *));
+
 :root {
   --background: #f6f8fb;
   --foreground: #13201f;
+}
+
+/* Marketing dark surface — scoped to .marketing-dark so the dashboard stays light */
+.marketing-dark {
+  --mk-bg: #09090b;
+  --mk-surface: #0f0f12;
+  --mk-surface-2: #16161a;
+  --mk-border: #232328;
+  --mk-text: #fafafa;
+  --mk-text-muted: #a1a1aa;
+  --mk-text-faint: #52525b;
+  --mk-accent: #ea580c;
+  --mk-accent-hover: #c2410c;
+  --mk-accent-soft: rgba(234, 88, 12, 0.12);
+  --mk-accent-ring: rgba(234, 88, 12, 0.35);
 }
 
 @theme inline {
@@ -10,6 +28,19 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-aeonik), Arial, Helvetica, sans-serif;
   --font-mono: "Courier New", Courier, monospace;
+  --breakpoint-xs: 30rem;
+  --container-8xl: 88rem;
+}
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  /* Hide scrollbar for IE, Edge and Firefox */
+  .no-scrollbar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
 }
 
 body {
@@ -18,9 +49,193 @@ body {
   font-family: var(--font-aeonik), Arial, Helvetica, sans-serif;
 }
 
+/* Docs theme — scoped to /docs via DocsThemeProvider (not the main dashboard) */
+html.docs-dark {
+  --background: #09090b;
+  --foreground: #fafafa;
+}
+
+html.docs-dark body {
+  background: var(--background);
+  color: var(--foreground);
+}
+
 * {
   box-sizing: border-box;
 }
+
+/* ─── Driver.js product tour — brand override ───────────────────────────── */
+.driver-popover {
+  all: unset;
+  box-sizing: border-box;
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: 1000000000;
+  margin: 0;
+  color: #1e293b;
+  padding: 0;
+  border-radius: 16px;
+  min-width: 300px;
+  max-width: 340px;
+  background: #ffffff;
+  overflow: hidden;
+  box-shadow:
+    0 8px 40px -8px rgba(15, 23, 42, 0.20),
+    0 0 0 1px rgba(15, 23, 42, 0.07);
+}
+
+.driver-popover * {
+  font-family: var(--font-aeonik), ui-sans-serif, -apple-system, BlinkMacSystemFont, sans-serif;
+  box-sizing: border-box;
+}
+
+/* Orange accent bar at top */
+.driver-popover::before {
+  content: "";
+  display: block;
+  height: 3px;
+  background: linear-gradient(90deg, #ea580c, #f97316, #fb923c);
+  border-radius: 16px 16px 0 0;
+}
+
+/* Inner padding wrapper — applied via title/description/footer padding */
+.driver-popover-title {
+  display: block;
+  font-size: 14px;
+  font-weight: 700;
+  color: #0f172a;
+  letter-spacing: -0.01em;
+  line-height: 1.4;
+  padding: 18px 44px 0 20px;
+  margin: 0;
+  zoom: 1;
+}
+
+.driver-popover-title[style*="block"] + .driver-popover-description {
+  margin-top: 6px;
+}
+
+.driver-popover-description {
+  font-size: 13px;
+  font-weight: 400;
+  color: #64748b;
+  line-height: 1.65;
+  margin: 0;
+  padding: 0 20px;
+  zoom: 1;
+}
+
+.driver-popover-close-btn {
+  all: unset;
+  box-sizing: border-box;
+  position: absolute;
+  top: 16px;
+  right: 14px;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 7px;
+  cursor: pointer;
+  font-size: 15px;
+  color: #94a3b8;
+  line-height: 1;
+  text-align: center;
+  transition: background 0.15s, color 0.15s;
+  z-index: 1;
+}
+.driver-popover-close-btn:hover,
+.driver-popover-close-btn:focus {
+  color: #334155;
+  background: #f1f5f9;
+}
+
+.driver-popover-footer {
+  margin-top: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 12px 20px 16px;
+  border-top: 1px solid #f1f5f9;
+  zoom: 1;
+}
+
+.driver-popover-progress-text {
+  font-size: 11px;
+  font-weight: 600;
+  color: #cbd5e1;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  zoom: 1;
+}
+
+.driver-popover-navigation-btns {
+  display: flex;
+  gap: 6px;
+  flex-grow: 1;
+  justify-content: flex-end;
+}
+
+.driver-popover-footer button {
+  all: unset;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 7px 15px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 9px;
+  cursor: pointer;
+  line-height: 1.4;
+  white-space: nowrap;
+  transition: background 0.15s, color 0.15s;
+  zoom: 1;
+}
+
+.driver-popover-prev-btn {
+  background: #f8fafc !important;
+  color: #64748b !important;
+  border: 1px solid #e2e8f0 !important;
+}
+.driver-popover-prev-btn:hover,
+.driver-popover-prev-btn:focus {
+  background: #f1f5f9 !important;
+  color: #334155 !important;
+}
+
+.driver-popover-next-btn {
+  background: #ea580c !important;
+  color: #ffffff !important;
+  border: none !important;
+  box-shadow: 0 2px 8px rgba(234, 88, 12, 0.35) !important;
+}
+.driver-popover-next-btn:hover,
+.driver-popover-next-btn:focus {
+  background: #c2410c !important;
+  box-shadow: 0 2px 8px rgba(194, 65, 12, 0.40) !important;
+}
+
+.driver-popover-footer .driver-popover-btn-disabled {
+  opacity: 0.35 !important;
+  pointer-events: none !important;
+}
+
+.driver-popover-arrow {
+  content: "";
+  position: absolute;
+  border: 5px solid #fff;
+}
+.driver-popover-arrow-side-left  { border-right-color: transparent; border-bottom-color: transparent; border-top-color: transparent; }
+.driver-popover-arrow-side-right { border-left-color: transparent;  border-bottom-color: transparent; border-top-color: transparent; }
+.driver-popover-arrow-side-top   { border-right-color: transparent; border-bottom-color: transparent; border-left-color: transparent; }
+.driver-popover-arrow-side-bottom{ border-left-color: transparent;  border-top-color: transparent;    border-right-color: transparent; }
+.driver-popover-arrow-side-over,
+.driver-popover-arrow-side-center,
+.driver-popover-arrow-none       { display: none; }
 
 button,
 a,

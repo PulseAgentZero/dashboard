@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import { QueryProvider } from "@/providers/query-provider";
+import { AuthProvider } from "@/providers/auth-provider";
+import { Toaster } from "sonner";
 import "./globals.css";
 
 const aeonik = localFont({
@@ -20,7 +23,7 @@ const aeonik = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Pulse | Real-Time Intelligence",
+  title: "Entivia | Real-Time Intelligence",
   description:
     "Open-source user modeling and recommendation intelligence for operational teams.",
 };
@@ -32,7 +35,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`h-full antialiased ${aeonik.variable}`}>
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <QueryProvider>
+          <AuthProvider>{children}</AuthProvider>
+        </QueryProvider>
+        <Toaster position="top-right" richColors />
+      </body>
     </html>
   );
 }

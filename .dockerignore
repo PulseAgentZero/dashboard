@@ -1,0 +1,29 @@
+# Dependencies
+node_modules
+# Docker uses npm (package-lock.json). Omit pnpm lock so Next.js does not invoke pnpm during build.
+pnpm-lock.yaml
+
+# Build output
+.next
+out
+
+# Development files
+.git
+.gitignore
+*.md
+README*
+
+# Local env files — never bake secrets into the image
+.env
+.env.*
+!.env.example
+
+# Editor / OS
+.DS_Store
+.vscode
+*.swp
+*.swo
+
+# Test / lint
+coverage
+.eslintcache

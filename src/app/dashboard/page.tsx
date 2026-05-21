@@ -1,34 +1,36 @@
-import { AgentPanel } from "@/components/dashboard/agent-panel";
-import { ConnectionStatusCard } from "@/components/dashboard/connection-status-card";
 import { DashboardHeader } from "@/components/dashboard/dashboard-header";
-import { EntityExplorerPreview } from "@/components/dashboard/entity-explorer-preview";
-import { IntegrationChecklist } from "@/components/dashboard/integration-checklist";
 import { MetricsGrid } from "@/components/dashboard/metric-card";
-import { RecommendationsPanel } from "@/components/dashboard/recommendations-panel";
-import { SegmentOverview } from "@/components/dashboard/segment-overview";
+import { RiskBreakdown } from "@/components/dashboard/risk-breakdown";
 import { TrendsPanel } from "@/components/dashboard/trends-panel";
+import { EntityExplorerPreview } from "@/components/dashboard/entity-explorer-preview";
+import { RecommendationsPanel } from "@/components/dashboard/recommendations-panel";
+import { PipelineStatusCard } from "@/components/dashboard/pipeline-status-card";
+import { DashboardPageShell } from "@/components/layout/dashboard-page-shell";
 
 export default function DashboardPage() {
   return (
-    <div className="mx-auto grid max-w-[1600px] gap-6 xl:grid-cols-[minmax(0,1fr)_420px]">
-      <section className="min-w-0 space-y-6">
-        <DashboardHeader />
-        <MetricsGrid />
+    <DashboardPageShell className="space-y-4 md:space-y-5">
+      
+      <DashboardHeader />
+      
+      <MetricsGrid />
 
-        <div className="grid gap-6 2xl:grid-cols-[minmax(0,1.2fr)_minmax(340px,0.8fr)]">
-          <TrendsPanel />
-          <SegmentOverview />
-        </div>
+      {/* 
+      */}
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.6fr] gap-4 md:gap-5">
+        <RiskBreakdown />
+        <TrendsPanel />
+      </div>
 
+      {/* 
+      */}
+      <div className="grid grid-cols-1 lg:grid-cols-[1.8fr_1fr] gap-4 md:gap-5">
         <EntityExplorerPreview />
-      </section>
-
-      <aside className="min-w-0 space-y-6">
-        <AgentPanel />
-        <ConnectionStatusCard />
         <RecommendationsPanel />
-        <IntegrationChecklist />
-      </aside>
-    </div>
+      </div>
+
+      <PipelineStatusCard />
+      
+    </DashboardPageShell>
   );
 }

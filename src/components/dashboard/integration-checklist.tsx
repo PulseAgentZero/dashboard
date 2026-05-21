@@ -1,4 +1,4 @@
-import { integrationTasks } from "@/lib/demo-data";
+import { integrationTasks } from "@/lib/demo.data";
 import { SectionHeading } from "@/components/shared/section-heading";
 
 export function IntegrationChecklist() {

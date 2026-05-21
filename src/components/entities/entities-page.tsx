@@ -1,103 +1,260 @@
-import Image from "next/image";
+"use client";
+
+import { useState, useTransition } from "react";
 import Link from "next/link";
-import { Filter, Search, SlidersHorizontal } from "lucide-react";
-import { PageHero } from "@/components/shared/page-hero";
+import { Search } from "lucide-react";
+import { PageHeader } from "@/components/shared/page-header";
+import { Pagination } from "@/components/shared/pagination";
+import { DashboardPageShell } from "@/components/layout/dashboard-page-shell";
+import { DEFAULT_PAGE_SIZE } from "@/lib/pagination";
 import { RiskPill } from "@/components/shared/risk-pill";
-import { SectionHeading } from "@/components/shared/section-heading";
-import { SummaryCard } from "@/components/shared/summary-card";
-import { entities, entitySummary, segments } from "@/lib/demo-data";
+import { useEntities } from "@/hooks/entities/use-entities";
+import { useDashboardOverview } from "@/hooks/dashboard/use-dashboard-overview";
+
+const RISK_TIERS = ["All", "High", "Medium", "Low", "Healthy"] as const;
+type RiskTier = (typeof RISK_TIERS)[number];
+
+function StatCard({ label, value, sub, color }: { label: string; value: string | number; sub?: string; color: string }) {
+  return (
+    <div className="rounded-xl border border-slate-200 bg-white p-4">
+      <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">{label}</p>
+      <p className={`mt-2 text-2xl font-bold ${color}`}>{value}</p>
+      {sub && <p className="mt-0.5 text-xs text-slate-400">{sub}</p>}
+    </div>
+  );
+}
+
+function SkeletonRow() {
+  return (
+    <tr className="animate-pulse">
+      {[180, 100, 80, 120, 80].map((w, i) => (
+        <td key={i} className="border-b border-slate-100 py-3.5 pr-5">
+          <div className="h-3.5 rounded bg-slate-100" style={{ width: w }} />
+        </td>
+      ))}
+    </tr>
+  );
+}
+
+function Initial({ name }: { name: string | null }) {
+  return (
+    <div className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-slate-100 text-xs font-bold text-slate-500 select-none">
+      {name?.charAt(0)?.toUpperCase() ?? "?"}
+    </div>
+  );
+}
 
 export function EntitiesPage() {
+  const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [riskTier, setRiskTier] = useState<RiskTier>("All");
+  const [page, setPage] = useState(1);
+  const [, startTransition] = useTransition();
+
+  const { data, isLoading } = useEntities({
+    search: debouncedSearch || undefined,
+    risk_tier: riskTier === "All" ? undefined : riskTier,
+    page,
+    limit: DEFAULT_PAGE_SIZE,
+  });
+
+  const { data: overview } = useDashboardOverview();
+  const dist = overview?.risk_distribution;
+
+  const total = data?.total ?? 0;
+
+  function handleSearch(v: string) {
+    setSearch(v);
+    startTransition(() => {
+      setDebouncedSearch(v);
+      setPage(1);
+    });
+  }
+
+  function handleTier(t: RiskTier) {
+    setRiskTier(t);
+    setPage(1);
+  }
+
   return (
-    <div className="mx-auto max-w-[1600px] space-y-6">
-      <PageHero
-        eyebrow="Entity explorer"
-        title="Search, rank, and investigate every modeled entity."
-        description="This page is the operational workbench for subscribers, patients, SKUs, routes, stores, or any primary entity an organization maps during onboarding."
-        action="Export CSV"
+    <DashboardPageShell className="space-y-5">
+      <PageHeader
+        title="Entity explorer"
+        description="Search, rank, and investigate every profiled entity."
+        actions={
+          data && data.total > 0 ? (
+            <span className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-medium text-slate-500">
+              {data.total.toLocaleString()} entities
+            </span>
+          ) : undefined
+        }
       />
 
-      <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        {entitySummary.map((item) => (
-          <SummaryCard key={item.label} item={item} />
-        ))}
-      </section>
+      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        <StatCard label="Total entities" value={(overview?.total_entities ?? 0).toLocaleString()} sub="Across all segments" color="text-slate-900" />
+        <StatCard label="High risk" value={(dist?.High ?? 0).toLocaleString()} sub="Need attention" color="text-rose-600" />
+        <StatCard label="Medium risk" value={(dist?.Medium ?? 0).toLocaleString()} sub="Monitor closely" color="text-amber-600" />
+        <StatCard label="Healthy" value={((dist?.Low ?? 0) + (dist?.Healthy ?? 0)).toLocaleString()} sub="Low and healthy" color="text-emerald-600" />
+      </div>
 
-      <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-        <div className="mb-5 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-          <div className="flex min-w-0 flex-1 items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3">
-            <Search size={16} className="shrink-0 text-slate-400" />
-            <input
-              className="h-11 min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-slate-400"
-              placeholder="Search by ID, name, signal, or segment"
-            />
-          </div>
-          <div className="flex gap-2">
-            <button className="inline-flex h-11 items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700">
-              <Filter size={15} />
-              Risk
-            </button>
-            <button className="inline-flex h-11 items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700">
-              <SlidersHorizontal size={15} />
-              Columns
-            </button>
+      <div className="rounded-xl border border-slate-200 bg-white">
+        <div className="border-b border-slate-100 px-5 py-4">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+            <div className="flex flex-1 items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2">
+              <Search size={15} className="shrink-0 text-slate-400" />
+              <input
+                className="min-w-0 flex-1 bg-transparent text-sm text-slate-900 outline-none placeholder:text-slate-400"
+                placeholder="Search by name or ID…"
+                value={search}
+                onChange={(e) => handleSearch(e.target.value)}
+              />
+            </div>
+
+            <div className="flex gap-1.5 overflow-x-auto">
+              {RISK_TIERS.map((t) => (
+                <button
+                  key={t}
+                  onClick={() => handleTier(t)}
+                  className={`shrink-0 rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors ${
+                    riskTier === t
+                      ? "bg-blue-600 text-white"
+                      : "border border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
+                  }`}
+                >
+                  {t}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[980px] border-separate border-spacing-0 text-left">
+        <div className="divide-y divide-slate-100 md:hidden">
+          {isLoading &&
+            Array.from({ length: 5 }).map((_, i) => (
+              <div key={i} className="animate-pulse space-y-2 px-4 py-4">
+                <div className="h-4 w-32 rounded bg-slate-100" />
+                <div className="h-3 w-24 rounded bg-slate-50" />
+              </div>
+            ))}
+          {!isLoading && (!data || data.entities.length === 0) && (
+            <p className="px-4 py-12 text-center text-sm text-slate-400">
+              {search || riskTier !== "All"
+                ? "No entities match your filters."
+                : "No entities profiled yet — run a pipeline to get started."}
+            </p>
+          )}
+          {data?.entities.map((e) => (
+            <Link
+              key={e.entity_id}
+              href={`/dashboard/entities/${encodeURIComponent(e.entity_id)}`}
+              className="flex items-start gap-3 px-4 py-4 hover:bg-slate-50/80"
+            >
+              <Initial name={e.entity_name} />
+              <div className="min-w-0 flex-1">
+                <p className="truncate font-medium text-slate-900">
+                  {e.entity_name ?? e.entity_id}
+                </p>
+                <p className="truncate text-[11px] text-slate-400">{e.entity_id}</p>
+                <div className="mt-2 flex flex-wrap items-center gap-2">
+                  <RiskPill risk={e.risk_tier ?? "Low"} />
+                  <span className="text-xs tabular-nums text-slate-500">
+                    Score {e.risk_score.toFixed(0)}
+                  </span>
+                  {e.open_recommendations > 0 && (
+                    <span className="rounded-full bg-amber-50 px-2 py-0.5 text-xs font-semibold text-amber-700">
+                      {e.open_recommendations} recs
+                    </span>
+                  )}
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
+
+        <div className="hidden overflow-x-auto md:block">
+          <table className="w-full min-w-[720px] border-separate border-spacing-0">
             <thead>
-              <tr className="text-xs uppercase tracking-wide text-slate-400">
-                {["Entity", "Industry", "Risk", "Top signal", "Recommendation", "Completeness", "Owner"].map((heading) => (
-                  <th key={heading} className="border-b border-slate-100 pb-3 font-semibold">
-                    {heading}
+              <tr className="text-[11px] font-semibold uppercase tracking-wide text-slate-400">
+                {["Entity", "Segment", "Risk tier", "Risk score", "Open recs"].map((col, i) => (
+                  <th
+                    key={col}
+                    className={`border-b border-slate-100 px-5 pb-3 pt-4 text-left font-semibold ${i === 4 ? "text-right" : ""}`}
+                  >
+                    {col}
                   </th>
                 ))}
               </tr>
             </thead>
             <tbody>
-              {entities.map((entity) => (
-                <tr key={entity.id} className="text-sm">
-                  <td className="border-b border-slate-100 py-4">
-                    <Link href={`/dashboard/entities/${entity.id}`} className="flex items-center gap-3">
-                      <Image src={entity.image} alt="" width={44} height={44} className="h-11 w-11 rounded-xl object-cover" />
+              {isLoading && Array.from({ length: 8 }).map((_, i) => <SkeletonRow key={i} />)}
+
+              {!isLoading && (!data || data.entities.length === 0) && (
+                <tr>
+                  <td colSpan={5} className="py-16 text-center text-sm text-slate-400">
+                    {search || riskTier !== "All"
+                      ? "No entities match your filters."
+                      : "No entities profiled yet — run a pipeline to get started."}
+                  </td>
+                </tr>
+              )}
+
+              {data?.entities.map((e) => (
+                <tr key={e.entity_id} className="group text-sm hover:bg-slate-50/60">
+                  <td className="border-b border-slate-100 px-5 py-3.5">
+                    <Link
+                      href={`/dashboard/entities/${encodeURIComponent(e.entity_id)}`}
+                      className="flex items-center gap-3"
+                    >
+                      <Initial name={e.entity_name} />
                       <div>
-                        <p className="font-semibold text-slate-950">{entity.name}</p>
-                        <p className="text-xs text-slate-500">{entity.id}</p>
+                        <p className="font-medium text-slate-900 group-hover:text-blue-600 transition-colors">
+                          {e.entity_name ?? e.entity_id}
+                        </p>
+                        <p className="text-[11px] text-slate-400">{e.entity_id}</p>
                       </div>
                     </Link>
                   </td>
-                  <td className="border-b border-slate-100 py-4 text-slate-600">{entity.industry}</td>
-                  <td className="border-b border-slate-100 py-4"><RiskPill risk={entity.risk} /></td>
-                  <td className="border-b border-slate-100 py-4 text-slate-600">{entity.signal}</td>
-                  <td className="border-b border-slate-100 py-4 font-medium text-slate-900">{entity.action}</td>
-                  <td className="border-b border-slate-100 py-4">
+                  <td className="border-b border-slate-100 px-5 py-3.5 text-sm text-slate-500">
+                    {e.segment ?? "—"}
+                  </td>
+                  <td className="border-b border-slate-100 px-5 py-3.5">
+                    <RiskPill risk={e.risk_tier ?? "Low"} />
+                  </td>
+                  <td className="border-b border-slate-100 px-5 py-3.5">
                     <div className="flex items-center gap-2">
-                      <div className="h-2 w-20 rounded-full bg-slate-100">
-                        <div className="h-2 rounded-full bg-blue-600" style={{ width: `${entity.completeness}%` }} />
+                      <div className="h-1.5 w-16 overflow-hidden rounded-full bg-slate-100">
+                        <div
+                          className={`h-1.5 rounded-full ${
+                            e.risk_score >= 70 ? "bg-rose-500" : e.risk_score >= 40 ? "bg-amber-400" : "bg-emerald-500"
+                          }`}
+                          style={{ width: `${Math.min(e.risk_score, 100)}%` }}
+                        />
                       </div>
-                      <span className="text-xs font-semibold text-slate-500">{entity.completeness}%</span>
+                      <span className="tabular-nums text-xs text-slate-500">{e.risk_score.toFixed(0)}</span>
                     </div>
                   </td>
-                  <td className="border-b border-slate-100 py-4 text-slate-600">{entity.owner}</td>
+                  <td className="border-b border-slate-100 px-5 py-3.5 text-right">
+                    {e.open_recommendations > 0 ? (
+                      <div className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-0.5 text-xs font-semibold text-amber-700">
+                        {e.open_recommendations}
+                      </div>
+                    ) : (
+                      <span className="text-xs text-slate-300">—</span>
+                    )}
+                  </td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
-      </section>
 
-      <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-        <SectionHeading eyebrow="Segments" title="Explorer filters" />
-        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-          {segments.map((segment) => (
-            <button key={segment.name} className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-left hover:bg-white">
-              <p className="font-semibold text-slate-950">{segment.name}</p>
-              <p className="mt-1 text-sm text-slate-500">{segment.entities} entities · {segment.change}</p>
-            </button>
-          ))}
-        </div>
-      </section>
-    </div>
+                <Pagination
+          page={page}
+          pageSize={DEFAULT_PAGE_SIZE}
+          total={total}
+          onPageChange={setPage}
+        />
+      </div>
+    </DashboardPageShell>
   );
 }
