@@ -34,6 +34,8 @@ export type LicenseInfo = {
   limits?: Record<string, number>;
   effective_limits?: Record<string, number>;
   issued_to?: string | null;
+  env_provisioned?: boolean;
+  env_provision_error?: string | null;
 };
 
 export const webhooksApi = {

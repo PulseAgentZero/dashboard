@@ -17,7 +17,7 @@ type AuthContextValue = {
 const AuthContext = createContext<AuthContextValue | null>(null);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const { data, isPending, isError, refetch } = useMe();
+  const { data, isPending, isFetching, isError, refetch } = useMe();
   const hasToken = typeof window !== "undefined" && !!tokens.getAccess();
 
   // When the user just logged in, `enabled` flips from false to true and React
@@ -28,14 +28,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     () => ({
       user: data?.user,
       org: data?.org,
-      isLoading: hasToken && isPending && !isError,
+      isLoading: hasToken && (isPending || isFetching),
       isAuthenticated: !!data?.user && hasToken,
       isError,
       refetch: () => {
         void refetch();
       },
     }),
-    [data, hasToken, isPending, isError, refetch],
+    [data, hasToken, isPending, isFetching, isError, refetch],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

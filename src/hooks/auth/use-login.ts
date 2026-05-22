@@ -7,7 +7,7 @@ import { authApi } from "@/lib/api/auth";
 import { ApiError } from "@/lib/api/client";
 import { shouldDeferMutationToast } from "@/lib/validation/parse";
 import { postAuthRedirect } from "@/lib/auth-redirect";
-import { tokens } from "@/lib/auth-tokens";
+import { clearBannerDismissFlags, tokens } from "@/lib/auth-tokens";
 import { isMfaRequired } from "@/types/auth";
 
 export function useLogin() {
@@ -24,7 +24,8 @@ export function useLogin() {
         return;
       }
       tokens.set(data.access_token, data.refresh_token);
-      void qc.invalidateQueries({ queryKey: ["me"] });
+      void qc.resetQueries({ queryKey: ["me"] });
+      clearBannerDismissFlags();
       toast.success("Welcome back!");
       postAuthRedirect(data.org, router, data.user);
     },

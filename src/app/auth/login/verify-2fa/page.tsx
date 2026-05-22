@@ -8,7 +8,7 @@ import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { authApi } from "@/lib/api/auth";
 import { ApiError } from "@/lib/api/client";
-import { tokens } from "@/lib/auth-tokens";
+import { clearBannerDismissFlags, tokens } from "@/lib/auth-tokens";
 import { postAuthRedirect } from "@/lib/auth-redirect";
 
 export default function Verify2faPage() {
@@ -29,7 +29,8 @@ export default function Verify2faPage() {
       sessionStorage.removeItem("mfa_token");
       sessionStorage.removeItem("mfa_user_email");
       tokens.set(data.access_token, data.refresh_token);
-      void qc.invalidateQueries({ queryKey: ["me"] });
+      void qc.resetQueries({ queryKey: ["me"] });
+      clearBannerDismissFlags();
       toast.success("Signed in");
       postAuthRedirect(data.org, router, data.user);
     },

@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { ApiError } from "@/lib/api/client";
 import { webhooksApi, licenseApi } from "@/lib/api/webhooks-api";
 import { isSelfHostedDeployment } from "@/lib/deployment";
 import { useAuthEnabled } from "@/hooks/use-auth-enabled";
@@ -49,10 +50,24 @@ export function useActivateLicense() {
       toast.success("License activated");
     },
     onError: (err: unknown) => {
-      const message =
-        err && typeof err === "object" && "message" in err && typeof err.message === "string"
-          ? err.message
-          : "Invalid or expired license key";
+      let message = "Invalid or expired license key";
+      if (err instanceof ApiError) {
+        if (err.code === "LICENSE_ALREADY_ACTIVATED") {
+          message =
+            "This license is already bound to another organization. Each key can only be activated once. Use a different key or contact support.";
+        } else if (err.code === "LICENSE_EXPIRED") {
+          message = "This license has expired. Renew it from the customer portal.";
+        } else if (err.code === "LICENSE_REVOKED") {
+          message = "This license has been revoked. Please contact support.";
+        } else if (err.code === "INVALID_LICENSE_SIGNATURE") {
+          message = "License signature is invalid. Make sure you pasted the full plc_… key.";
+        } else if (err.code === "LICENSE_SERVER_UNREACHABLE") {
+          message =
+            "Could not reach the Entivia license server. Check your internet connection and try again.";
+        } else if (err.message) {
+          message = err.message;
+        }
+      }
       toast.error(message);
     },
   });

@@ -18,3 +18,14 @@ export const tokens = {
     storage()?.removeItem(REFRESH_KEY);
   },
 };
+
+export function clearBannerDismissFlags() {
+  if (typeof window === "undefined") return;
+  const ss = window.sessionStorage;
+  for (let i = ss.length - 1; i >= 0; i--) {
+    const key = ss.key(i);
+    if (key?.startsWith("pulse_setup_banner_dismissed")) {
+      ss.removeItem(key);
+    }
+  }
+}
