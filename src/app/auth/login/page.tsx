@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { Building2, Mails } from "lucide-react";
 import { Google } from "../../../../public/icon/google";
 import Link from "next/link";
@@ -11,14 +12,21 @@ import { useLogin } from "@/hooks/auth/use-login";
 import { useAuthInstance } from "@/hooks/auth/use-auth-instance";
 import { initiateGoogleSignIn, initiateSsoSignIn } from "@/lib/api/auth";
 import { loginSchema, useFormValidation } from "@/lib/validation";
+import { savePostAuthRedirect } from "@/lib/auth-redirect";
 
 export default function LoginPage() {
+  const searchParams = useSearchParams();
   const { mutate: login, isPending } = useLogin();
   const { data: instance } = useAuthInstance();
   const [orgSlug, setOrgSlug] = useState("");
   const { fieldErrors, clearErrors, validateFormData, handleApiError } =
     useFormValidation();
   const googleOAuthEnabled = instance?.google_oauth_enabled ?? false;
+  const ssoEnabled = instance?.sso_enabled ?? false;
+
+  useEffect(() => {
+    savePostAuthRedirect(searchParams.get("redirect"));
+  }, [searchParams]);
 
   function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -109,7 +117,7 @@ export default function LoginPage() {
           </>
         ) : null}
 
-        {instance?.deployment_mode === "self_hosted" ? (
+        {ssoEnabled ? (
           <>
             {!googleOAuthEnabled && (
               <div className="relative">

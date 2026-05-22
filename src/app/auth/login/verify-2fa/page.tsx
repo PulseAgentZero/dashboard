@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
@@ -13,6 +13,7 @@ import { postAuthRedirect } from "@/lib/auth-redirect";
 
 export default function Verify2faPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const qc = useQueryClient();
   const [code, setCode] = useState("");
   const mfaToken =
@@ -32,7 +33,7 @@ export default function Verify2faPage() {
       void qc.resetQueries({ queryKey: ["me"] });
       clearBannerDismissFlags();
       toast.success("Signed in");
-      postAuthRedirect(data.org, router, data.user);
+      postAuthRedirect(data.org, router, data.user, searchParams.get("redirect"));
     },
     onError(err) {
       toast.error(

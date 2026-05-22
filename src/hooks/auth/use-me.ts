@@ -13,10 +13,7 @@ export function useMe() {
   // user just submitted and traps them on the form.
   const onPublicPage =
     !!pathname &&
-    (pathname.startsWith("/auth") ||
-      pathname === "/" ||
-      pathname.startsWith("/pricing") ||
-      pathname.startsWith("/p/"));
+    (pathname.startsWith("/auth") || pathname === "/" || pathname.startsWith("/p/"));
 
   return useQuery({
     queryKey: ["me"],

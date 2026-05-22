@@ -254,7 +254,8 @@ export const ENV_VAR_GROUPS: EnvVarGroup[] = [
         name: "ENTIVIA_LICENSE_KEY",
         selfHostedOnly: true,
         description:
-          "Reserved for future env-based activation. Today, activate your plc_… key under Settings → License after sign-in.",
+          "Optional plc_… key for automatic activation on first admin visit to Settings → License. " +
+          "PULSE_LICENSE_KEY is accepted as a backward-compatible alias.",
       },
     ],
   },

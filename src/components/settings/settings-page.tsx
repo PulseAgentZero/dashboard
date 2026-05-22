@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   Bot, Building2, Copy, Download, Eye, EyeOff,
   KeyRound, Loader2, LogIn, Plus, Radio, Server, ShieldCheck, Trash2, User, Webhook,
@@ -711,7 +712,7 @@ function LicenseTab() {
 
       {!isLoading && envProvisionError && (
         <div className="rounded-xl border border-amber-200 bg-amber-50/60 p-4 text-xs text-amber-900 leading-relaxed">
-          <p className="font-semibold">PULSE_LICENSE_KEY could not be activated</p>
+          <p className="font-semibold">ENTIVIA_LICENSE_KEY could not be activated</p>
           <p className="mt-1">{envProvisionError}</p>
           <p className="mt-2 text-amber-800">
             Verify the value in your <code className="font-mono">.env</code> and restart the
@@ -786,7 +787,7 @@ function LicenseTab() {
         </p>
         {envProvisioned && (
           <p className="text-xs text-slate-500 leading-relaxed">
-            This instance is using a key set via <code className="font-mono">PULSE_LICENSE_KEY</code> in your
+            This instance is using a key set via <code className="font-mono">ENTIVIA_LICENSE_KEY</code> in your
             environment. Pasting a new key below will override it for this org until the next restart.
           </p>
         )}
@@ -811,10 +812,30 @@ function LicenseTab() {
 
 // ─── Settings page ────────────────────────────────────────────────────────────
 
+function resolveTabFromQuery(
+  raw: string | null,
+  visibleTabs: ReadonlyArray<{ id: Tab }>,
+): Tab {
+  if (!raw) return "org";
+  const allowed = new Set(visibleTabs.map((t) => t.id));
+  return allowed.has(raw as Tab) ? (raw as Tab) : "org";
+}
+
 export function SettingsPage() {
   const { user } = useAuth();
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const visibleTabs = useMemo(() => getVisibleTabs(user?.role), [user?.role]);
   const [tab, setTab] = useState<Tab>("org");
+
+  useEffect(() => {
+    setTab(resolveTabFromQuery(searchParams.get("tab"), visibleTabs));
+  }, [searchParams, visibleTabs]);
+
+  function selectTab(next: Tab) {
+    setTab(next);
+    router.replace(`/dashboard/settings?tab=${next}`, { scroll: false });
+  }
 
   return (
     <div className="mx-auto w-full max-w-[1400px] space-y-6">
@@ -830,7 +851,7 @@ export function SettingsPage() {
           {visibleTabs.map(({ id, label, icon: Icon }) => (
             <button
               key={id}
-              onClick={() => setTab(id)}
+              onClick={() => selectTab(id)}
               className={`flex shrink-0 items-center gap-2 rounded-t-lg px-4 py-2.5 text-sm font-semibold border-b-2 transition-all ${
                 tab === id
                   ? "border-orange-600 text-orange-600 bg-white"

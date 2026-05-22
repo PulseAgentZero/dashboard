@@ -63,7 +63,7 @@ export default function SsoCallbackContent() {
       .me()
       .then((me) => {
         qc.setQueryData(["me"], me);
-        postAuthRedirect(me.org, router, me.user);
+        postAuthRedirect(me.org, router, me.user, params.get("redirect"));
       })
       .catch(() => {
         tokens.clear();
