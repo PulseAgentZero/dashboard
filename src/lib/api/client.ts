@@ -88,7 +88,14 @@ async function request<T>(
     }
     if (typeof window !== "undefined") {
       tokens.clear();
-      window.location.href = "/auth/login";
+      // Don't hard-reload to /auth/login if we're already on an auth page —
+      // that would cancel any in-flight POST /auth/login or /auth/signup the
+      // user just submitted (e.g. from a stale /auth/me firing in the
+      // background) and trap them on the form.
+      const current = window.location.pathname;
+      if (!current.startsWith("/auth")) {
+        window.location.href = "/auth/login";
+      }
     }
   }
 
