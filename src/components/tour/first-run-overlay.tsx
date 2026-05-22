@@ -13,6 +13,7 @@ const DURATION = 5000;
 export function FirstRunOverlay() {
   const pathname = usePathname();
   const { org, isLoading } = useAuth();
+  const { mutate: markSetupShown } = useMarkSetupShown();
 
   const [active, setActive] = useState(false);
   const [fill, setFill] = useState(false);
