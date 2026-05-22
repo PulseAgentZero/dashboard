@@ -1,7 +1,8 @@
 import { tokens } from "@/lib/auth-tokens";
 import { ApiError } from "./client";
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+const _apiUrl = process.env.NEXT_PUBLIC_API_URL;
+const BASE_URL = _apiUrl !== undefined ? _apiUrl : "http://localhost:8000";
 const API_PREFIX = "/api/v1";
 
 /**

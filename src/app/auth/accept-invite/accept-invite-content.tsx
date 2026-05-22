@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
@@ -11,11 +11,18 @@ import PasswordField from "@/components/ui/password-field";
 import { AuthSplitLayout } from "@/components/auth/auth-split-layout";
 import { authApi, initiateGoogleSignIn } from "@/lib/api/auth";
 import { ApiError } from "@/lib/api/client";
+import { useAuthInstance } from "@/hooks/auth/use-auth-instance";
 import { acceptInviteSchema, useFormValidation } from "@/lib/validation";
 import {
   handleAcceptInviteApiError,
   useAcceptInvite,
 } from "@/hooks/auth/use-accept-invite";
+
+const OAUTH_ERROR_MESSAGES: Record<string, string> = {
+  invite_email_mismatch: "Use the Google account for the email that received the invitation.",
+  invite_invalid: "This invitation link is invalid or expired.",
+  account_exists: "An account with this email already exists. Sign in instead.",
+};
 
 function InviteErrorPanel({
   title,
@@ -46,6 +53,12 @@ export function AcceptInviteContent() {
   const [error, setError] = useState("");
   const { fieldErrors, clearErrors, validate, applyApiErrors } = useFormValidation();
   const { mutate: acceptInvite, isPending } = useAcceptInvite();
+  const { data: instance } = useAuthInstance();
+  const googleOAuthEnabled = instance?.google_oauth_enabled ?? false;
+  const oauthErrorMessage = oauthError
+    ? OAUTH_ERROR_MESSAGES[oauthError] ?? "Google sign-in failed. Please try again."
+    : "";
+  const displayError = error || oauthErrorMessage;
 
   const { data: preview, isLoading: previewLoading } = useQuery({
     queryKey: ["invite-preview", token],
@@ -53,18 +66,6 @@ export function AcceptInviteContent() {
     enabled: Boolean(token),
     retry: false,
   });
-
-  useEffect(() => {
-    if (!oauthError) return;
-    const messages: Record<string, string> = {
-      invite_email_mismatch:
-        "Use the Google account for the email that received the invitation.",
-      invite_invalid: "This invitation link is invalid or expired.",
-      account_exists:
-        "An account with this email already exists. Sign in instead.",
-    };
-    setError(messages[oauthError] ?? "Google sign-in failed. Please try again.");
-  }, [oauthError]);
 
   if (!token) {
     return (
@@ -163,7 +164,7 @@ export function AcceptInviteContent() {
           />
         </div>
 
-        {error === "__exists__" ? (
+        {displayError === "__exists__" ? (
           <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm">
             <p className="font-semibold text-amber-800">Account already exists</p>
             <p className="mt-0.5 text-amber-700">
@@ -174,10 +175,10 @@ export function AcceptInviteContent() {
               .
             </p>
           </div>
-        ) : error ? (
+        ) : displayError ? (
           <div className="flex items-center gap-2 rounded-xl bg-rose-50 px-4 py-3 text-sm text-rose-700">
             <AlertTriangle size={15} className="shrink-0" />
-            {error}
+            {displayError}
           </div>
         ) : null}
 
@@ -191,23 +192,27 @@ export function AcceptInviteContent() {
         </button>
       </form>
 
-      <div className="relative">
-        <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-slate-200" />
-        </div>
-        <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-white px-2 text-slate-500">Or continue with</span>
-        </div>
-      </div>
+      {googleOAuthEnabled ? (
+        <>
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-slate-200" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-white px-2 text-slate-500">Or continue with</span>
+            </div>
+          </div>
 
-      <button
-        type="button"
-        onClick={() => initiateGoogleSignIn("invite", { inviteToken: token })}
-        className="flex w-full items-center justify-center gap-3 rounded-xl border border-slate-200 bg-white py-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50"
-      >
-        <Google />
-        Continue with Google
-      </button>
+          <button
+            type="button"
+            onClick={() => initiateGoogleSignIn("invite", { inviteToken: token })}
+            className="flex w-full items-center justify-center gap-3 rounded-xl border border-slate-200 bg-white py-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50"
+          >
+            <Google />
+            Continue with Google
+          </button>
+        </>
+      ) : null}
     </AuthSplitLayout>
   );
 }

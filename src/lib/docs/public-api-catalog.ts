@@ -199,9 +199,8 @@ export function getCatalogGroupBySlug(
 }
 
 export function buildPublicApiUrl(path: string): string {
-  const base =
-    process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") ||
-    "http://localhost:8000";
+  const url = process.env.NEXT_PUBLIC_API_URL;
+  const base = (url !== undefined ? url : "http://localhost:8000").replace(/\/$/, "");
   return `${base}/api/public/v1${path}`;
 }
 

@@ -19,13 +19,20 @@ export function canAccessAuditLogsCloud(plan: string | null | undefined): boolea
 export function canAccessAuditLogsSelfHosted(
   license: LicenseInfo | null | undefined,
 ): boolean {
+  return hasLicenseFeature(license, AUDIT_LOG_FEATURE);
+}
+
+export function hasLicenseFeature(
+  license: LicenseInfo | null | undefined,
+  feature: string,
+): boolean {
   if (!license?.is_valid || license.locked) return false;
   const plan = normalizePlan(license.effective_plan ?? license.plan);
-  if (isProPlan(plan)) return true;
   const features = (license.effective_features ?? license.features ?? []).map((f) =>
     f.toLowerCase(),
   );
-  return features.includes(AUDIT_LOG_FEATURE);
+  if (features.includes(feature.toLowerCase())) return true;
+  return isProPlan(plan) && feature === AUDIT_LOG_FEATURE;
 }
 
 export function canAccessAuditLogs(

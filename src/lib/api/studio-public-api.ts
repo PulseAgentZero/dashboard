@@ -1,6 +1,7 @@
 import type { PublicDashboard } from "@/types/studio";
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+const _apiUrl = process.env.NEXT_PUBLIC_API_URL;
+const BASE_URL = _apiUrl !== undefined ? _apiUrl : "http://localhost:8000";
 const PUBLIC_PREFIX = "/api/public/v1/studio";
 
 export class PublicApiError extends Error {

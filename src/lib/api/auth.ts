@@ -19,12 +19,14 @@ export interface InvitePreview {
   expires_at: string;
 }
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+const _apiUrl = process.env.NEXT_PUBLIC_API_URL;
+const BASE_URL = _apiUrl !== undefined ? _apiUrl : "http://localhost:8000";
 
 export interface AuthInstanceStatus {
   deployment_mode: string;
   registration_open: boolean;
   can_create_organization: boolean;
+  google_oauth_enabled: boolean;
 }
 
 export function initiateGoogleSignIn(
@@ -40,6 +42,10 @@ export function initiateGoogleSignIn(
     params.set("invite_token", options.inviteToken);
   }
   window.location.href = `${BASE_URL}/api/v1/auth/oauth/google?${params.toString()}`;
+}
+
+export function initiateSsoSignIn(orgSlug: string) {
+  window.location.href = `${BASE_URL}/api/v1/auth/sso/${encodeURIComponent(orgSlug)}/login`;
 }
 
 export const authApi = {

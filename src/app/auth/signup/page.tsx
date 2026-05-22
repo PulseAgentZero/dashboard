@@ -20,6 +20,7 @@ export default function SignupPage() {
   const { fieldErrors, clearErrors, validate, handleApiError } = useFormValidation();
   const { data: instance, isLoading } = useAuthInstance();
   const registrationOpen = instance?.registration_open ?? true;
+  const googleOAuthEnabled = instance?.google_oauth_enabled ?? false;
 
   function requireTermsAccepted(): boolean {
     if (termsAccepted) return true;
@@ -140,27 +141,31 @@ export default function SignupPage() {
             {isPending ? "Creating account…" : "Create account"}
           </button>
 
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-slate-200" />
-            </div>
-            <div className="relative flex justify-center text-[13px]">
-              <span className="bg-white px-2 text-slate-500">Or continue with</span>
-            </div>
-          </div>
+          {googleOAuthEnabled ? (
+            <>
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-slate-200" />
+                </div>
+                <div className="relative flex justify-center text-[13px]">
+                  <span className="bg-white px-2 text-slate-500">Or continue with</span>
+                </div>
+              </div>
 
-          <button
-            type="button"
-            onClick={() => {
-              if (!requireTermsAccepted()) return;
-              initiateGoogleSignIn("signup");
-            }}
-            disabled={!termsAccepted}
-            className="flex w-full items-center justify-center gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3 text-[12px] font-medium text-slate-700 transition duration-150 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
-          >
-            <Google />
-            Sign up with Google
-          </button>
+              <button
+                type="button"
+                onClick={() => {
+                  if (!requireTermsAccepted()) return;
+                  initiateGoogleSignIn("signup");
+                }}
+                disabled={!termsAccepted}
+                className="flex w-full items-center justify-center gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3 text-[12px] font-medium text-slate-700 transition duration-150 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                <Google />
+                Sign up with Google
+              </button>
+            </>
+          ) : null}
         </form>
       )}
 
