@@ -62,19 +62,41 @@ services:
       retries: 5
       start_period: 10s
 
-  pulse:
+  qdrant:
+    image: qdrant/qdrant:latest
+    volumes:
+      - qdrant_data:/qdrant/storage
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c '</dev/tcp/127.0.0.1/6333'"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  entivia:
     image: entivia/entivia:${PULSE_VERSION:-latest}
-    env_file: .env
+    env_file:
+      - path: .env
+        required: false
     ports:
       - "${PORT:-80}:80"
     environment:
       DATABASE_URL: postgresql+asyncpg://pulse:${POSTGRES_PASSWORD}@db:5432/pulse
+      DATABASE_SSLMODE: disable
+      QDRANT_URL: http://qdrant:6333
+      REDIS_URL: redis://127.0.0.1:6379/0
       LOCAL_STORAGE_PATH: /app/uploads
+      HOME: /home/pulse
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost}
     volumes:
       - pulse_data:/data
       - uploads_data:/app/uploads
+      - pulse_logs:/var/log/pulse/streams
     depends_on:
       db:
+        condition: service_healthy
+      qdrant:
         condition: service_healthy
     restart: unless-stopped
     healthcheck:
@@ -86,8 +108,11 @@ services:
 
 volumes:
   db_data:
+  qdrant_data:
   pulse_data:
+  pulse_logs:
   uploads_data:
+
 ```
 
 ### 3. `.env` — required variables
@@ -192,7 +217,7 @@ To use managed Postgres instead of the bundled `db` service:
 
 1. Set `DATABASE_URL` in `.env` to your external DSN.
 2. Remove the `db` service and `depends_on` from `docker-compose.yml`.
-3. Ensure the `pulse` service still receives `DATABASE_URL` (via `.env` only).
+3. Ensure the `entivia` service still receives `DATABASE_URL` (via `.env` only).
 
 ## Data privacy
 

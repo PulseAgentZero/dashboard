@@ -1,8 +1,7 @@
 export function getApiBaseUrl(): string {
-  return (
-    process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") ||
-    "http://localhost:8000"
-  );
+  const url = process.env.NEXT_PUBLIC_API_URL;
+  const base = url !== undefined ? url : "http://localhost:8000";
+  return base.replace(/\/$/, "");
 }
 
 export function getPublicRedocUrl(): string {

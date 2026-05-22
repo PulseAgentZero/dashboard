@@ -118,7 +118,8 @@ export const studioApi = {
   getRun: (runId: string) => api.get<StudioQueryRun>(`${STUDIO}/runs/${runId}`),
 
   downloadRunUrl: (runId: string, format: "csv" | "json" = "csv") => {
-    const base = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+    const url = process.env.NEXT_PUBLIC_API_URL;
+    const base = url !== undefined ? url : "http://localhost:8000";
     return `${base}/api/v1${STUDIO}/runs/${runId}/download?format=${format}`;
   },
 

@@ -19,7 +19,6 @@ import { useUsage } from "@/hooks/usage/use-usage";
 import {
   useCancelSubscription,
   useInitializeCloudCheckout,
-  useInitializeSelfHostedCheckout,
   useSubscription,
   useOpenManagePaymentLink,
   useVerifyCloudPayment,
@@ -35,6 +34,7 @@ import {
   SELF_HOSTED_LICENSE_FEATURES,
 } from "@/lib/plans";
 import { isCloudDeployment, isSelfHostedDeployment } from "@/lib/deployment";
+import { getMarketingUrl, marketingHref } from "@/lib/site-urls";
 import {
   isPaidPlan,
   isProPlan,
@@ -49,19 +49,16 @@ const VERIFIED_PAYMENT_REF_KEY = "pulse_verified_payment_ref";
 export function PlanPage() {
   const searchParams = useSearchParams();
   const reference = searchParams.get("reference");
-  const { user, org } = useAuth();
+  const { org } = useAuth();
   const { data: usage } = useUsage();
   const { data: subscription } = useSubscription();
   const { mutate: startCloudCheckout, isPending: cloudCheckout } =
     useInitializeCloudCheckout();
-  const { mutate: startLicenseCheckout, isPending: licenseCheckout } =
-    useInitializeSelfHostedCheckout();
   const { mutate: verifyPayment, isPending: verifying } = useVerifyCloudPayment();
   const { mutate: openManageLink, isPending: openingManageLink } =
     useOpenManagePaymentLink();
   const { mutate: cancelSubscription, isPending: cancelling } =
     useCancelSubscription();
-  const [licenseEmail, setLicenseEmail] = useState<string | null>(null);
   const [confirmCancel, setConfirmCancel] = useState(false);
 
   const cloud = isCloudDeployment();
@@ -94,16 +91,6 @@ export function PlanPage() {
     startCloudCheckout({
       callbackUrl: `${window.location.origin}/dashboard/plan`,
       plan: tier,
-    });
-  }
-
-  function handleLicensePurchase(e: React.FormEvent) {
-    e.preventDefault();
-    const email = licenseEmail?.trim() || user?.email?.trim();
-    if (!email) return;
-    startLicenseCheckout({
-      email,
-      callback_url: `${window.location.origin}/pricing/self-hosted`,
     });
   }
 
@@ -256,24 +243,27 @@ export function PlanPage() {
                 </li>
               ))}
             </ul>
-            <form onSubmit={handleLicensePurchase} className="space-y-3">
-              <input
-                type="email"
-                required
-                value={licenseEmail ?? user?.email ?? ""}
-                onChange={(e) => setLicenseEmail(e.target.value)}
-                placeholder="License delivery email"
-                className="w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-100"
-              />
-              <button
-                type="submit"
-                disabled={licenseCheckout}
-                className="flex w-full items-center justify-center gap-2 rounded-xl bg-slate-900 py-3 text-sm font-bold text-white hover:bg-slate-800 disabled:opacity-50"
+            <div className="space-y-3">
+              <p className="text-sm text-slate-600">
+                Licenses are issued by the Entivia license server. Purchase a key, then
+                activate it under <span className="font-semibold">Settings → License</span>.
+              </p>
+              <a
+                href={getMarketingUrl() ? marketingHref("/pricing/self-hosted") : "https://entivia.online/pricing/self-hosted"}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex w-full items-center justify-center gap-2 rounded-xl bg-slate-900 py-3 text-sm font-bold text-white hover:bg-slate-800"
               >
-                {licenseCheckout && <Loader2 size={16} className="animate-spin" />}
-                Purchase license
-              </button>
-            </form>
+                Purchase license at entivia.online
+                <ArrowRight size={14} />
+              </a>
+              <Link
+                href="/dashboard/settings?tab=license"
+                className="block text-center text-xs font-semibold text-orange-600 hover:text-orange-500"
+              >
+                I already have a key → Activate
+              </Link>
+            </div>
           </div>
           {isPro && (
             <div className="border-t border-orange-100 bg-orange-50/60 px-6 py-3 text-sm text-orange-800">

@@ -54,6 +54,11 @@ export const DOCS_NAV: DocNavSection[] = [
         slug: "configuration/license",
         file: "configuration-license",
       },
+      {
+        title: "Log streaming",
+        slug: "configuration/log-streaming",
+        file: "configuration-log-streaming",
+      },
     ],
   },
   {

@@ -31,6 +31,8 @@ export type LicenseInfo = {
   seat_used?: number;
   features: string[];
   effective_features?: string[];
+  limits?: Record<string, number>;
+  effective_limits?: Record<string, number>;
   issued_to?: string | null;
 };
 

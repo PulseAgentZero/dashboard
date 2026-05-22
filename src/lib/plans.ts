@@ -61,6 +61,10 @@ export const SELF_HOSTED_LICENSE_FEATURES = [
   "Deploy on your own infrastructure",
   "Pro-equivalent limits (unlimited quotas)",
   "Audit logs with a valid license",
+  "Stream logs to HTTP, Syslog, or local files",
+  "SSO with OIDC and SAML",
+  "LDAP / Active Directory user sync",
+  "Run multiple pipelines in parallel",
   "Bring your own LLM keys",
   "One-time license — no recurring cloud fee",
 ];

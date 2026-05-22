@@ -10,7 +10,8 @@ import {
   type PublicApiEndpoint,
 } from "@/lib/docs/public-api-catalog";
 
-const BASE_URL = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000").replace(
+const _apiUrl = process.env.NEXT_PUBLIC_API_URL;
+const BASE_URL = (_apiUrl !== undefined ? _apiUrl : "http://localhost:8000").replace(
   /\/$/,
   "",
 );

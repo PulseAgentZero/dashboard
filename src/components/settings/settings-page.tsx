@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import {
   Bot, Building2, Copy, Download, Eye, EyeOff,
-  KeyRound, Loader2, Plus, ShieldCheck, Trash2, User, Webhook,
+  KeyRound, Loader2, LogIn, Plus, Radio, Server, ShieldCheck, Trash2, User, Webhook,
 } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/providers/auth-provider";
@@ -28,6 +28,9 @@ import { UsageBar } from "@/components/shared/usage-bar";
 import { isCloudDeployment } from "@/lib/deployment";
 import { useLicense, useActivateLicense } from "@/hooks/webhooks/use-webhooks";
 import { WebhooksSettingsTab } from "@/components/settings/webhooks-settings-tab";
+import { LogStreamsSettingsTab } from "@/components/settings/log-streams-settings-tab";
+import { SsoSettingsTab } from "@/components/settings/sso-settings-tab";
+import { LdapSettingsTab } from "@/components/settings/ldap-settings-tab";
 import {
   changePasswordSchema,
   profileSchema,
@@ -51,6 +54,9 @@ const ALL_TABS = [
   { id: "apikeys", label: "API keys", icon: KeyRound },
   { id: "llm", label: "LLM keys", icon: Bot, selfHostedOnly: true },
   { id: "webhooks", label: "Webhooks", icon: Webhook },
+  { id: "log-streams", label: "Log streams", icon: Radio, selfHostedOnly: true },
+  { id: "sso", label: "SSO", icon: LogIn, selfHostedOnly: true },
+  { id: "ldap", label: "LDAP", icon: Server, selfHostedOnly: true },
   { id: "license", label: "License", icon: ShieldCheck, selfHostedOnly: true },
 ] as const;
 
@@ -61,7 +67,7 @@ function getVisibleTabs(role: string | undefined) {
   return ALL_TABS.filter((t) => {
     if (cloud && "selfHostedOnly" in t && t.selfHostedOnly) return false;
     if (t.id === "apikeys") return hasMinRole(role, "manager");
-    if (t.id === "webhooks" || t.id === "llm" || t.id === "license") {
+    if (t.id === "webhooks" || t.id === "llm" || t.id === "license" || t.id === "log-streams" || t.id === "sso" || t.id === "ldap") {
       return hasMinRole(role, "admin");
     }
     return true;
@@ -684,6 +690,12 @@ function LicenseTab() {
                 <span className="ml-2 font-semibold text-slate-700">{license.issued_to}</span>
               </div>
             )}
+            {license.effective_limits?.concurrent_pipeline_runs && (
+              <div>
+                <span className="text-slate-400">Concurrent pipelines</span>
+                <span className="ml-2 font-semibold text-slate-700">{license.effective_limits.concurrent_pipeline_runs}</span>
+              </div>
+            )}
           </div>
           {license.features.length > 0 && (
             <div className="mt-4 flex flex-wrap gap-1.5 border-t border-slate-100/80 pt-3">
@@ -763,6 +775,9 @@ export function SettingsPage() {
           {tab === "apikeys" && <ApiKeysTab />}
           {tab === "llm" && <LlmKeysTab />}
           {tab === "webhooks" && <WebhooksSettingsTab />}
+          {tab === "log-streams" && <LogStreamsSettingsTab />}
+          {tab === "sso" && <SsoSettingsTab />}
+          {tab === "ldap" && <LdapSettingsTab />}
           {tab === "license" && <LicenseTab />}
         </div>
       </div>

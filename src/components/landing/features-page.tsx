@@ -175,7 +175,7 @@ export function FeaturesPage() {
               >
                 locally inside your VPC
               </Link>{" "}
-              if enterprise compliance policies limit data migration. The core engine functions identically.
+              if enterprise compliance policies limit data migration. Licensed self-hosted instances add SIEM-ready log streaming, SSO, LDAP directory sync, and parallel pipeline execution for heavier operational workloads.
             </p>
           </div>
         </section>
