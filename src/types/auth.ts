@@ -31,11 +31,16 @@ export interface UserOut {
 export interface OrgOut {
   id: string;
   name: string;
-  slug: string;
+  slug: string | null;
   industry: string | null;
-  plan: string;
+  business_context: string | null;
+  entity_label: string | null;
+  goal_label: string | null;
+  plan: string | null;
+  timezone: string | null;
   onboarding_done: boolean;
   created_at: string;
+  updated_at: string;
   logo_url?: string | null;
   tour_guide?: { setup_shown?: boolean; completed?: boolean; version?: number; completed_at?: string | null };
   require_2fa?: boolean;

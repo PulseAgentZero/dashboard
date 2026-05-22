@@ -26,14 +26,31 @@ function dismissKey(orgId: string | undefined) {
 }
 
 export function SetupBanner() {
-  const { data: org } = useOrganization();
-  const { user } = useAuth();
-  const { data: connections } = useConnections();
-  const { data: mappings } = useSchemaMappings();
+  const { user, org: authOrg, isLoading: isAuthLoading } = useAuth();
+  const orgQuery = useOrganization();
+  const connQuery = useConnections();
+  const mappingsQuery = useSchemaMappings();
   const { mutate: completeSetup } = useCompleteSetup();
-  const [dismissed, setDismissed] = useState(false);
+  const [dismissedOrgId, setDismissedOrgId] = useState<string | null>(null);
   const [sheetOpen, setSheetOpen] = useState(false);
   const canManageSetup = hasMinRole(user?.role, "manager");
+
+  // Prefer the freshest org payload, but fall back to the one already
+  // hydrated by AuthProvider so business-context checks don't wait on a
+  // second round-trip after the dashboard mounts.
+  const org = orgQuery.data ?? authOrg;
+  const connections = connQuery.data;
+  const mappings = mappingsQuery.data;
+
+  // Only consider setup state once every underlying query has settled at
+  // least once. `isPending` flips to false after success *or* error, so a
+  // failed query won't permanently hide the banner — we just stop showing
+  // it during the initial load flicker.
+  const dataReady =
+    !isAuthLoading &&
+    !orgQuery.isPending &&
+    !connQuery.isPending &&
+    !mappingsQuery.isPending;
 
   const needsContext = !hasBusinessContext(org);
   const needsConn = !hasConnection(connections);
@@ -45,19 +62,18 @@ export function SetupBanner() {
       (c.status === "active" || c.status === "connected"),
   );
 
-  const show = !dismissed && isSetupIncomplete(org, connections, mappings);
-
-  // Re-read the dismiss flag whenever the active org changes so a previous
-  // user's dismissal in the same browser tab never leaks to a different org.
-  useEffect(() => {
-    if (!org?.id) {
-      setDismissed(false);
-      return;
-    }
-    setDismissed(sessionStorage.getItem(dismissKey(org.id)) === "1");
-  }, [org?.id]);
+  const storedDismissed =
+    typeof window !== "undefined" && org?.id
+      ? sessionStorage.getItem(dismissKey(org.id)) === "1"
+      : false;
+  const dismissed = Boolean(
+    org?.id && (dismissedOrgId === org.id || storedDismissed),
+  );
+  const show =
+    dataReady && !dismissed && isSetupIncomplete(org, connections, mappings);
 
   useEffect(() => {
+    if (!dataReady) return;
     if (!canManageSetup || !org || org.onboarding_done) return;
     if (
       hasBusinessContext(org) &&
@@ -66,15 +82,15 @@ export function SetupBanner() {
     ) {
       completeSetup();
     }
-  }, [canManageSetup, org, connections, mappings, completeSetup]);
+  }, [dataReady, canManageSetup, org, connections, mappings, completeSetup]);
 
   if (!show) return null;
 
   function dismiss() {
     if (org?.id) {
       sessionStorage.setItem(dismissKey(org.id), "1");
+      setDismissedOrgId(org.id);
     }
-    setDismissed(true);
   }
 
   function bannerMessage() {
@@ -163,7 +179,7 @@ export function SetupBanner() {
             if (org?.id) {
               sessionStorage.removeItem(dismissKey(org.id));
             }
-            setDismissed(false);
+            setDismissedOrgId(null);
           }}
         />
       )}

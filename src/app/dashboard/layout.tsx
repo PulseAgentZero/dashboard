@@ -32,7 +32,7 @@ export default function DashboardLayout({
       <SidebarProvider>
         <div className="flex min-h-[100dvh] h-[100dvh] overflow-hidden bg-[#f6f8fb] text-slate-900">
           <Sidebar />
-          <div className="flex min-h-0 min-w-0 flex-1 flex-col pt-14">
+          <div className="flex min-h-0 min-w-0 flex-1 flex-col">
             <Nav />
             <VerifyEmailBanner />
             <SetupBanner />

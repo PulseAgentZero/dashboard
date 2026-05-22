@@ -3,7 +3,9 @@ import type { ConnectionResponse } from "@/types/connections";
 import type { SchemaMapping } from "@/types/schema-mapping";
 import { supportsEntityMapping } from "@/lib/connectors/pipeline-supported";
 
-export function hasBusinessContext(org: OrgProfile | null | undefined): boolean {
+type SetupOrg = Pick<OrgProfile, "business_context">;
+
+export function hasBusinessContext(org: SetupOrg | null | undefined): boolean {
   return Boolean(org?.business_context?.trim());
 }
 
@@ -48,7 +50,7 @@ export function needsSchemaMapping(
 }
 
 export function isSetupIncomplete(
-  org: OrgProfile | null | undefined,
+  org: SetupOrg | null | undefined,
   connections: ConnectionResponse[] | undefined,
   mappings?: SchemaMapping[] | undefined,
 ): boolean {
