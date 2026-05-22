@@ -11,7 +11,7 @@ const DURATION = 5000;
 
 export function FirstRunOverlay() {
   const pathname = usePathname();
-  const { org, isLoading } = useAuth();
+  const { user, org, isLoading } = useAuth();
 
   const [active, setActive] = useState(false);
   const [fill, setFill] = useState(false);
@@ -26,7 +26,17 @@ export function FirstRunOverlay() {
     if (initialized.current || isLoading || !org?.id || org.onboarding_done || pathname !== "/dashboard") {
       return;
     }
-    if (sessionStorage.getItem(FIRST_RUN_PENDING_KEY) !== "1") return;
+
+    // Trigger when:
+    //   - the user is the org owner (covers OAuth signup + email/password signup
+    //     paths where FIRST_RUN_PENDING_KEY may not be set), OR
+    //   - we have an explicit FIRST_RUN_PENDING_KEY signal from a flow that
+    //     opted in (e.g., post email verification "Continue" click).
+    // Either way, the per-org localStorage flag below guarantees we only run
+    // this overlay once per browser per org.
+    const isOrgOwner = Boolean(user?.is_org_owner);
+    const explicitlyPending = sessionStorage.getItem(FIRST_RUN_PENDING_KEY) === "1";
+    if (!isOrgOwner && !explicitlyPending) return;
 
     const key = `entivia_setup_shown_${org.id}`;
     if (localStorage.getItem(key)) return;
@@ -46,7 +56,7 @@ export function FirstRunOverlay() {
 
     // No cleanup returned — timers live in refs and survive dep re-runs.
     // Unmount cleanup below handles teardown.
-  }, [isLoading, org?.id, org?.onboarding_done, pathname]);
+  }, [isLoading, org?.id, org?.onboarding_done, user?.is_org_owner, pathname]);
 
   useEffect(() => {
     if (!active || pathname !== "/dashboard") return;

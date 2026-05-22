@@ -23,6 +23,18 @@ export function useLogout() {
     onSettled() {
       tokens.clear();
       qc.removeQueries({ queryKey: ["me"] });
+      if (typeof window !== "undefined") {
+        // Defensive: drop any per-org UI session flags so the next user
+        // signing in on this tab starts with a clean slate (setup banner,
+        // future per-tab toggles, etc.).
+        const ss = window.sessionStorage;
+        for (let i = ss.length - 1; i >= 0; i--) {
+          const key = ss.key(i);
+          if (key && key.startsWith("pulse_setup_banner_dismissed")) {
+            ss.removeItem(key);
+          }
+        }
+      }
       router.push("/auth/login");
     },
   });

@@ -19,7 +19,11 @@ import {
 import { supportsEntityMapping } from "@/lib/connectors/pipeline-supported";
 import { BusinessContextSheet } from "@/components/dashboard/business-context-sheet";
 
-const DISMISS_KEY = "pulse_setup_banner_dismissed";
+const DISMISS_KEY_PREFIX = "pulse_setup_banner_dismissed";
+
+function dismissKey(orgId: string | undefined) {
+  return orgId ? `${DISMISS_KEY_PREFIX}:${orgId}` : DISMISS_KEY_PREFIX;
+}
 
 export function SetupBanner() {
   const { data: org } = useOrganization();
@@ -43,9 +47,15 @@ export function SetupBanner() {
 
   const show = !dismissed && isSetupIncomplete(org, connections, mappings);
 
+  // Re-read the dismiss flag whenever the active org changes so a previous
+  // user's dismissal in the same browser tab never leaks to a different org.
   useEffect(() => {
-    setDismissed(sessionStorage.getItem(DISMISS_KEY) === "1");
-  }, []);
+    if (!org?.id) {
+      setDismissed(false);
+      return;
+    }
+    setDismissed(sessionStorage.getItem(dismissKey(org.id)) === "1");
+  }, [org?.id]);
 
   useEffect(() => {
     if (!canManageSetup || !org || org.onboarding_done) return;
@@ -61,7 +71,9 @@ export function SetupBanner() {
   if (!show) return null;
 
   function dismiss() {
-    sessionStorage.setItem(DISMISS_KEY, "1");
+    if (org?.id) {
+      sessionStorage.setItem(dismissKey(org.id), "1");
+    }
     setDismissed(true);
   }
 
@@ -148,7 +160,9 @@ export function SetupBanner() {
           open={sheetOpen}
           onClose={() => setSheetOpen(false)}
           onSaved={() => {
-            sessionStorage.removeItem(DISMISS_KEY);
+            if (org?.id) {
+              sessionStorage.removeItem(dismissKey(org.id));
+            }
             setDismissed(false);
           }}
         />

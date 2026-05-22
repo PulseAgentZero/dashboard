@@ -9,9 +9,25 @@ import {
   useChat,
 } from "@/hooks/agent/use-agent";
 import type { AgentMessage, ConversationListItem } from "@/lib/api/agent-api";
+import { DashboardIntakeCard } from "@/components/agent/dashboard-intake-card";
+import { DashboardPlanCard } from "@/components/agent/dashboard-plan-card";
+import { DashboardChangesCard } from "@/components/agent/dashboard-changes-card";
+import { DashboardBuiltCard } from "@/components/agent/dashboard-built-card";
 
-function MessageBubble({ msg }: { msg: AgentMessage }) {
+function MessageBubble({
+  msg,
+  isLatestAssistant,
+  onSend,
+  sending,
+}: {
+  msg: AgentMessage;
+  isLatestAssistant: boolean;
+  onSend: (content: string) => void;
+  sending: boolean;
+}) {
   const isUser = msg.role === "user";
+  const artifacts = msg.artifacts ?? null;
+
   return (
     <div className={`flex ${isUser ? "justify-end" : "justify-start"} animate-in fade-in duration-200`}>
       {!isUser && (
@@ -20,13 +36,58 @@ function MessageBubble({ msg }: { msg: AgentMessage }) {
         </div>
       )}
       <div
-        className={`max-w-[85%] sm:max-w-[80%] rounded-2xl px-3.5 py-2 text-sm leading-relaxed ${
+        className={`max-w-[85%] sm:max-w-[80%] ${
           isUser
-            ? "bg-slate-900 text-white rounded-br-xs"
-            : "border border-slate-200 bg-white text-slate-800 rounded-bl-xs"
+            ? "rounded-2xl rounded-br-xs bg-slate-900 px-3.5 py-2 text-sm leading-relaxed text-white"
+            : ""
         }`}
       >
-        {msg.content}
+        {isUser ? (
+          msg.content
+        ) : (
+          <>
+            {msg.content && (
+              <div className="whitespace-pre-wrap rounded-2xl rounded-bl-xs border border-slate-200 bg-white px-3.5 py-2 text-sm leading-relaxed text-slate-800">
+                {msg.content}
+              </div>
+            )}
+            {artifacts?.start_dashboard_intake && (
+              <DashboardIntakeCard
+                artifact={artifacts.start_dashboard_intake}
+                onSubmit={onSend}
+                disabled={!isLatestAssistant || sending}
+              />
+            )}
+            {artifacts?.draft_dashboard_plan && (
+              <DashboardPlanCard
+                artifact={artifacts.draft_dashboard_plan}
+                onConfirm={onSend}
+                onEdit={onSend}
+                disabled={!isLatestAssistant || sending}
+              />
+            )}
+            {artifacts?.propose_dashboard_changes && (
+              <DashboardChangesCard
+                artifact={artifacts.propose_dashboard_changes}
+                onApply={onSend}
+                onReject={onSend}
+                disabled={!isLatestAssistant || sending}
+              />
+            )}
+            {artifacts?.build_dashboard_from_plan && (
+              <DashboardBuiltCard
+                artifact={artifacts.build_dashboard_from_plan}
+                variant="build"
+              />
+            )}
+            {artifacts?.apply_dashboard_changes && (
+              <DashboardBuiltCard
+                artifact={artifacts.apply_dashboard_changes}
+                variant="apply"
+              />
+            )}
+          </>
+        )}
       </div>
     </div>
   );
@@ -104,6 +165,13 @@ function ChatPanel({
         role: (raw.role as "user" | "assistant") ?? "assistant",
         content: String(raw.content ?? raw.text ?? ""),
         created_at: raw.created_at as string | undefined,
+        tools_called: Array.isArray(raw.tools_called)
+          ? (raw.tools_called as string[])
+          : undefined,
+        artifacts:
+          raw.artifacts && typeof raw.artifacts === "object"
+            ? (raw.artifacts as AgentMessage["artifacts"])
+            : undefined,
       };
     });
   })();
@@ -118,21 +186,37 @@ function ChatPanel({
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [allMessages.length]);
 
-  function handleSend() {
-    const content = input.trim();
-    if (!content || sending) return;
+  function sendContent(content: string) {
+    const trimmed = content.trim();
+    if (!trimmed || sending) return;
     setBaseline(messages.length);
     setInput("");
-    setOptimistic([{ role: "user", content }]);
-    sendMsg(content, {
+    setOptimistic([{ role: "user", content: trimmed }]);
+    sendMsg(trimmed, {
       onSuccess: (data) => {
         setOptimistic([
-          { role: "user", content },
-          { role: "assistant", content: data.reply },
+          { role: "user", content: trimmed },
+          {
+            role: "assistant",
+            content: data.reply,
+            tools_called: data.tools_called ?? undefined,
+            artifacts: data.artifacts ?? undefined,
+          },
         ]);
       },
     });
   }
+
+  function handleSend() {
+    sendContent(input);
+  }
+
+  const latestAssistantIdx = (() => {
+    for (let i = allMessages.length - 1; i >= 0; i--) {
+      if (allMessages[i].role === "assistant") return i;
+    }
+    return -1;
+  })();
 
   function handleKey(e: React.KeyboardEvent<HTMLTextAreaElement>) {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -176,7 +260,13 @@ function ChatPanel({
           </div>
         )}
         {allMessages.map((msg, i) => (
-          <MessageBubble key={i} msg={msg} />
+          <MessageBubble
+            key={i}
+            msg={msg}
+            isLatestAssistant={i === latestAssistantIdx}
+            onSend={sendContent}
+            sending={sending}
+          />
         ))}
         {sending && (
           <div className="flex justify-start">

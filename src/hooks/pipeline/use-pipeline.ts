@@ -45,8 +45,38 @@ export function useUpdateSchedule() {
     mutationFn: pipelineApi.updateSchedule,
     onSuccess: () => {
       void qc.invalidateQueries({ queryKey: ["pipeline", "schedule"] });
+      void qc.invalidateQueries({ queryKey: ["pipeline", "scheduler-status"] });
       toast.success("Schedule updated");
     },
     onError: () => toast.error("Failed to update schedule"),
+  });
+}
+
+export function useSchedulerStatus() {
+  return useQuery({
+    queryKey: ["pipeline", "scheduler-status"],
+    queryFn: pipelineApi.getSchedulerStatus,
+    staleTime: 15_000,
+    refetchInterval: 30_000,
+    retry: 1,
+  });
+}
+
+export function useSchedulePreview(
+  cron: string | null | undefined,
+  timezone: string | undefined,
+  enabled: boolean,
+) {
+  return useQuery({
+    queryKey: ["pipeline", "schedule-preview", cron ?? "", timezone ?? "UTC"],
+    queryFn: () =>
+      pipelineApi.previewSchedule({
+        cron_expression: cron ?? "0 */6 * * *",
+        timezone: timezone ?? "UTC",
+        count: 5,
+      }),
+    enabled: enabled && !!cron,
+    staleTime: 30_000,
+    retry: 1,
   });
 }

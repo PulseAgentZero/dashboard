@@ -17,21 +17,25 @@ type AuthContextValue = {
 const AuthContext = createContext<AuthContextValue | null>(null);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const { data, isLoading, isError, refetch } = useMe();
+  const { data, isPending, isError, refetch } = useMe();
   const hasToken = typeof window !== "undefined" && !!tokens.getAccess();
 
+  // When the user just logged in, `enabled` flips from false to true and React
+  // Query schedules the fetch in a useEffect. During that first render
+  // `isLoading` is still false but `data` is undefined — using `isPending`
+  // covers both the "not yet started" and "currently fetching" states.
   const value = useMemo<AuthContextValue>(
     () => ({
       user: data?.user,
       org: data?.org,
-      isLoading: hasToken && isLoading,
+      isLoading: hasToken && isPending && !isError,
       isAuthenticated: !!data?.user && hasToken,
       isError,
       refetch: () => {
         void refetch();
       },
     }),
-    [data, hasToken, isLoading, isError, refetch],
+    [data, hasToken, isPending, isError, refetch],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
