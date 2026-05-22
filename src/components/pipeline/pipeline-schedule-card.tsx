@@ -1,9 +1,13 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Calendar, ChevronDown, Loader2 } from "lucide-react";
+import { Calendar, CalendarClock, ChevronDown, Loader2 } from "lucide-react";
 import { useOrganization } from "@/hooks/org/use-organization";
-import { usePipelineSchedule, useUpdateSchedule } from "@/hooks/pipeline/use-pipeline";
+import {
+  usePipelineSchedule,
+  useSchedulePreview,
+  useUpdateSchedule,
+} from "@/hooks/pipeline/use-pipeline";
 import {
   CUSTOM_SCHEDULE_PRESET,
   getScheduleDisplayLabel,
@@ -67,6 +71,20 @@ export function PipelineScheduleCard() {
       { onSuccess: () => setOpen(false) },
     );
   }
+
+  const previewCron =
+    presetId === "custom"
+      ? customCron
+      : presetId === "manual"
+        ? null
+        : (SCHEDULE_PRESETS.find((p) => p.id === presetId)?.cron ?? null);
+
+  const previewTimezone = org?.timezone ?? "UTC";
+  const { data: preview } = useSchedulePreview(
+    previewCron,
+    previewTimezone,
+    open && !!previewCron,
+  );
 
   if (isLoading) {
     return (
@@ -212,6 +230,31 @@ export function PipelineScheduleCard() {
             Save
           </button>
         </div>
+      </div>
+    )}
+
+    {previewCron && preview?.next_runs && preview.next_runs.length > 0 && (
+      <div className="border-t border-slate-100 px-4 py-2.5">
+        <p className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wide text-slate-500">
+          <CalendarClock size={11} />
+          Next {preview.next_runs.length} runs
+          {previewTimezone ? ` · ${previewTimezone}` : ""}
+        </p>
+        <ul className="mt-1 space-y-0.5 text-[11px] text-slate-700">
+          {preview.next_runs.map((run, i) => (
+            <li key={i} className="flex justify-between gap-3 tabular-nums">
+              <span className="text-slate-500">#{i + 1}</span>
+              <span className="truncate">
+                {new Date(run.local).toLocaleString(undefined, {
+                  month: "short",
+                  day: "numeric",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
+              </span>
+            </li>
+          ))}
+        </ul>
       </div>
     )}
 

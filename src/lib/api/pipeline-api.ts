@@ -48,6 +48,25 @@ type ApiPipelineSchedule = {
   mapping_id: string | null;
 };
 
+export type SchedulerStatus = {
+  kind: string;
+  last_seen_at: string | null;
+  age_seconds: number | null;
+  healthy: boolean;
+  process_id: string | null;
+  host: string | null;
+  scheduled_runs_total: number;
+  stale_after_seconds: number;
+};
+
+export type SchedulePreviewRun = { utc: string; local: string };
+
+export type SchedulePreview = {
+  cron_expression: string;
+  timezone: string;
+  next_runs: SchedulePreviewRun[];
+};
+
 const STATUS_MAP: Record<string, PipelineRunStatus> = {
   succeeded: "success",
   success: "success",
@@ -145,4 +164,18 @@ export const pipelineApi = {
     });
     return normalizeSchedule(raw)!;
   },
+
+  previewSchedule: (body: {
+    cron_expression: string;
+    timezone?: string;
+    count?: number;
+  }) =>
+    api.post<SchedulePreview>("/pipeline/schedule/preview-next", {
+      cron_expression: body.cron_expression,
+      timezone: body.timezone ?? "UTC",
+      count: body.count ?? 5,
+    }),
+
+  getSchedulerStatus: () =>
+    api.get<SchedulerStatus>("/pipeline/scheduler/status"),
 };

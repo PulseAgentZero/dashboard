@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { DashboardPageShell } from "@/components/layout/dashboard-page-shell";
 import { PipelineScheduleCard } from "@/components/pipeline/pipeline-schedule-card";
+import { SchedulerStatusPill } from "@/components/pipeline/scheduler-status-pill";
 import { DashboardDocsLink } from "@/components/dashboard/docs-link";
 import {
   usePipelineRuns,
@@ -264,6 +265,8 @@ export function PipelinePage() {
           </div>
         </div>
       )}
+
+      <SchedulerStatusPill />
 
       {/* Summary Row */}
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">

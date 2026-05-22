@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { QueryProvider } from "@/providers/query-provider";
 import { AuthProvider } from "@/providers/auth-provider";
+import { PageTransition } from "@/components/page-transition";
 import { Toaster } from "sonner";
 import "./globals.css";
 
@@ -37,7 +38,9 @@ export default function RootLayout({
     <html lang="en" className={`h-full antialiased ${aeonik.variable}`}>
       <body className="min-h-full flex flex-col">
         <QueryProvider>
-          <AuthProvider>{children}</AuthProvider>
+          <AuthProvider>
+            <PageTransition>{children}</PageTransition>
+          </AuthProvider>
         </QueryProvider>
         <Toaster position="top-right" richColors />
       </body>

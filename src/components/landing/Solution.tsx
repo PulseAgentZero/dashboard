@@ -59,7 +59,15 @@ const STEPS = [
 
 export default function Solution() {
   const [activeStep, setActiveStep] = useState(0);
+  const [isDesktop, setIsDesktop] = useState(false);
   const stepRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+  useEffect(() => {
+    const checkDesktop = () => setIsDesktop(window.innerWidth >= 1024);
+    checkDesktop();
+    window.addEventListener("resize", checkDesktop, { passive: true });
+    return () => window.removeEventListener("resize", checkDesktop);
+  }, []);
 
   useEffect(() => {
     // Only track scroll intersections on large viewports where the layout is a sticky split-screen
@@ -218,7 +226,7 @@ export default function Solution() {
                     ref={(el) => { stepRefs.current[idx] = el; }}
                     onClick={() => scrollToStep(idx)}
                     className="w-full text-left flex gap-3 sm:gap-4 items-start relative cursor-pointer pl-4 -ml-[1px] lg:transition-opacity lg:duration-300"
-                    style={{ opacity: isSelected ? 1 : window.innerWidth >= 1024 ? 0.25 : 1 }}
+                    style={{ opacity: isSelected ? 1 : isDesktop ? 0.25 : 1 }}
                   >
                     {/* Sleek Vertical Accent Active Bar */}
                     <span 

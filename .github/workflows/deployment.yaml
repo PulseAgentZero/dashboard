@@ -2,7 +2,7 @@ name: Build and deploy Frontend
 
 on:
   push:
-    branches: [main, feature/integration]
+    branches: [main]
     paths:
       - "src/**"
       - "public/**"
