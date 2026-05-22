@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useAuth } from "@/providers/auth-provider";
 import { FIRST_RUN_PENDING_KEY } from "@/lib/tour/first-run";
 import { requestProductTour } from "@/lib/tour/run-product-tour";
+import { useMarkSetupShown } from "@/hooks/tour/use-tour-guide";
 import { BladeFan } from "../../../public/icon/bladeFan";
 
 const DURATION = 5000;
@@ -12,6 +13,7 @@ const DURATION = 5000;
 export function FirstRunOverlay() {
   const pathname = usePathname();
   const { user, org, isLoading } = useAuth();
+  const { mutate: markSetupShown } = useMarkSetupShown();
 
   const [active, setActive] = useState(false);
   const [fill, setFill] = useState(false);
@@ -27,19 +29,14 @@ export function FirstRunOverlay() {
       return;
     }
 
-    // Trigger when:
-    //   - the user is the org owner (covers OAuth signup + email/password signup
-    //     paths where FIRST_RUN_PENDING_KEY may not be set), OR
-    //   - we have an explicit FIRST_RUN_PENDING_KEY signal from a flow that
-    //     opted in (e.g., post email verification "Continue" click).
-    // Either way, the per-org localStorage flag below guarantees we only run
-    // this overlay once per browser per org.
+    // Already shown on any device — backend is the source of truth.
+    if (org.tour_guide?.setup_shown) return;
+
+    // Trigger when the user is the org owner (covers OAuth signup) or we have
+    // an explicit FIRST_RUN_PENDING_KEY signal set by login / email verification.
     const isOrgOwner = Boolean(user?.is_org_owner);
     const explicitlyPending = sessionStorage.getItem(FIRST_RUN_PENDING_KEY) === "1";
     if (!isOrgOwner && !explicitlyPending) return;
-
-    const key = `entivia_setup_shown_${org.id}`;
-    if (localStorage.getItem(key)) return;
 
     initialized.current = true;
     sessionStorage.removeItem(FIRST_RUN_PENDING_KEY);
@@ -56,15 +53,13 @@ export function FirstRunOverlay() {
 
     // No cleanup returned — timers live in refs and survive dep re-runs.
     // Unmount cleanup below handles teardown.
-  }, [isLoading, org?.id, org?.onboarding_done, user?.is_org_owner, pathname]);
+  }, [isLoading, org?.id, org?.onboarding_done, org?.tour_guide?.setup_shown, user?.is_org_owner, pathname]);
 
   useEffect(() => {
     if (!active || pathname !== "/dashboard") return;
 
     finishTimerRef.current = setTimeout(() => {
-      if (org?.id) {
-        localStorage.setItem(`entivia_setup_shown_${org.id}`, "1");
-      }
+      markSetupShown();
       setActive(false);
       setStartTour(true);
       clearInterval(dotTimerRef.current);
@@ -73,7 +68,7 @@ export function FirstRunOverlay() {
     return () => {
       clearTimeout(finishTimerRef.current);
     };
-  }, [active, org?.id, pathname]);
+  }, [active, org?.id, pathname, markSetupShown]);
 
   useEffect(() => {
     if (!startTour || active || pathname !== "/dashboard") return;

@@ -37,7 +37,7 @@ export interface OrgOut {
   onboarding_done: boolean;
   created_at: string;
   logo_url?: string | null;
-  tour_guide?: { completed?: boolean; version?: number; completed_at?: string | null };
+  tour_guide?: { setup_shown?: boolean; completed?: boolean; version?: number; completed_at?: string | null };
   require_2fa?: boolean;
 }
 

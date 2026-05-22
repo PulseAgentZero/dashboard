@@ -27,3 +27,15 @@ export function useCompleteTourGuide() {
     },
   });
 }
+
+export function useMarkSetupShown() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: () =>
+      orgApi.patchMemberSettings({ tour_guide: { setup_shown: true } }),
+    onSuccess: () => {
+      void qc.invalidateQueries({ queryKey: ["organization"] });
+      void qc.invalidateQueries({ queryKey: ["me"] });
+    },
+  });
+}

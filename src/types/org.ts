@@ -1,4 +1,5 @@
 export type TourGuideState = {
+  setup_shown?: boolean;
   completed?: boolean;
   version?: number;
   completed_at?: string | null;
