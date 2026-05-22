@@ -1,17 +1,18 @@
 "use client";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { authApi } from "@/lib/api/auth";
 import { ApiError } from "@/lib/api/client";
 import { shouldDeferMutationToast } from "@/lib/validation/parse";
 import { postAuthRedirect } from "@/lib/auth-redirect";
-import { tokens } from "@/lib/auth-tokens";
+import { clearBannerDismissFlags, tokens } from "@/lib/auth-tokens";
 import { isMfaRequired } from "@/types/auth";
 
 export function useLogin() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const qc = useQueryClient();
 
   return useMutation({
@@ -25,12 +26,10 @@ export function useLogin() {
         return;
       }
       tokens.set(data.access_token, data.refresh_token);
-      console.log("[login] tokens set, access token:", !!tokens.getAccess());
-      void qc.invalidateQueries({ queryKey: ["me"] });
+      void qc.resetQueries({ queryKey: ["me"] });
+      clearBannerDismissFlags();
       toast.success("Welcome back!");
-      console.log("[login] calling postAuthRedirect, user.is_verified:", data.user?.is_verified);
-      postAuthRedirect(data.org, router, data.user);
-      console.log("[login] postAuthRedirect called");
+      postAuthRedirect(data.org, router, data.user, searchParams.get("redirect"));
     },
     onError(err) {
       if (err instanceof ApiError && err.code === "TWO_FACTOR_SETUP_REQUIRED") {

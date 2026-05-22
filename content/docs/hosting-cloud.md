@@ -22,7 +22,7 @@ flowchart LR
   YourDB -.->|read-only connection| EntiviaStack
 ```
 
-1. **You** use the dashboard at our public URL (e.g. `app.pulseai.io`).
+1. **You** use the dashboard at our public URL (`app.entivia.online`).
 2. **We** host the API, workers, agents, scheduler, and operational data stores.
 3. **Your database** stays where it is; Entivia connects with credentials you provide (read-only recommended).
 
@@ -58,7 +58,7 @@ As a Cloud customer you typically **do not**:
 
 - Set `JWT_SECRET`, `DATABASE_URL`, or other API environment variables
 - Deploy Docker images or run `docker compose`
-- Purchase a self-hosted `PULSE_LICENSE_KEY`
+- Purchase or activate a self-hosted license key
 
 Those are operated by Entivia. Configuration you **do** control: connections, API keys, webhooks, Studio content, and team settings.
 

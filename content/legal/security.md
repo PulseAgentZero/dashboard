@@ -76,7 +76,7 @@ Minimize what you connect and what you ask the agent to process.
 
 ## Vulnerability disclosure
 
-We welcome responsible reports of security vulnerabilities. Please email **security@pulsedata.io** with:
+We welcome responsible reports of security vulnerabilities. Please email **security@entivia.online** with:
 
 - A clear description and steps to reproduce.
 - Impact assessment if known.
@@ -105,4 +105,4 @@ Your compliance obligations depend on your industry, data types, and deployment 
 - [Self-hosted deployment](/docs/hosting/self-hosted)
 - [Environment variables](/docs/configuration/environment-variables)
 
-Questions: **security@pulsedata.io**
+Questions: **security@entivia.online**

@@ -12,7 +12,7 @@ We are committed to transparency and to practices aligned with the Nigeria Data 
 
 **Entivia Intelligence Engine** provides a real-time intelligence platform for operational teams. Depending on how you use Entivia, we may act as a **data controller** (for example, for your account and billing on Entivia Cloud) or as a **data processor** on your instructions (for example, when you connect customer databases and run pipelines).
 
-Contact: **privacy@pulsedata.io**
+Contact: **privacy@entivia.online**
 
 ## 2. Entivia Cloud vs self-hosted
 
@@ -115,7 +115,7 @@ Depending on your location, you may have the right to:
 - Withdraw consent where processing is consent-based.
 - Lodge a complaint with a supervisory authority (for example, the Nigeria Data Protection Commission).
 
-To exercise rights, email **privacy@pulsedata.io**. We may verify your identity before responding.
+To exercise rights, email **privacy@entivia.online**. We may verify your identity before responding.
 
 ## 12. Cookies and similar technologies
 
@@ -133,6 +133,6 @@ We may update this Privacy Policy from time to time. We will post the revised ve
 
 ## 15. Contact
 
-Privacy inquiries and data subject requests: **privacy@pulsedata.io**
+Privacy inquiries and data subject requests: **privacy@entivia.online**
 
-Security issues: **security@pulsedata.io** (see [Security](/security))
+Security issues: **security@entivia.online** (see [Security](/security))

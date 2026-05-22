@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   Bot, Building2, Copy, Download, Eye, EyeOff,
   KeyRound, Loader2, LogIn, Plus, Radio, Server, ShieldCheck, Trash2, User, Webhook,
@@ -600,36 +601,83 @@ function LlmKeysTab() {
     );
   }
 
+  const providers = [
+    {
+      name: "anthropic" as const,
+      label: "Anthropic (Claude)",
+      placeholder: "sk-ant-…",
+      show: showAnthropic,
+      toggle: () => setShowAnthropic((s) => !s),
+      state: llm?.anthropic,
+    },
+    {
+      name: "groq" as const,
+      label: "Groq",
+      placeholder: "gsk_…",
+      show: showGroq,
+      toggle: () => setShowGroq((s) => !s),
+      state: llm?.groq,
+    },
+  ];
+
   return (
-    <form key={`${llm?.anthropic}-${llm?.groq}`} onSubmit={handleSubmit} className="space-y-6">
+    <form
+      key={`${llm?.anthropic?.source}-${llm?.groq?.source}`}
+      onSubmit={handleSubmit}
+      className="space-y-6"
+    >
       <div className="rounded-xl border border-orange-100 bg-orange-50/30 px-4 py-3 text-xs text-orange-800 leading-normal">
         LLM keys are stored securely using symmetric encryption and are referenced exclusively for context-rich AI processing blocks on your self-hosted instance.
       </div>
       <section className="space-y-4">
         <p className="text-xs font-bold uppercase tracking-wider text-slate-400">Provider keys</p>
         <div className="space-y-4">
-          {([
-            { name: "anthropic", label: "Anthropic (Claude)", placeholder: "sk-ant-…", show: showAnthropic, toggle: () => setShowAnthropic((s) => !s), configured: !!llm?.anthropic },
-            { name: "groq", label: "Groq", placeholder: "gsk_…", show: showGroq, toggle: () => setShowGroq((s) => !s), configured: !!llm?.groq },
-          ] as const).map(({ name, label, placeholder, show, toggle, configured }) => (
-            <div key={name} className="space-y-1.5">
-              <label className="block text-xs font-semibold text-slate-700">{label}</label>
-              <div className="relative">
-                <input
-                  name={name}
-                  type={show ? "text" : "password"}
-                  className={`${inputCls} pr-10`}
-                  defaultValue={name === "anthropic" ? (llm?.anthropic ?? "") : (llm?.groq ?? "")}
-                  placeholder={placeholder}
-                  autoComplete="off"
-                />
-                <button type="button" onClick={toggle} className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors">
-                  {show ? <EyeOff size={15} /> : <Eye size={15} />}
-                </button>
+          {providers.map(({ name, label, placeholder, show, toggle, state }) => {
+            const fromEnv = state?.source === "env";
+            const fromDb = state?.source === "db";
+            const configured = !!state?.configured;
+            return (
+              <div key={name} className="space-y-1.5">
+                <label className="block text-xs font-semibold text-slate-700">{label}</label>
+                <div className="relative">
+                  <input
+                    name={name}
+                    type={show ? "text" : "password"}
+                    className={`${inputCls} pr-10 ${fromEnv ? "bg-slate-50 text-slate-400" : ""}`}
+                    defaultValue=""
+                    placeholder={fromEnv ? "Configured via .env (read-only)" : placeholder}
+                    autoComplete="off"
+                    disabled={fromEnv}
+                  />
+                  <button
+                    type="button"
+                    onClick={toggle}
+                    disabled={fromEnv}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors disabled:opacity-40"
+                  >
+                    {show ? <EyeOff size={15} /> : <Eye size={15} />}
+                  </button>
+                </div>
+                {fromEnv && (
+                  <p className="text-[11px] font-medium text-blue-600 flex items-center gap-1">
+                    ✓ Set in environment ({name === "anthropic" ? "ANTHROPIC_API_KEY" : "GROQ_API_KEY"}).
+                    Edit your <code className="font-mono text-[10px]">.env</code> to change it, or
+                    paste a key below to override for this org.
+                  </p>
+                )}
+                {fromDb && (
+                  <p className="text-[11px] font-medium text-emerald-600 flex items-center gap-1">
+                    ✓ Saved (overrides environment)
+                  </p>
+                )}
+                {!configured && (
+                  <p className="text-[11px] text-slate-400">
+                    No key configured. Pipelines using this provider will fail.
+                  </p>
+                )}
               </div>
-              {configured && <p className="text-[11px] font-medium text-emerald-600 flex items-center gap-1">✓ Connected</p>}
-            </div>
-          ))}
+            );
+          })}
         </div>
       </section>
       <div className="flex justify-end border-t border-slate-100 pt-4">
@@ -655,9 +703,23 @@ function LicenseTab() {
     activate(key, { onSuccess: () => setKey("") });
   }
 
+  const envProvisioned = !!license?.env_provisioned;
+  const envProvisionError = license?.env_provision_error;
+
   return (
     <div className="space-y-6">
       {isLoading && <div className="h-24 animate-pulse rounded-xl bg-slate-100" />}
+
+      {!isLoading && envProvisionError && (
+        <div className="rounded-xl border border-amber-200 bg-amber-50/60 p-4 text-xs text-amber-900 leading-relaxed">
+          <p className="font-semibold">ENTIVIA_LICENSE_KEY could not be activated</p>
+          <p className="mt-1">{envProvisionError}</p>
+          <p className="mt-2 text-amber-800">
+            Verify the value in your <code className="font-mono">.env</code> and restart the
+            instance, or paste a fresh key below.
+          </p>
+        </div>
+      )}
 
       {!isLoading && !isError && license && (
         <div className={`rounded-xl border p-5 ${license.is_valid ? "border-emerald-200 bg-emerald-50/40" : "border-rose-200 bg-rose-50/40"}`}>
@@ -666,6 +728,11 @@ function LicenseTab() {
             <p className={`text-sm font-semibold ${license.is_valid ? "text-emerald-800" : "text-rose-800"}`}>
               {license.is_valid ? "License active" : "License invalid or expired"}
             </p>
+            {envProvisioned && (
+              <span className="rounded-full bg-blue-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-blue-700">
+                Provisioned via .env
+              </span>
+            )}
           </div>
           <div className="grid gap-3 text-xs sm:grid-cols-2">
             <div>
@@ -710,18 +777,26 @@ function LicenseTab() {
       {(isError || (!isLoading && !license)) && (
         <div className="rounded-xl border border-slate-200 bg-slate-50/40 px-5 py-6 text-center">
           <p className="text-sm font-medium text-slate-600">No active instance license found</p>
-          <p className="mt-0.5 text-xs text-slate-400">Activate an enterprise bundle to unlock programmatic rulesets and workflows.</p>
+          <p className="mt-0.5 text-xs text-slate-400">Activate a Pro bundle to unlock SSO, LDAP, audit log, and high-concurrency pipelines.</p>
         </div>
       )}
 
       <section className="space-y-3">
-        <p className="text-xs font-bold uppercase tracking-wider text-slate-400">Activate license</p>
+        <p className="text-xs font-bold uppercase tracking-wider text-slate-400">
+          {envProvisioned ? "Replace license" : "Activate license"}
+        </p>
+        {envProvisioned && (
+          <p className="text-xs text-slate-500 leading-relaxed">
+            This instance is using a key set via <code className="font-mono">ENTIVIA_LICENSE_KEY</code> in your
+            environment. Pasting a new key below will override it for this org until the next restart.
+          </p>
+        )}
         <form onSubmit={handleActivate} className="flex flex-col gap-2.5 sm:flex-row sm:items-center">
           <input
             className={`${inputCls} font-mono sm:flex-1`}
             value={key}
             onChange={(e) => setKey(e.target.value)}
-            placeholder="PULSE-XXXX-XXXX-XXXX"
+            placeholder="plc_…"
             required
           />
           <button type="submit" disabled={isPending || !key.trim()}
@@ -737,10 +812,30 @@ function LicenseTab() {
 
 // ─── Settings page ────────────────────────────────────────────────────────────
 
+function resolveTabFromQuery(
+  raw: string | null,
+  visibleTabs: ReadonlyArray<{ id: Tab }>,
+): Tab {
+  if (!raw) return "org";
+  const allowed = new Set(visibleTabs.map((t) => t.id));
+  return allowed.has(raw as Tab) ? (raw as Tab) : "org";
+}
+
 export function SettingsPage() {
   const { user } = useAuth();
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const visibleTabs = useMemo(() => getVisibleTabs(user?.role), [user?.role]);
   const [tab, setTab] = useState<Tab>("org");
+
+  useEffect(() => {
+    setTab(resolveTabFromQuery(searchParams.get("tab"), visibleTabs));
+  }, [searchParams, visibleTabs]);
+
+  function selectTab(next: Tab) {
+    setTab(next);
+    router.replace(`/dashboard/settings?tab=${next}`, { scroll: false });
+  }
 
   return (
     <div className="mx-auto w-full max-w-[1400px] space-y-6">
@@ -756,7 +851,7 @@ export function SettingsPage() {
           {visibleTabs.map(({ id, label, icon: Icon }) => (
             <button
               key={id}
-              onClick={() => setTab(id)}
+              onClick={() => selectTab(id)}
               className={`flex shrink-0 items-center gap-2 rounded-t-lg px-4 py-2.5 text-sm font-semibold border-b-2 transition-all ${
                 tab === id
                   ? "border-orange-600 text-orange-600 bg-white"

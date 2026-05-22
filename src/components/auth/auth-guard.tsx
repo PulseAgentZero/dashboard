@@ -20,8 +20,7 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
       router.replace("/auth/login");
       return;
     }
-    if (isError) {
-      console.log("[AuthGuard] isError → redirect login");
+    if (isError && !isLoading) {
       router.replace("/auth/login");
       return;
     }

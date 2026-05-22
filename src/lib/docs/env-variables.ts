@@ -23,7 +23,7 @@ export const ENV_VAR_GROUPS: EnvVarGroup[] = [
     vars: [
       {
         name: "POSTGRES_USER",
-        default: "pulse",
+        default: "entivia",
         description: "Postgres username (compose service).",
       },
       {
@@ -33,7 +33,7 @@ export const ENV_VAR_GROUPS: EnvVarGroup[] = [
       },
       {
         name: "POSTGRES_DB",
-        default: "pulse",
+        default: "entivia",
         description: "Database name.",
       },
       {
@@ -137,7 +137,7 @@ export const ENV_VAR_GROUPS: EnvVarGroup[] = [
       },
       {
         name: "DEFAULT_FROM_EMAIL",
-        default: "noreply@pulse.club",
+        default: "noreply@entivia.online",
         description: "Sender address for system emails.",
       },
       {
@@ -171,7 +171,7 @@ export const ENV_VAR_GROUPS: EnvVarGroup[] = [
       },
       {
         name: "ASSETS_S3_PREFIX",
-        default: "pulse/assets",
+        default: "entivia/assets",
         description: "Key prefix inside the bucket.",
       },
       {
@@ -206,7 +206,7 @@ export const ENV_VAR_GROUPS: EnvVarGroup[] = [
       },
       {
         name: "MINIO_BUCKET",
-        default: "pulse-assets",
+        default: "entivia-assets",
         description: "Bucket name for MinIO backend.",
       },
     ],
@@ -220,6 +220,17 @@ export const ENV_VAR_GROUPS: EnvVarGroup[] = [
         required: true,
         description:
           "Dashboard URL for CORS and email links. No trailing slash. Self-hosted: your browser URL.",
+      },
+      {
+        name: "MARKETING_URL",
+        default: "https://entivia.online",
+        description:
+          "Marketing site origin. Cloud APIs allow this origin for anonymous self-hosted license checkout.",
+      },
+      {
+        name: "CORS_ALLOWED_ORIGINS",
+        description:
+          "Optional comma-separated extra browser origins allowed to call the API.",
       },
       {
         name: "ENVIRONMENT",
@@ -240,10 +251,11 @@ export const ENV_VAR_GROUPS: EnvVarGroup[] = [
       "Standard Docker Hub installs do not use license env vars. Enter your plc_… key under Settings → License after sign-in.",
     vars: [
       {
-        name: "PULSE_LICENSE_KEY",
+        name: "ENTIVIA_LICENSE_KEY",
         selfHostedOnly: true,
         description:
-          "Optional: preload a Pro license (plc_…) via env. Most users activate in the dashboard instead.",
+          "Optional plc_… key for automatic activation on first admin visit to Settings → License. " +
+          "PULSE_LICENSE_KEY is accepted as a backward-compatible alias.",
       },
     ],
   },
@@ -251,12 +263,12 @@ export const ENV_VAR_GROUPS: EnvVarGroup[] = [
     id: "runtime",
     title: "Runtime & image",
     description:
-      "Used by the all-in-one `entivia/entivia` image. Set in `.env` alongside the compose file.",
+      "Used by the all-in-one `chideraozigbo488/entivia` image. Set in `.env` alongside the compose file.",
     vars: [
       {
-        name: "PULSE_VERSION",
+        name: "ENTIVIA_VERSION",
         default: "latest",
-        description: "Docker image tag for `entivia/entivia` (e.g. `latest` or a release tag).",
+        description: "Docker image tag for `chideraozigbo488/entivia` (e.g. `latest` or a release tag).",
       },
       {
         name: "PORT",

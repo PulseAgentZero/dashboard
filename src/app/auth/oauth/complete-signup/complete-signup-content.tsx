@@ -11,6 +11,7 @@ import { authApi } from "@/lib/api/auth";
 import { ApiError } from "@/lib/api/client";
 import { postAuthRedirect } from "@/lib/auth-redirect";
 import { tokens } from "@/lib/auth-tokens";
+import { FIRST_RUN_PENDING_KEY } from "@/lib/tour/first-run";
 import { completeGoogleSignupSchema, useFormValidation } from "@/lib/validation";
 import { shouldDeferMutationToast } from "@/lib/validation/parse";
 
@@ -33,7 +34,8 @@ export default function CompleteSignupContent() {
     },
     onSuccess: async (data) => {
       tokens.set(data.access_token, data.refresh_token);
-      await qc.invalidateQueries({ queryKey: ["me"] });
+      sessionStorage.setItem(FIRST_RUN_PENDING_KEY, "1");
+      await qc.resetQueries({ queryKey: ["me"] });
       toast.success("Welcome to Entivia!");
       postAuthRedirect(data.org, router, data.user);
     },

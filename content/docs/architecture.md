@@ -13,7 +13,7 @@ For user-facing capabilities—entities, pipeline, Studio, alerts, and workspace
 
 The same application components exist in both; only **who runs the servers** and **how Pro is billed** differ.
 
-On **self-hosted**, the published **`entivia/entivia`** Docker image bundles the dashboard, API, workers, agent, scheduler, and embedded Redis behind one nginx port. Postgres runs as a separate container (or external database). See [Self-hosted](/docs/hosting/self-hosted).
+On **self-hosted**, the published **`chideraozigbo488/entivia`** Docker image bundles the dashboard, API, workers, agent, scheduler, and embedded Redis behind one nginx port. Postgres runs as a separate container (or external database). See [Self-hosted](/docs/hosting/self-hosted).
 
 ## System components
 

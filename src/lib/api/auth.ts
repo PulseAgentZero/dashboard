@@ -27,6 +27,7 @@ export interface AuthInstanceStatus {
   registration_open: boolean;
   can_create_organization: boolean;
   google_oauth_enabled: boolean;
+  sso_enabled: boolean;
 }
 
 export function initiateGoogleSignIn(

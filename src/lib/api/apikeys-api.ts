@@ -34,8 +34,20 @@ export const apiKeysApi = {
   revoke: (id: string) => api.delete<void>(`/api-keys/${id}`),
 };
 
+export type LlmKeySource = "env" | "db" | null;
+
+export type LlmKeyState = {
+  configured: boolean;
+  source: LlmKeySource;
+};
+
+export type LlmKeysStatus = {
+  anthropic: LlmKeyState;
+  groq: LlmKeyState;
+};
+
 export const llmKeysApi = {
-  get: () => api.get<{ anthropic: string | null; groq: string | null }>("/settings/llm-keys"),
+  get: () => api.get<LlmKeysStatus>("/settings/llm-keys"),
   update: (body: { anthropic?: string | null; groq?: string | null }) =>
-    api.put<{ anthropic: string | null; groq: string | null }>("/settings/llm-keys", body),
+    api.put<LlmKeysStatus>("/settings/llm-keys", body),
 };

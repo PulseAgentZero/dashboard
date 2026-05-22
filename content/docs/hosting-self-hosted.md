@@ -1,10 +1,10 @@
 # Self-hosted
 
-**Self-hosted** Entivia runs on **your** infrastructure (VPC, on-prem, private cloud). You do not need the Entivia source code—the published **`entivia/entivia`** image on [Docker Hub](https://hub.docker.com/r/entivia/entivia) includes everything in one container.
+**Self-hosted** Entivia runs on **your** infrastructure (VPC, on-prem, private cloud). You do not need the Entivia source code—the published **`chideraozigbo488/entivia`** image on [Docker Hub](https://hub.docker.com/r/chideraozigbo488/entivia) includes everything in one container.
 
 ## What you get
 
-| Component | Included in `entivia/entivia` |
+| Component | Included in `chideraozigbo488/entivia` |
 |-----------|----------------------------|
 | Dashboard (Next.js) | Yes — served by nginx |
 | API (FastAPI) | Yes |
@@ -24,7 +24,7 @@ Nginx listens on a **single port** (default **80**) and routes browser traffic t
 | Operated by | Entivia | You |
 | Sign up at | Our hosted app | Your server after `docker compose up` |
 | Pro access | [Subscription](/pricing) | [License key](/pricing/self-hosted) |
-| Docker | Not required | `entivia/entivia` + Postgres |
+| Docker | Not required | `chideraozigbo488/entivia` + Postgres |
 
 ## Prerequisites
 
@@ -49,14 +49,14 @@ services:
   db:
     image: postgres:16-alpine
     environment:
-      POSTGRES_USER: pulse
+      POSTGRES_USER: entivia
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?missing — set POSTGRES_PASSWORD in .env}
-      POSTGRES_DB: pulse
+      POSTGRES_DB: entivia
     volumes:
       - db_data:/var/lib/postgresql/data
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U pulse -d pulse"]
+      test: ["CMD-SHELL", "pg_isready -U entivia -d entivia"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -75,24 +75,24 @@ services:
       start_period: 10s
 
   entivia:
-    image: entivia/entivia:${PULSE_VERSION:-latest}
+    image: chideraozigbo488/entivia:${ENTIVIA_VERSION:-latest}
     env_file:
       - path: .env
         required: false
     ports:
       - "${PORT:-80}:80"
     environment:
-      DATABASE_URL: postgresql+asyncpg://pulse:${POSTGRES_PASSWORD}@db:5432/pulse
+      DATABASE_URL: postgresql+asyncpg://entivia:${POSTGRES_PASSWORD}@db:5432/entivia
       DATABASE_SSLMODE: disable
       QDRANT_URL: http://qdrant:6333
       REDIS_URL: redis://127.0.0.1:6379/0
       LOCAL_STORAGE_PATH: /app/uploads
-      HOME: /home/pulse
+      HOME: /home/entivia
       FRONTEND_URL: ${FRONTEND_URL:-http://localhost}
     volumes:
-      - pulse_data:/data
+      - entivia_data:/data
       - uploads_data:/app/uploads
-      - pulse_logs:/var/log/pulse/streams
+      - entivia_logs:/var/log/entivia/streams
     depends_on:
       db:
         condition: service_healthy
@@ -109,8 +109,8 @@ services:
 volumes:
   db_data:
   qdrant_data:
-  pulse_data:
-  pulse_logs:
+  entivia_data:
+  entivia_logs:
   uploads_data:
 
 ```
@@ -120,7 +120,7 @@ volumes:
 Create `.env` in the same directory. At minimum set:
 
 ```bash
-# Database (used by the db service and pulse service)
+# Database (used by the db service and entivia service)
 POSTGRES_PASSWORD=          # openssl rand -hex 24
 
 # Security
@@ -135,7 +135,7 @@ GROQ_API_KEY=
 FRONTEND_URL=http://localhost
 
 # Optional: pin image tag (default latest)
-PULSE_VERSION=latest
+ENTIVIA_VERSION=latest
 
 # Optional: host port (default 80)
 PORT=80
@@ -169,7 +169,7 @@ curl http://localhost/health
 ```mermaid
 flowchart TB
   User[Browser] --> Port["Host port PORT default 80"]
-  Port --> Image["entivia/entivia image"]
+  Port --> Image["chideraozigbo488/entivia image"]
   subgraph stack [Entivia container]
     Nginx[nginx]
     UI[Dashboard]
@@ -181,7 +181,7 @@ flowchart TB
   end
   Image --> stack
   stack --> PG[(Postgres db service)]
-  License[PULSE_LICENSE_KEY] --> API
+  License[License key] --> API
 ```
 
 ## Volumes
@@ -189,7 +189,7 @@ flowchart TB
 | Volume | Purpose |
 |--------|---------|
 | `db_data` | Postgres data |
-| `pulse_data` | Embedded Redis persistence |
+| `entivia_data` | Embedded Redis persistence |
 | `uploads_data` | Avatars, logos, CSV uploads (`STORAGE_BACKEND=local`) |
 
 ## Upgrades
@@ -201,13 +201,12 @@ docker compose pull
 docker compose up -d
 ```
 
-Pin a specific version with `PULSE_VERSION=v1.2.3` in `.env` before upgrading.
+Pin a specific version with `ENTIVIA_VERSION=1.2.3` in `.env` before upgrading.
 
 ## Pro license
 
 1. Purchase at [Self-hosted pricing](/pricing/self-hosted).
-2. Set `PULSE_LICENSE_KEY=plc_...` in `.env` and restart, **or**
-3. Activate under **Settings → License** in the dashboard.
+2. Activate under **Settings → License** in the dashboard.
 
 Details: [License activation](/docs/configuration/license).
 

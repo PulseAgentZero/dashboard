@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { Loader2, ShieldAlert } from "lucide-react";
+import { Loader2, ShieldAlert, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 import { useExchangePortalToken } from "@/hooks/billing/use-billing";
 import { ApiError } from "@/lib/api/client";
@@ -48,72 +48,84 @@ export function LicensePortalCallbackContent() {
 
   if (!token) {
     return (
-      <div className="min-h-screen bg-black text-white antialiased">
-        <main className="grid min-h-screen place-items-center px-4">
-          <div className="max-w-md text-center">
-            <ShieldAlert
-              size={36}
-              strokeWidth={1.5}
-              className="mx-auto text-red-400"
-            />
-            <h1 className="mt-4 text-xl sm:text-2xl font-extrabold tracking-tight">
-              Couldn&apos;t sign you in
-            </h1>
-            <p className="mt-3 text-sm text-zinc-400 leading-relaxed">
-              Missing sign-in token. Open the link from your email.
-            </p>
-            <Link
-              href="/pricing/self-hosted/portal"
-              className="mt-6 inline-flex items-center justify-center rounded-full bg-orange-600 px-5 py-2.5 text-xs font-bold text-white hover:bg-orange-500 transition-colors"
-            >
-              Request a new link
-            </Link>
-          </div>
-        </main>
-      </div>
+      <PortalShell tone="error" icon={<ShieldAlert size={32} strokeWidth={1.5} />}>
+        <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900">
+          Couldn&apos;t sign you in
+        </h1>
+        <p className="mt-3 text-sm text-slate-500 leading-relaxed">
+          Missing sign-in token. Open the link from your email.
+        </p>
+        <Link
+          href="/pricing/self-hosted/portal"
+          className="mt-6 inline-flex items-center justify-center rounded-xl bg-orange-600 px-5 py-2.5 text-xs font-semibold text-white shadow-sm hover:bg-orange-500 transition-colors"
+        >
+          Request a new link
+        </Link>
+      </PortalShell>
     );
   }
 
   if (exchangeError) {
     return (
-      <div className="min-h-screen bg-black text-white antialiased">
-        <main className="grid min-h-screen place-items-center px-4">
-          <div className="max-w-md text-center">
-            <ShieldAlert
-              size={36}
-              strokeWidth={1.5}
-              className="mx-auto text-red-400"
-            />
-            <h1 className="mt-4 text-xl sm:text-2xl font-extrabold tracking-tight">
-              Couldn&apos;t sign you in
-            </h1>
-            <p className="mt-3 text-sm text-zinc-400 leading-relaxed">{exchangeError}</p>
-            <Link
-              href="/pricing/self-hosted/portal"
-              className="mt-6 inline-flex items-center justify-center rounded-full bg-orange-600 px-5 py-2.5 text-xs font-bold text-white hover:bg-orange-300 transition-colors"
-            >
-              Request a new link
-            </Link>
-          </div>
-        </main>
-      </div>
+      <PortalShell tone="error" icon={<ShieldAlert size={32} strokeWidth={1.5} />}>
+        <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900">
+          Couldn&apos;t sign you in
+        </h1>
+        <p className="mt-3 text-sm text-slate-500 leading-relaxed">{exchangeError}</p>
+        <Link
+          href="/pricing/self-hosted/portal"
+          className="mt-6 inline-flex items-center justify-center rounded-xl bg-orange-600 px-5 py-2.5 text-xs font-semibold text-white shadow-sm hover:bg-orange-500 transition-colors"
+        >
+          Request a new link
+        </Link>
+      </PortalShell>
     );
   }
 
   return (
-    <div className="min-h-screen bg-black text-white antialiased">
+    <PortalShell
+      tone="brand"
+      icon={<Loader2 size={24} className="animate-spin" />}
+    >
+      <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900">
+        Signing you in…
+      </h1>
+      <p className="mt-3 text-sm text-slate-500">
+        One moment while we verify your sign-in link.
+      </p>
+    </PortalShell>
+  );
+}
+
+function PortalShell({
+  tone,
+  icon,
+  children,
+}: {
+  tone: "brand" | "error";
+  icon: React.ReactNode;
+  children: React.ReactNode;
+}) {
+  const iconTone =
+    tone === "error"
+      ? "bg-rose-50 text-rose-600 ring-rose-100"
+      : "bg-orange-50 text-orange-600 ring-orange-100";
+  return (
+    <div className="min-h-screen bg-slate-50 text-slate-900 antialiased">
       <main className="grid min-h-screen place-items-center px-4">
-        <div className="max-w-md text-center">
-          <Loader2
-            size={28}
-            className="mx-auto animate-spin text-orange-500"
-          />
-          <h1 className="mt-4 text-xl sm:text-2xl font-extrabold tracking-tight">
-            Signing you in…
-          </h1>
-          <p className="mt-3 text-sm text-zinc-400">
-            One moment while we verify your sign-in link.
-          </p>
+        <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-sm">
+          <div className="mb-5 flex items-center justify-center gap-2 text-slate-400">
+            <ShieldCheck size={14} />
+            <span className="text-[10px] font-bold uppercase tracking-widest">
+              Entivia license portal
+            </span>
+          </div>
+          <span
+            className={`mx-auto grid h-14 w-14 place-items-center rounded-2xl ring-1 ${iconTone}`}
+          >
+            {icon}
+          </span>
+          <div className="mt-5">{children}</div>
         </div>
       </main>
     </div>

@@ -29,7 +29,7 @@ services:
         # unset for local dev to keep links relative.
         NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-}
         NEXT_PUBLIC_MARKETING_URL: ${NEXT_PUBLIC_MARKETING_URL:-}
-    image: entivia/entivia-frontend:${IMAGE_TAG:-latest}
+    image: chideraozigbo488/entivia-frontend:${IMAGE_TAG:-latest}
     ports:
       - "${FRONTEND_PORT:-3096}:3000"
     environment:

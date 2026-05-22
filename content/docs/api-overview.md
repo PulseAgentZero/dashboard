@@ -4,11 +4,13 @@ The Entivia **Public API** lets external systems read entities, recommendations,
 
 ## Base URL
 
+**Entivia Cloud:**
+
 ```
-https://api.yourdomain.com/api/public/v1
+https://api.entivia.online/api/public/v1
 ```
 
-Replace `api.yourdomain.com` with the API host for your Entivia Cloud workspace or self-hosted deployment.
+**Self-hosted:** replace the host with your own deployment URL, e.g. `https://entivia.acme.com/api/public/v1`.
 
 ## Authentication
 

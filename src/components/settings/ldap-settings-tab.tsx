@@ -88,7 +88,7 @@ export function LdapSettingsTab() {
             LDAP / Active Directory
           </p>
           <p className="mt-0.5 text-xs text-slate-500">
-            Provision users and map directory groups to Pulse roles.
+            Provision users and map directory groups to Entivia roles.
           </p>
         </div>
 
@@ -102,7 +102,7 @@ export function LdapSettingsTab() {
           <span className="min-w-0 flex-1">
             <span className="block text-sm font-semibold text-slate-800">Enable scheduled sync</span>
             <span className="block text-xs text-slate-500 mt-0.5">
-              When enabled, Pulse will sync users from your directory on the cron schedule below.
+              When enabled, Entivia will sync users from your directory on the cron schedule below.
             </span>
           </span>
         </label>
@@ -196,7 +196,7 @@ export function LdapSettingsTab() {
       <section className="space-y-4 py-4 sm:p-5 sm:bg-white sm:border sm:border-slate-200 sm:rounded-xl sm:shadow-sm">
         <p className="text-xs font-bold uppercase tracking-wider text-slate-400">Role mapping</p>
         <p className="text-xs text-slate-500 -mt-2">
-          Map directory groups (DN strings) to Pulse roles. Users not in any mapped group get the default role.
+          Map directory groups (DN strings) to Entivia roles. Users not in any mapped group get the default role.
         </p>
         <textarea
           name="role_mapping"

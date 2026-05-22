@@ -2,7 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   // Standalone output produces a minimal server.js + no node_modules dependency.
-  // Required for the bundled entivia/entivia Docker image build.
+  // Required for the bundled chideraozigbo488/entivia Docker image build.
   output: process.env.NEXT_BUILD_STANDALONE === "1" ? "standalone" : undefined,
   transpilePackages: ["recharts"],
   async redirects() {

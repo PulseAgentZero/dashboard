@@ -12,8 +12,7 @@ const DURATION = 5000;
 
 export function FirstRunOverlay() {
   const pathname = usePathname();
-  const { user, org, isLoading } = useAuth();
-  const { mutate: markSetupShown } = useMarkSetupShown();
+  const { org, isLoading } = useAuth();
 
   const [active, setActive] = useState(false);
   const [fill, setFill] = useState(false);
@@ -29,14 +28,7 @@ export function FirstRunOverlay() {
       return;
     }
 
-    // Already shown on any device — backend is the source of truth.
-    if (org.tour_guide?.setup_shown) return;
-
-    // Trigger when the user is the org owner (covers OAuth signup) or we have
-    // an explicit FIRST_RUN_PENDING_KEY signal set by login / email verification.
-    const isOrgOwner = Boolean(user?.is_org_owner);
-    const explicitlyPending = sessionStorage.getItem(FIRST_RUN_PENDING_KEY) === "1";
-    if (!isOrgOwner && !explicitlyPending) return;
+    if (sessionStorage.getItem(FIRST_RUN_PENDING_KEY) !== "1") return;
 
     initialized.current = true;
     sessionStorage.removeItem(FIRST_RUN_PENDING_KEY);
@@ -53,7 +45,7 @@ export function FirstRunOverlay() {
 
     // No cleanup returned — timers live in refs and survive dep re-runs.
     // Unmount cleanup below handles teardown.
-  }, [isLoading, org?.id, org?.onboarding_done, org?.tour_guide?.setup_shown, user?.is_org_owner, pathname]);
+  }, [isLoading, org?.id, org?.onboarding_done, pathname]);
 
   useEffect(() => {
     if (!active || pathname !== "/dashboard") return;

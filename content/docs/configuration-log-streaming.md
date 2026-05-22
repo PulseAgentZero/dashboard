@@ -6,7 +6,7 @@ Supported destinations:
 
 - HTTP webhook endpoints for SIEMs and observability tools.
 - Syslog collectors over UDP, TCP, or TLS.
-- Rotating files under `/var/log/pulse/streams` inside the `pulse_logs` Docker volume.
+- Rotating files under `/var/log/entivia/streams` inside the `entivia_logs` Docker volume.
 
 Each delivered record is JSON and includes the standard fields `timestamp`, `level`, `logger`, `message`, plus structured fields such as `event_category`, `request_id`, `org_id`, `status_code`, `duration_ms`, and `run_id` when available.
 
@@ -30,4 +30,4 @@ HTTP destinations receive batched payloads:
 }
 ```
 
-If you configure an HMAC secret, Entivia sends `X-Pulse-Signature: sha256=<hex digest>` computed over the raw request body.
+If you configure an HMAC secret, Entivia sends `X-Entivia-Signature: sha256=<hex digest>` computed over the raw request body.

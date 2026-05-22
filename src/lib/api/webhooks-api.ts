@@ -18,6 +18,15 @@ export type WebhookDelivery = {
   created_at: string;
 };
 
+export type ActivateLicenseResponse = {
+  plan: string;
+  features: string[];
+  limits?: Record<string, number>;
+  seat_limit?: number | null;
+  expires_at: string | null;
+  validation_cached_until: string | null;
+};
+
 export type LicenseInfo = {
   id?: string | null;
   plan: string;
@@ -34,6 +43,8 @@ export type LicenseInfo = {
   limits?: Record<string, number>;
   effective_limits?: Record<string, number>;
   issued_to?: string | null;
+  env_provisioned?: boolean;
+  env_provision_error?: string | null;
 };
 
 export const webhooksApi = {
@@ -56,5 +67,5 @@ export const licenseApi = {
   get: () => api.get<LicenseInfo>("/license"),
 
   activate: (key: string) =>
-    api.post<LicenseInfo>("/license/activate", { license_key: key }),
+    api.post<ActivateLicenseResponse>("/license/activate", { license_key: key }),
 };

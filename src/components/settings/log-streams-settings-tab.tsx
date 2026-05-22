@@ -27,7 +27,7 @@ const labelCls = "block text-xs font-semibold text-slate-600";
 const DESTINATION_OPTIONS: { value: LogStreamDestination; label: string; hint: string }[] = [
   { value: "http", label: "HTTP webhook", hint: "POST batches as JSON to your endpoint" },
   { value: "syslog", label: "Syslog", hint: "Stream to a Syslog collector (UDP / TCP / TLS)" },
-  { value: "file", label: "File", hint: "Write to /var/log/pulse/streams in the container" },
+  { value: "file", label: "File", hint: "Write to /var/log/entivia/streams in the container" },
 ];
 
 function LockedState() {
@@ -59,7 +59,7 @@ function StreamForm({ onClose }: { onClose: () => void }) {
   const [host, setHost] = useState("");
   const [port, setPort] = useState("514");
   const [protocol, setProtocol] = useState<"udp" | "tcp" | "tls">("udp");
-  const [path, setPath] = useState("/var/log/pulse/streams/pulse.log");
+  const [path, setPath] = useState("/var/log/entivia/streams/entivia.log");
   const [minLevel, setMinLevel] = useState("INFO");
 
   function submit(e: React.SyntheticEvent<HTMLFormElement>) {
@@ -212,7 +212,7 @@ function StreamForm({ onClose }: { onClose: () => void }) {
             required
             value={path}
             onChange={(e) => setPath(e.target.value)}
-            placeholder="/var/log/pulse/streams/pulse.log"
+            placeholder="/var/log/entivia/streams/entivia.log"
           />
           <p className="text-[11px] text-slate-400">
             Must be writable inside the container — mount a volume at this path for persistence.
@@ -342,7 +342,7 @@ export function LogStreamsSettingsTab() {
               </div>
               <p className="text-sm font-semibold text-slate-700">No log streams configured</p>
               <p className="mt-0.5 max-w-xs text-xs text-slate-400 px-4 leading-normal">
-                Send Pulse logs to your observability stack so you can audit, alert, and retain them off-host.
+                Send Entivia logs to your observability stack so you can audit, alert, and retain them off-host.
               </p>
             </div>
           )}
@@ -356,7 +356,7 @@ export function LogStreamsSettingsTab() {
               onDelete={() =>
                 requestDeleteConfirm({
                   title: "Delete log stream",
-                  description: `Delete "${s.name}"? Pulse will stop sending logs to this destination.`,
+                  description: `Delete "${s.name}"? Entivia will stop sending logs to this destination.`,
                   confirmLabel: "Delete",
                   onConfirm: () => remove(s.id),
                 })

@@ -18,7 +18,7 @@ const SSO_ERROR_MESSAGES: Record<string, string> = {
   saml_failed: "SAML sign-in failed. Please try again.",
   email_missing: "Your identity provider did not return an email address.",
   EMAIL_NOT_ALLOWED: "Your email domain is not allowed for this organization.",
-  USER_NOT_PROVISIONED: "No Pulse account exists for this email. Ask your admin to invite you.",
+  USER_NOT_PROVISIONED: "No Entivia account exists for this email. Ask your admin to invite you.",
   EMAIL_TAKEN: "This email is already used in another organization.",
   sso_failed: "SSO sign-in failed. Please try again.",
 };
@@ -63,7 +63,7 @@ export default function SsoCallbackContent() {
       .me()
       .then((me) => {
         qc.setQueryData(["me"], me);
-        postAuthRedirect(me.org, router, me.user);
+        postAuthRedirect(me.org, router, me.user, params.get("redirect"));
       })
       .catch(() => {
         tokens.clear();
