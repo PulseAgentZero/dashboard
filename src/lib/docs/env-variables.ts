@@ -222,6 +222,17 @@ export const ENV_VAR_GROUPS: EnvVarGroup[] = [
           "Dashboard URL for CORS and email links. No trailing slash. Self-hosted: your browser URL.",
       },
       {
+        name: "MARKETING_URL",
+        default: "https://entivia.online",
+        description:
+          "Marketing site origin. Cloud APIs allow this origin for anonymous self-hosted license checkout.",
+      },
+      {
+        name: "CORS_ALLOWED_ORIGINS",
+        description:
+          "Optional comma-separated extra browser origins allowed to call the API.",
+      },
+      {
         name: "ENVIRONMENT",
         default: "development",
         description: "development | staging | production",
