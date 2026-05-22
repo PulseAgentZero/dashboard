@@ -59,7 +59,7 @@ const navGroups: NavGroup[] = [
       { label: "Recommendations", href: "/dashboard/recommendations", icon: Target },
       { label: "Analytics", href: "/dashboard/analytics", icon: TrendingUp },
       { label: "Studio", href: "/dashboard/studio", icon: Code2 },
-      { label: "Agent", href: "/dashboard/agent", icon: Bot },
+      { label: "Co-Pilot", href: "/dashboard/agent", icon: Bot },
     ],
   },
   {
