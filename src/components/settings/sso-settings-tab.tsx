@@ -255,7 +255,7 @@ export function SsoSettingsTab() {
             <span className="min-w-0 flex-1">
               <span className="block text-sm font-semibold text-slate-800">Auto-provision users on first login</span>
               <span className="block text-xs text-slate-500 mt-0.5">
-                Create a new Pulse user when an unknown email signs in through SSO.
+                Create a new Entivia user when an unknown email signs in through SSO.
               </span>
             </span>
           </label>

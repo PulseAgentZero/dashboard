@@ -11,8 +11,12 @@ Keys are stored as hashes—**the full value is shown only once**.
 ## Request header
 
 ```bash
+# Entivia Cloud
 curl -H "X-API-Key: pk_live_xxxxxxxx" \
-  https://api.yourdomain.com/api/public/v1/entities
+  https://api.entivia.online/api/public/v1/entities
+
+# Self-hosted — use your own host
+# curl -H "X-API-Key: pk_live_xxxxxxxx" https://entivia.acme.com/api/public/v1/entities
 ```
 
 Never send API keys in query strings or commit them to source control.

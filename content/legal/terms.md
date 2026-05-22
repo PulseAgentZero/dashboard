@@ -26,7 +26,7 @@ Organization accounts may invite team members. You are responsible for permissio
 
 Subject to these Terms and payment of applicable fees, we grant you a limited, non-exclusive, non-transferable, revocable license to access and use the Services for your internal business purposes.
 
-For **Entivia Cloud**, this license covers use of our hosted environment. For **self-hosted** deployments, use is subject to your license tier (including any valid `PULSE_LICENSE_KEY` for Pro features). You may not sublicense, resell, or make the Services available to third parties as a managed service without our prior written consent.
+For **Entivia Cloud**, this license covers use of our hosted environment. For **self-hosted** deployments, use is subject to your license tier (including any valid Entivia self-hosted license key for Pro features). You may not sublicense, resell, or make the Services available to third parties as a managed service without our prior written consent.
 
 You retain all rights in your Customer Data. We do not claim ownership of data in your Connected Systems.
 
@@ -116,10 +116,10 @@ We may update these Terms from time to time. We will post the revised version wi
 
 These Terms are governed by the laws of the **Federal Republic of Nigeria**, without regard to conflict-of-law principles. Courts in **Lagos State, Nigeria** shall have exclusive jurisdiction over disputes arising from these Terms, subject to any mandatory consumer protections in your jurisdiction.
 
-Before filing suit, the parties agree to attempt good-faith resolution by contacting **legal@pulsedata.io**.
+Before filing suit, the parties agree to attempt good-faith resolution by contacting **legal@entivia.online**.
 
 ## 16. Contact
 
-Questions about these Terms: **legal@pulsedata.io**
+Questions about these Terms: **legal@entivia.online**
 
 Entivia Intelligence Engine — Built in Lagos for the world.

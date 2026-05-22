@@ -14,7 +14,7 @@
 | Dashboard embed tokens | **Not available** |
 | Auto-refresh schedules | Disabled |
 
-**Recommendation:** Always run Redis in production. For self-hosted, the default `entivia/entivia` image includes embedded Redis.
+**Recommendation:** Always run Redis in production. For self-hosted, the default `chideraozigbo488/entivia` image includes embedded Redis.
 
 ```bash
 REDIS_URL=redis://localhost:6379/0

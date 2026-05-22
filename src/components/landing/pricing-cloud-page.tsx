@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Check, Info, Landmark, Loader2 } from "lucide-react";
+import { ArrowRight, Check, Loader2, Server } from "lucide-react";
 import Navbar from "@/components/landing/navbar";
 import Footer from "@/components/landing/footer";
 import { useAuth } from "@/providers/auth-provider";
@@ -98,10 +98,17 @@ export function PricingCloudPage() {
             <br />
             Scaled for enterprise growth.
           </h1>
-          {/* <p className="mx-auto max-w-xl text-base text-neutral-500 leading-relaxed">
-            Start free, scale with Growth, or unlock unlimited possibilities on Pro.
-            Billed monthly via Paystack.
-          </p> */}
+
+          <p className="mx-auto pt-1 text-xs sm:text-sm text-neutral-500">
+            Looking for self-hosting?{" "}
+            <Link
+              href="/pricing/self-hosted"
+              className="inline-flex items-center gap-1 font-medium text-neutral-900 underline underline-offset-4 hover:text-(--mk-accent,#ea580c) transition-colors"
+            >
+              See license pricing
+              <ArrowRight className="h-3.5 w-3.5" />
+            </Link>
+          </p>
         </div>
 
         {/* Pricing cards */}
@@ -213,21 +220,32 @@ export function PricingCloudPage() {
   </div>
 </div>
 
-        {/* Security notice */}
-        {/* <div className="max-w-xl mx-auto mt-12 text-center text-neutral-400 font-mono text-[11px] flex items-center justify-center gap-2 bg-white border border-neutral-200/60 py-3 px-4 rounded-2xl shadow-sm">
-          <Info className="w-3.5 h-3.5 text-(--mk-accent,#ea580c) shrink-0" />
-          <span>All cloud credential paths are encrypted locally using AES-256 protocols.</span>
-        </div>
-
-        <p className="mx-auto mt-6 max-w-2xl text-center text-xs text-neutral-400">
-          Prefer to self-host?{" "}
+        {/* Self-hosted callout */}
+        <div className="mx-auto mt-16 max-w-3xl px-6">
           <Link
             href="/pricing/self-hosted"
-            className="font-medium underline underline-offset-4 hover:text-(--mk-accent,#ea580c) transition-colors"
+            className="group flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between rounded-2xl border border-neutral-200 bg-neutral-50/60 p-5 sm:p-6 hover:border-neutral-300 hover:bg-neutral-50 transition-colors"
           >
-            View license models →
+            <div className="flex items-start gap-4">
+              <div className="hidden sm:flex h-10 w-10 items-center justify-center rounded-xl border border-neutral-200 bg-white shrink-0">
+                <Server className="h-5 w-5 text-(--mk-accent,#ea580c)" />
+              </div>
+              <div>
+                <p className="font-sans text-base sm:text-lg font-semibold text-neutral-900">
+                  Looking for self-hosting?
+                </p>
+                <p className="mt-1 text-xs sm:text-sm text-neutral-500 leading-relaxed">
+                  Run Entivia on your own infrastructure with a one-time license key.
+                  Email-only checkout — no Entivia Cloud account required.
+                </p>
+              </div>
+            </div>
+            <span className="inline-flex items-center justify-center gap-1.5 font-mono font-bold tracking-wider text-[11px] uppercase rounded-full border border-neutral-900 bg-neutral-900 text-white px-5 py-2.5 group-hover:bg-neutral-800 transition-colors shrink-0 self-start sm:self-auto">
+              See license pricing
+              <ArrowRight className="h-3.5 w-3.5" />
+            </span>
           </Link>
-        </p> */}
+        </div>
       </main>
 
       <Footer />

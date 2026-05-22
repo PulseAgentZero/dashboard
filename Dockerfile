@@ -7,17 +7,17 @@
 # Build:
 #   docker build \
 #     --build-arg NEXT_PUBLIC_API_URL=https://api.yourpulse.io \
-#     -t entivia/entivia-frontend:latest .
+#     -t chideraozigbo488/entivia-frontend:latest .
 #
 # Run:
-#   docker run -p 3000:3000 entivia/entivia-frontend:latest
+#   docker run -p 3000:3000 chideraozigbo488/entivia-frontend:latest
 #
 # Push to Docker Hub:
 #   docker buildx build \
 #     --build-arg NEXT_PUBLIC_API_URL=https://api.yourpulse.io \
 #     --platform linux/amd64,linux/arm64 \
 #     --push \
-#     -t entivia/entivia-frontend:latest .
+#     -t chideraozigbo488/entivia-frontend:latest .
 # ─────────────────────────────────────────────────────────────────────────────
 
 

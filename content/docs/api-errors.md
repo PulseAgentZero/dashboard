@@ -37,7 +37,7 @@ Plan gates (`402`) may include `feature` and `upgrade_url`:
     "code": "FEATURE_LOCKED",
     "message": "Analytics requires a Pro plan",
     "feature": "advanced_analytics",
-    "upgrade_url": "https://pulseai.io/pricing"
+    "upgrade_url": "https://entivia.online/pricing"
   }
 }
 ```

@@ -152,7 +152,7 @@ export default function LoginPage() {
                 </button>
               </div>
               <p className="text-[11px] text-slate-400">
-                Your administrator can find this slug in the Pulse settings page.
+                Your administrator can find this slug in the Entivia settings page.
               </p>
             </div>
           </>
