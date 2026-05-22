@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { Loader2, Plus, Save, Settings } from "lucide-react";
+import { Loader2, Plus, Save, Settings, Eye, FileText, ChevronLeft, X } from "lucide-react";
 import type { VizPanelData } from "@/components/studio/dashboard/dashboard-grid";
 import { DashboardFilterBar } from "@/components/studio/dashboard/dashboard-filter-bar";
 import { DashboardGrid } from "@/components/studio/dashboard/dashboard-grid";
@@ -218,6 +218,7 @@ export function DashboardBuilderPage({ dashboardId }: Props) {
       id: dashboardId,
       body: { layout },
     });
+    toast.success("Layout saved successfully");
   }
 
   async function saveSettings() {
@@ -234,6 +235,7 @@ export function DashboardBuilderPage({ dashboardId }: Props) {
       },
     });
     setSettingsOpen(false);
+    toast.success("Settings updated");
   }
 
   async function addVisualization(vizId: string) {
@@ -242,6 +244,7 @@ export function DashboardBuilderPage({ dashboardId }: Props) {
       body: { panel_type: "visualization", visualization_id: vizId, position: dashboard?.items.length ?? 0 },
     });
     setPickerOpen(false);
+    toast.success("Chart added to canvas");
   }
 
   async function addTextPanel() {
@@ -249,6 +252,7 @@ export function DashboardBuilderPage({ dashboardId }: Props) {
       dashboardId,
       body: { panel_type: "text", content: textContent, position: dashboard?.items.length ?? 0 },
     });
+    toast.success("Text block added");
   }
 
   function requestRemovePanel(item: StudioDashboardItem) {
@@ -290,214 +294,290 @@ export function DashboardBuilderPage({ dashboardId }: Props) {
 
   if (isLoading || !dashboard) {
     return (
-      <div className="flex justify-center py-20">
-        <Loader2 className="animate-spin text-indigo-500" size={32} />
+      <div className="flex h-[60vh] items-center justify-center">
+        <Loader2 className="animate-spin text-orange-500" size={32} />
       </div>
     );
   }
 
   return (
-    <div className="space-y-4">
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <div>
-          <Link href={`/dashboard/studio/dashboards/${dashboardId}`} className="text-sm text-slate-500">
-            ← View
+    <div className="space-y-6 max-w-[1600px] mx-auto px-4 py-2">
+      {/* Top Header/Action Bar */}
+      <div className="flex flex-col gap-4 border-b border-slate-100 pb-5 sm:flex-row sm:items-center sm:justify-between">
+        <div className="space-y-1 flex-1 min-w-0">
+          <Link 
+            href={`/dashboard/studio/dashboards/${dashboardId}`} 
+            className="group inline-flex items-center gap-1 text-xs font-medium text-slate-500 transition-colors hover:text-orange-600"
+          >
+            <ChevronLeft size={14} className="transition-transform group-hover:-translate-x-0.5" />
+            Back to View Mode
           </Link>
           <input
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="mt-1 block w-full border-0 border-b border-transparent text-xl font-semibold text-slate-900 focus:border-indigo-300 focus:outline-none sm:w-auto"
+            className="block w-full border-b border-transparent bg-transparent py-0.5 text-2xl font-bold tracking-tight text-slate-900 transition-colors hover:border-slate-200 focus:border-orange-500 focus:outline-none"
+            placeholder="Untitled Dashboard"
           />
         </div>
-        <div className="flex flex-wrap gap-2">
+
+        <div className="flex flex-wrap items-center gap-2.5">
           <button
             type="button"
             onClick={() => setPickerOpen(!pickerOpen)}
-            className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50"
+            className={`inline-flex items-center gap-1.5 rounded-lg border px-3.5 py-2 text-sm font-medium transition-all shadow-sm ${
+              pickerOpen 
+                ? "border-orange-200 bg-orange-50 text-orange-700" 
+                : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:text-slate-900"
+            }`}
           >
-            <Plus size={14} />
+            <Plus size={16} />
             Add chart
           </button>
+          
           <button
             type="button"
             onClick={() => void addTextPanel()}
-            className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 shadow-sm transition-colors hover:bg-slate-50 hover:text-slate-900"
           >
+            <FileText size={16} />
             Text panel
           </button>
+
+          <button
+            type="button"
+            onClick={() => setSettingsOpen(true)}
+            className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 shadow-sm transition-colors hover:bg-slate-50 hover:text-slate-900"
+          >
+            <Settings size={16} />
+            Settings
+          </button>
+
           <button
             type="button"
             onClick={() => void saveLayout()}
             disabled={updateDashboard.isPending}
-            className="inline-flex items-center gap-1 rounded-lg bg-indigo-600 px-3 py-1.5 text-sm font-semibold text-white"
+            className="inline-flex items-center gap-1.5 rounded-lg bg-orange-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-all hover:bg-orange-500 active:scale-[0.98] disabled:opacity-50"
           >
-            <Save size={14} />
+            <Save size={16} />
             Save layout
-          </button>
-          <button
-            type="button"
-            onClick={() => setSettingsOpen(true)}
-            className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50"
-          >
-            <Settings size={14} />
-            Settings
           </button>
         </div>
       </div>
 
+      {/* Modern Catalog Panel Selection */}
       {pickerOpen && (
-        <div className="max-h-48 overflow-y-auto rounded-lg border border-slate-200 bg-white p-3">
-          <p className="mb-2 text-xs font-semibold uppercase text-slate-500">Pick visualization</p>
-          <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="animate-in fade-in slide-in-from-top-2 duration-200 rounded-xl border border-slate-200 bg-slate-50/50 p-4 shadow-inner">
+          <div className="flex items-center justify-between mb-3">
+            <p className="text-xs font-semibold tracking-wider uppercase text-slate-500">Available Visualizations</p>
+            <button onClick={() => setPickerOpen(false)} className="text-slate-400 hover:text-slate-600">
+              <X size={16} />
+            </button>
+          </div>
+          <div className="grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {allViz.map((v) => (
               <button
                 key={v.id}
                 type="button"
                 onClick={() => void addVisualization(v.id)}
-                className="rounded-lg border px-3 py-2 text-left text-sm hover:border-indigo-300 hover:bg-indigo-50"
+                className="group rounded-xl border border-slate-200 bg-white px-4 py-3 text-left shadow-sm transition-all hover:border-orange-400 hover:ring-2 hover:ring-orange-100"
               >
-                {v.name}
-                <span className="ml-1 text-xs text-slate-400">({v.chart_type})</span>
+                <p className="text-sm font-medium text-slate-800 transition-colors group-hover:text-orange-700">{v.name}</p>
+                <span className="inline-block mt-1 rounded bg-slate-100 px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-slate-500">
+                  {v.chart_type}
+                </span>
               </button>
             ))}
             {allViz.length === 0 && (
-              <p className="text-sm text-slate-400">Create charts from saved queries first.</p>
+              <p className="text-sm text-slate-400 py-2 col-span-full">Create charts from saved queries first.</p>
             )}
           </div>
         </div>
       )}
 
-      <DashboardToolbar
-        timeRange={timeRange}
-        onTimeRangeChange={(range) => {
-          setTimeRange(range);
-          void runExecute(paramValues, range);
-        }}
-        refreshIntervalSeconds={refreshIntervalSeconds}
-        onRefreshIntervalChange={setRefreshIntervalSeconds}
-        onManualRefresh={handleManualRefresh}
-        lastRefreshedAt={lastRefreshedAt}
-        loading={executeDashboard.isPending}
-      />
+      {/* Control Toolbars */}
+      <div className="space-y-3 bg-white border border-slate-100 p-4 rounded-xl shadow-sm">
+        <DashboardToolbar
+          timeRange={timeRange}
+          onTimeRangeChange={(range) => {
+            setTimeRange(range);
+            void runExecute(paramValues, range);
+          }}
+          refreshIntervalSeconds={refreshIntervalSeconds}
+          onRefreshIntervalChange={setRefreshIntervalSeconds}
+          onManualRefresh={handleManualRefresh}
+          lastRefreshedAt={lastRefreshedAt}
+          loading={executeDashboard.isPending}
+        />
 
-      <DashboardFilterBar
-        params={dashboardParams}
-        initialValues={paramValues}
-        onApply={(v) => {
-          setParamValues(v);
-          void runExecute(v, timeRange);
-        }}
-        loading={executeDashboard.isPending}
-        autoApplyOnChange
-      />
+        <DashboardFilterBar
+          params={dashboardParams}
+          initialValues={paramValues}
+          onApply={(v) => {
+            setParamValues(v);
+            void runExecute(v, timeRange);
+          }}
+          loading={executeDashboard.isPending}
+          autoApplyOnChange
+        />
+      </div>
 
-      <DashboardGrid
-        items={dashboard.items}
-        layout={displayLayout}
-        vizById={vizById}
-        editable
-        loadingVizIds={pendingVizIds}
-        onLayoutChange={setLayout}
-        onRemoveItem={requestRemovePanel}
-      />
+      {/* Main Canvas Area */}
+      <div className="rounded-xl border border-slate-100 bg-slate-50/30 p-2 min-h-[400px]">
+        <DashboardGrid
+          items={dashboard.items}
+          layout={displayLayout}
+          vizById={vizById}
+          editable
+          loadingVizIds={pendingVizIds}
+          onLayoutChange={setLayout}
+          onRemoveItem={requestRemovePanel}
+        />
+      </div>
 
       {deleteConfirmModal}
 
+      {/* Slide-over Settings Sheet Drawer */}
       {settingsOpen && (
-        <div className="fixed inset-0 z-50 flex justify-end bg-black/30">
-          <div className="h-full w-full max-w-md overflow-y-auto bg-white p-6 shadow-xl">
-            <h2 className="text-lg font-semibold">Dashboard settings</h2>
-            <div className="mt-4 space-y-4">
-              <label className="block text-sm">
-                Description
-                <textarea
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  rows={2}
-                  className="mt-1 w-full rounded-lg border px-3 py-2"
-                />
-              </label>
-              <div>
-                <span className="text-sm font-medium">Tags</span>
-                <TagEditor tags={tags} onChange={setTags} />
+        <div className="fixed inset-0 z-50 flex justify-end bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="h-full w-full max-w-md overflow-y-auto bg-white p-6 shadow-2xl flex flex-col justify-between animate-in slide-in-from-right duration-300">
+            <div className="space-y-6">
+              <div className="flex items-center justify-between border-b border-slate-100 pb-4">
+                <h2 className="text-lg font-semibold text-slate-900">Dashboard configuration</h2>
+                <button 
+                  onClick={() => setSettingsOpen(false)} 
+                  className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-50 hover:text-slate-600 transition-colors"
+                >
+                  <X size={18} />
+                </button>
               </div>
-              <label className="flex items-center gap-2 text-sm">
-                <input type="checkbox" checked={isPublic} onChange={(e) => setIsPublic(e.target.checked)} />
-                Public dashboard
-              </label>
-              {isPublic && <PublicBadge slug={dashboard.slug} isPublic />}
-              <div>
-                <span className="text-sm font-medium">Filters</span>
-                {dashboardParams.map((p, i) => (
-                  <div key={i} className="mt-2 grid grid-cols-2 gap-2">
-                    <input
-                      value={p.name}
-                      onChange={(e) => {
-                        const next = [...dashboardParams];
-                        next[i] = { ...p, name: e.target.value };
-                        setDashboardParams(next);
-                      }}
-                      placeholder="name"
-                      className="rounded border px-2 py-1 text-sm font-mono"
+
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Description</label>
+                  <textarea
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    rows={3}
+                    placeholder="Provide details about the metrics in this configuration dashboard..."
+                    className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-800 placeholder-slate-400 shadow-sm focus:border-orange-500 focus:ring-1 focus:ring-orange-500 focus:outline-none"
+                  />
+                </div>
+
+                <div>
+                  <span className="block text-sm font-medium text-slate-700 mb-1">Tags</span>
+                  <TagEditor tags={tags} onChange={setTags} />
+                </div>
+
+                <div className="pt-2">
+                  <label className="flex items-center gap-3 cursor-pointer group select-none">
+                    <input 
+                      type="checkbox" 
+                      checked={isPublic} 
+                      onChange={(e) => setIsPublic(e.target.checked)} 
+                      className="h-4 w-4 rounded border-slate-300 text-orange-600 focus:ring-orange-500 cursor-pointer"
                     />
-                    <select
-                      value={p.type}
-                      onChange={(e) => {
-                        const next = [...dashboardParams];
-                        next[i] = { ...p, type: e.target.value as QueryParamDefinition["type"] };
-                        setDashboardParams(next);
-                      }}
-                      className="rounded border px-2 py-1 text-sm"
-                    >
-                      <option value="text">text</option>
-                      <option value="number">number</option>
-                      <option value="date">date</option>
-                      <option value="datetime">datetime</option>
-                    </select>
+                    <div className="text-sm">
+                      <p className="font-medium text-slate-800">Public dashboard</p>
+                      <p className="text-xs text-slate-400">Make this canvas discoverable by link</p>
+                    </div>
+                  </label>
+                </div>
+
+                {isPublic && (
+                  <div className="rounded-lg bg-slate-50 p-3 border border-slate-100">
+                    <PublicBadge slug={dashboard.slug} isPublic />
                   </div>
-                ))}
-                <button
-                  type="button"
-                  onClick={() =>
-                    setDashboardParams([
-                      ...dashboardParams,
-                      { name: "filter", type: "text", default_value: "", label: "Filter" },
-                    ])
-                  }
-                  className="mt-2 text-sm text-indigo-600"
-                >
-                  + Add filter
-                </button>
+                )}
+
+                <div className="border-t border-slate-100 pt-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm font-medium text-slate-700">Declared Filters</span>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setDashboardParams([
+                          ...dashboardParams,
+                          { name: "filter", type: "text", default_value: "", label: "Filter" },
+                        ])
+                      }
+                      className="text-xs font-semibold text-orange-600 hover:text-orange-500"
+                    >
+                      + Add parameter
+                    </button>
+                  </div>
+                  
+                  <div className="space-y-2 max-h-[220px] overflow-y-auto pr-1">
+                    {dashboardParams.map((p, i) => (
+                      <div key={i} className="flex items-center gap-2 rounded-lg bg-slate-50/50 p-2 border border-slate-100">
+                        <input
+                          value={p.name}
+                          onChange={(e) => {
+                            const next = [...dashboardParams];
+                            next[i] = { ...p, name: e.target.value };
+                            setDashboardParams(next);
+                          }}
+                          placeholder="name"
+                          className="w-1/2 rounded border border-slate-200 bg-white px-2 py-1 text-sm font-mono focus:border-orange-500 focus:outline-none"
+                        />
+                        <select
+                          value={p.type}
+                          onChange={(e) => {
+                            const next = [...dashboardParams];
+                            next[i] = { ...p, type: e.target.value as QueryParamDefinition["type"] };
+                            setDashboardParams(next);
+                          }}
+                          className="w-1/2 rounded border border-slate-200 bg-white px-2 py-1 text-sm focus:border-orange-500 focus:outline-none"
+                        >
+                          <option value="text">text</option>
+                          <option value="number">number</option>
+                          <option value="date">date</option>
+                          <option value="datetime">datetime</option>
+                        </select>
+                        <button 
+                          onClick={() => setDashboardParams(dashboardParams.filter((_, idx) => idx !== i))}
+                          className="text-slate-400 hover:text-rose-500 p-1"
+                        >
+                          <X size={14} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {canManageEmbed(user?.role) && (
+                  <div className="border-t border-slate-100 pt-4">
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        const res = await createEmbed.mutateAsync({ id: dashboardId });
+                        setEmbedData(res);
+                        setEmbedOpen(true);
+                      }}
+                      className="inline-flex items-center gap-1.5 text-sm font-medium text-orange-600 hover:text-orange-500"
+                    >
+                      <Eye size={15} />
+                      Generate public embed credentials
+                    </button>
+                  </div>
+                )}
               </div>
-              {canManageEmbed(user?.role) && (
-                <button
-                  type="button"
-                  onClick={async () => {
-                    const res = await createEmbed.mutateAsync({ id: dashboardId });
-                    setEmbedData(res);
-                    setEmbedOpen(true);
-                  }}
-                  className="text-sm text-indigo-600"
-                >
-                  Generate embed code
-                </button>
-              )}
-              <div className="flex gap-2 pt-4">
-                <button
-                  type="button"
-                  onClick={() => setSettingsOpen(false)}
-                  className="rounded-lg border px-4 py-2 text-sm"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="button"
-                  onClick={() => void saveSettings()}
-                  className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white"
-                >
-                  Save
-                </button>
-              </div>
+            </div>
+
+            <div className="flex items-center gap-3 border-t border-slate-100 pt-4 mt-6">
+              <button
+                type="button"
+                onClick={() => setSettingsOpen(false)}
+                className="w-full rounded-lg border border-slate-200 bg-white py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={() => void saveSettings()}
+                className="w-full rounded-lg bg-orange-600 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-orange-500 transition-colors"
+              >
+                Apply changes
+              </button>
             </div>
           </div>
         </div>

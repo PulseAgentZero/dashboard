@@ -18,6 +18,7 @@ export function useLogin() {
   return useMutation({
     mutationFn: authApi.login,
     onSuccess(data) {
+      console.log("[login] onSuccess fired", data);
       if (isMfaRequired(data)) {
         sessionStorage.setItem("mfa_token", data.mfa_token);
         sessionStorage.setItem("mfa_user_email", data.user.email);

@@ -11,8 +11,12 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
 
   const hasToken = typeof window !== "undefined" && !!tokens.getAccess();
 
+  console.log("[AuthGuard] render — hasToken:", hasToken, "isLoading:", isLoading, "isAuthenticated:", isAuthenticated, "isError:", isError);
+
   useEffect(() => {
+    console.log("[AuthGuard] effect — hasToken:", hasToken, "isLoading:", isLoading, "isAuthenticated:", isAuthenticated, "isError:", isError);
     if (!hasToken) {
+      console.log("[AuthGuard] no token → redirect login");
       router.replace("/auth/login");
       return;
     }
@@ -21,6 +25,7 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
       return;
     }
     if (!isLoading && !isAuthenticated) {
+      console.log("[AuthGuard] not loading & not authenticated → redirect login");
       router.replace("/auth/login");
     }
   }, [router, isError, hasToken, isLoading, isAuthenticated]);

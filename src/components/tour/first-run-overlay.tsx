@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useAuth } from "@/providers/auth-provider";
 import { FIRST_RUN_PENDING_KEY } from "@/lib/tour/first-run";
 import { requestProductTour } from "@/lib/tour/run-product-tour";
+import { useMarkSetupShown } from "@/hooks/tour/use-tour-guide";
 import { BladeFan } from "../../../public/icon/bladeFan";
 
 const DURATION = 5000;
@@ -29,9 +30,6 @@ export function FirstRunOverlay() {
 
     if (sessionStorage.getItem(FIRST_RUN_PENDING_KEY) !== "1") return;
 
-    const key = `entivia_setup_shown_${org.id}`;
-    if (localStorage.getItem(key)) return;
-
     initialized.current = true;
     sessionStorage.removeItem(FIRST_RUN_PENDING_KEY);
 
@@ -53,9 +51,7 @@ export function FirstRunOverlay() {
     if (!active || pathname !== "/dashboard") return;
 
     finishTimerRef.current = setTimeout(() => {
-      if (org?.id) {
-        localStorage.setItem(`entivia_setup_shown_${org.id}`, "1");
-      }
+      markSetupShown();
       setActive(false);
       setStartTour(true);
       clearInterval(dotTimerRef.current);
@@ -64,7 +60,7 @@ export function FirstRunOverlay() {
     return () => {
       clearTimeout(finishTimerRef.current);
     };
-  }, [active, org?.id, pathname]);
+  }, [active, org?.id, pathname, markSetupShown]);
 
   useEffect(() => {
     if (!startTour || active || pathname !== "/dashboard") return;

@@ -4,7 +4,7 @@ import Footer from "@/components/landing/footer";
 import Problem from "@/components/landing/Problem";
 import Solution from "@/components/landing/Solution";
 import Industries from "@/components/landing/Industries";
-import Pricing from "@/components/landing/Pricing";
+// import Pricing from "@/components/landing/Pricing";
 
 export default function Home() {
   return (
@@ -15,7 +15,7 @@ export default function Home() {
         <Problem />
         <Solution />
         <Industries />
-        <Pricing />
+        {/* <Pricing /> */}
       </main>
       <Footer />
     </div>

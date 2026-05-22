@@ -44,7 +44,7 @@ export function resolvePostAuthPath(redirectFromUrl?: string | null): string {
 }
 
 export function postAuthRedirect(
-  _org: Pick<Org, "onboarding_done"> | null | undefined,
+  org: Pick<Org, "onboarding_done"> | null | undefined,
   router: { push: (href: string) => void },
   user?: Pick<User, "is_verified"> | null,
   redirectFromUrl?: string | null,
