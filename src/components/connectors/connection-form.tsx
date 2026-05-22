@@ -43,8 +43,9 @@ export function FieldInput({
     isTextarea &&
     (field.key.includes("service_account") || field.key.includes("_json"));
 
+  // Refined input style: solid transition paths, smooth gray default borders, focused into subtle orange accenting
   const base =
-    "w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 placeholder:text-slate-400";
+    "w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition duration-150 ease-in-out focus:border-orange-500 focus:ring-1 focus:ring-orange-500 placeholder:text-slate-400";
 
   if (isSelect && field.options) {
     return (
@@ -62,7 +63,7 @@ export function FieldInput({
     return (
       <input
         type="file"
-        className={`${base} file:mr-3 file:rounded-md file:border-0 file:bg-indigo-50 file:px-3 file:py-1 file:text-sm file:font-medium file:text-indigo-700`}
+        className={`${base} file:mr-3 file:rounded-md file:border-0 file:bg-orange-50 file:px-3 file:py-1 file:text-sm file:font-medium file:text-orange-700 file:transition file:hover:bg-orange-100`}
         accept=".csv,text/csv"
         onChange={(e) => {
           const f = e.target.files?.[0];
@@ -100,7 +101,7 @@ export function FieldInput({
           type="button"
           tabIndex={-1}
           onClick={() => setShow((s) => !s)}
-          className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+          className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 transition hover:text-slate-600"
         >
           {show ? <EyeOff size={14} /> : <Eye size={14} />}
         </button>
@@ -263,17 +264,17 @@ export function ConnectionForm({ catalogItem: rawCatalogItem, onSuccess, onCance
       </div>
 
       {catalogItem.notes && (
-        <p className="rounded-lg bg-amber-50 px-3 py-2 text-xs text-amber-700">
+        <p className="rounded-lg border border-amber-200/60 bg-amber-50/50 px-3 py-2 text-xs text-amber-800">
           {catalogItem.notes}
         </p>
       )}
 
-      <div className="flex flex-col-reverse gap-2 border-t border-slate-200 pt-4 sm:flex-row sm:justify-end">
+      <div className="flex flex-col-reverse gap-2 border-t border-slate-100 pt-4 sm:flex-row sm:justify-end">
         {onCancel && (
           <button
             type="button"
             onClick={onCancel}
-            className="flex w-full items-center justify-center rounded-lg border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-50 sm:w-auto"
+            className="flex w-full items-center justify-center rounded-lg border border-slate-200 px-4 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-50 sm:w-auto"
           >
             Cancel
           </button>
@@ -281,7 +282,7 @@ export function ConnectionForm({ catalogItem: rawCatalogItem, onSuccess, onCance
         <button
           type="submit"
           disabled={isPending}
-          className="flex w-full items-center justify-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700 disabled:opacity-50 sm:w-auto"
+          className="flex w-full items-center justify-center gap-2 rounded-lg bg-orange-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 disabled:opacity-50 sm:w-auto"
         >
           {isPending && <Loader2 size={14} className="animate-spin" />}
           {isPending

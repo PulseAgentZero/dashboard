@@ -223,7 +223,7 @@ export function VizEditorPanel({
   const formatColumns = [...new Set([xAxis, ...yAxes, valueCol, labelCol, sparklineCol].filter(Boolean))];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4 backdrop-blur-xs">
       <div
         className="mx-4 flex h-[min(92dvh,880px)] w-full max-w-5xl flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-2xl"
         role="dialog"
@@ -231,16 +231,16 @@ export function VizEditorPanel({
         aria-labelledby="viz-editor-title"
       >
         <div className="flex shrink-0 items-center justify-between border-b border-slate-200 px-5 py-3">
-          <h2 id="viz-editor-title" className="text-lg font-semibold text-slate-900">
+          <h2 id="viz-editor-title" className="text-sm font-semibold text-slate-900">
             {existing ? "Edit chart" : "New chart"}
           </h2>
           <button
             type="button"
             onClick={onClose}
             aria-label="Close"
-            className="rounded-lg p-1.5 text-slate-500 hover:bg-slate-100"
+            className="rounded-lg p-1.5 text-slate-400 transition hover:bg-slate-50 hover:text-slate-600"
           >
-            <X size={20} />
+            <X size={18} />
           </button>
         </div>
 
@@ -254,7 +254,7 @@ export function VizEditorPanel({
                 </p>
               )}
             </div>
-            <div className="h-72 min-h-0 flex-1 rounded-xl border border-slate-200 bg-slate-50/80 p-4 lg:h-[400px]">
+            <div className="h-72 min-h-0 flex-1 rounded-xl border border-slate-200 bg-slate-50/60 p-4 lg:h-[400px]">
               <ChartRenderer
                 chartType={chartType}
                 config={debouncedConfig}
@@ -268,7 +268,7 @@ export function VizEditorPanel({
             onSubmit={submit}
             className="flex w-full shrink-0 flex-col lg:w-[380px]"
           >
-            <div className="flex border-b border-slate-200">
+            <div className="flex border-b border-slate-200 bg-slate-50/40">
               {(
                 [
                   ["data", "Data"],
@@ -280,85 +280,95 @@ export function VizEditorPanel({
                   key={id}
                   type="button"
                   onClick={() => setTab(id)}
-                  className={`flex-1 px-3 py-2.5 text-sm font-medium transition ${
+                  className={`relative flex-1 py-3 text-xs font-medium transition duration-150 ease-in-out ${
                     tab === id
-                      ? "border-b-2 border-indigo-600 text-indigo-700"
-                      : "text-slate-500 hover:text-slate-700"
+                      ? "text-orange-600"
+                      : "text-slate-500 hover:text-slate-800"
                   }`}
                 >
                   {label}
+                  {tab === id && (
+                    <div className="absolute bottom-0 left-0 h-0.5 w-full bg-orange-600" />
+                  )}
                 </button>
               ))}
             </div>
 
             <div className="min-h-0 flex-1 overflow-y-auto p-4">
               {!result?.rows?.length && (
-                <p className="mb-3 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
+                <p className="mb-4 rounded-lg border border-amber-200 bg-amber-50/60 px-3 py-2 text-xs leading-relaxed text-amber-800">
                   Run the query first to configure axes and preview the chart.
                 </p>
               )}
 
               {tab === "data" && (
-                <>
-                  <label className="mb-3 block text-sm">
+                <div className="space-y-4">
+                  <label className="block text-xs">
                     <span className="font-medium text-slate-700">Name</span>
                     <input
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2"
+                      className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500"
                       required
                     />
                   </label>
-                  <div className="mb-3">
-                    <p className="mb-2 text-xs font-semibold uppercase text-slate-500">Chart type</p>
+                  
+                  <div>
+                    <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-wider text-slate-400">Chart type</p>
                     <ChartTypePicker value={chartType} onChange={setChartType} />
                   </div>
+                  
                   {onRecommend && (
                     <button
                       type="button"
                       onClick={() => void handleRecommend()}
                       disabled={pending}
-                      className="mb-3 flex w-full items-center justify-center gap-2 rounded-lg border border-indigo-200 bg-indigo-50 py-2 text-sm font-medium text-indigo-700 hover:bg-indigo-100"
+                      className="flex w-full items-center justify-center gap-1.5 rounded-lg border border-orange-200 bg-orange-50/40 py-2 text-xs font-medium text-orange-700 transition duration-150 hover:bg-orange-50 disabled:opacity-50"
                     >
-                      <Sparkles size={14} />
+                      <Sparkles size={13} className="text-orange-500" />
                       AI recommend
                     </button>
                   )}
-                  {reasoning && <p className="mb-3 text-xs text-slate-500">{reasoning}</p>}
-                  <label className="mb-3 block text-sm">
+                  
+                  {reasoning && <p className="text-xs leading-relaxed text-slate-500 bg-slate-50 border border-slate-100 rounded-lg p-2.5">{reasoning}</p>}
+                  
+                  <label className="block text-xs">
                     <span className="font-medium text-slate-700">Title</span>
                     <input
                       value={title}
                       onChange={(e) => setTitle(e.target.value)}
                       placeholder="Optional chart title"
-                      className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2"
+                      className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500"
                     />
                   </label>
-                  {fields.map((field) => (
-                    <FieldControl
-                      key={field.key}
-                      field={field}
-                      columns={columns}
-                      xAxis={xAxis}
-                      setXAxis={setXAxis}
-                      yAxes={yAxes}
-                      setYAxes={setYAxes}
-                      toggleYAxis={toggleYAxis}
-                      valueCol={valueCol}
-                      setValueCol={setValueCol}
-                      labelCol={labelCol}
-                      setLabelCol={setLabelCol}
-                      sparklineCol={sparklineCol}
-                      setSparklineCol={setSparklineCol}
-                      minValue={minValue}
-                      setMinValue={setMinValue}
-                      maxValue={maxValue}
-                      setMaxValue={setMaxValue}
-                      unit={unit}
-                      setUnit={setUnit}
-                    />
-                  ))}
-                </>
+                  
+                  <div className="space-y-3 pt-1 border-t border-slate-100">
+                    {fields.map((field) => (
+                      <FieldControl
+                        key={field.key}
+                        field={field}
+                        columns={columns}
+                        xAxis={xAxis}
+                        setXAxis={setXAxis}
+                        yAxes={yAxes}
+                        setYAxes={setYAxes}
+                        toggleYAxis={toggleYAxis}
+                        valueCol={valueCol}
+                        setValueCol={setValueCol}
+                        labelCol={labelCol}
+                        setLabelCol={setLabelCol}
+                        sparklineCol={sparklineCol}
+                        setSparklineCol={setSparklineCol}
+                        minValue={minValue}
+                        setMinValue={setMinValue}
+                        maxValue={maxValue}
+                        setMaxValue={setMaxValue}
+                        unit={unit}
+                        setUnit={setUnit}
+                      />
+                    ))}
+                  </div>
+                </div>
               )}
 
               {tab === "style" && (
@@ -373,48 +383,50 @@ export function VizEditorPanel({
               {tab === "format" && (
                 <>
                   {formatColumns.length === 0 ? (
-                    <p className="text-sm text-slate-500">Select data columns first to format values.</p>
+                    <p className="text-xs text-slate-400 text-center py-6">Select data columns first to format values.</p>
                   ) : (
-                    <div>
-                      <p className="mb-2 text-xs font-semibold uppercase text-slate-500">Column formats</p>
-                      {formatColumns.map((col) => (
-                        <label key={col} className="mb-2 flex items-center gap-2 text-sm">
-                          <span className="w-28 truncate text-slate-600" title={col}>
-                            {col}
-                          </span>
-                          <select
-                            value={columnFormats[col]?.type ?? ""}
-                            onChange={(e) => {
-                              const type = e.target.value as ColumnFormatRule["type"] | "";
-                              setColumnFormats((prev) => {
-                                const next = { ...prev };
-                                if (!type) delete next[col];
-                                else next[col] = { type };
-                                return next;
-                              });
-                            }}
-                            className="flex-1 rounded-lg border border-slate-200 px-2 py-1.5"
-                          >
-                            <option value="">Default</option>
-                            <option value="number">Number</option>
-                            <option value="currency">Currency</option>
-                            <option value="percent">Percent</option>
-                            <option value="date">Date</option>
-                            <option value="badge">Badge</option>
-                          </select>
-                        </label>
-                      ))}
+                    <div className="space-y-3">
+                      <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Column formats</p>
+                      <div className="rounded-xl border border-slate-100 bg-slate-50/30 p-3 space-y-2.5">
+                        {formatColumns.map((col) => (
+                          <label key={col} className="flex items-center gap-3 text-xs">
+                            <span className="w-24 truncate text-slate-600 font-medium" title={col}>
+                              {col}
+                            </span>
+                            <select
+                              value={columnFormats[col]?.type ?? ""}
+                              onChange={(e) => {
+                                const type = e.target.value as ColumnFormatRule["type"] | "";
+                                setColumnFormats((prev) => {
+                                  const next = { ...prev };
+                                  if (!type) delete next[col];
+                                  else next[col] = { type };
+                                  return next;
+                                });
+                              }}
+                              className="flex-1 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-sm text-slate-800 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500"
+                            >
+                              <option value="">Default</option>
+                              <option value="number">Number</option>
+                              <option value="currency">Currency</option>
+                              <option value="percent">Percent</option>
+                              <option value="date">Date</option>
+                              <option value="badge">Badge</option>
+                            </select>
+                          </label>
+                        ))}
+                      </div>
                     </div>
                   )}
                 </>
               )}
             </div>
 
-            <div className="shrink-0 border-t border-slate-200 p-4">
+            <div className="shrink-0 border-t border-slate-200 bg-slate-50/40 p-4">
               <button
                 type="submit"
                 disabled={pending}
-                className="flex w-full items-center justify-center gap-2 rounded-lg bg-indigo-600 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700 disabled:opacity-60"
+                className="flex w-full items-center justify-center gap-2 rounded-lg bg-orange-600 py-2.5 text-sm font-medium text-white transition duration-150 ease-in-out hover:bg-orange-700 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {pending && <Loader2 size={14} className="animate-spin" />}
                 {existing ? "Update chart" : "Save chart"}
@@ -472,38 +484,43 @@ function FieldControl({
     const val = field.key === "min_value" ? minValue : maxValue;
     const set = field.key === "min_value" ? setMinValue : setMaxValue;
     return (
-      <label className="mb-3 block text-sm">
-        <span className="font-medium text-slate-700">{field.label}</span>
+      <label className="block text-xs">
+        <span className="font-medium text-slate-600">{field.label}</span>
         <input
           type="number"
           value={val}
           onChange={(e) => set(e.target.value)}
-          className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2"
+          className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-1.5 text-sm focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500"
         />
       </label>
     );
   }
   if (field.kind === "text") {
     return (
-      <label className="mb-3 block text-sm">
-        <span className="font-medium text-slate-700">{field.label}</span>
+      <label className="block text-xs">
+        <span className="font-medium text-slate-600">{field.label}</span>
         <input
           value={unit}
           onChange={(e) => setUnit(e.target.value)}
-          className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2"
+          className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-1.5 text-sm focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500"
         />
       </label>
     );
   }
   if (field.kind === "columns") {
     return (
-      <div className="mb-3">
-        <p className="text-sm font-medium text-slate-700">{field.label}</p>
-        <div className="mt-1 max-h-36 space-y-1 overflow-y-auto rounded-lg border border-slate-200 p-2">
+      <div className="text-xs">
+        <p className="font-medium text-slate-600">{field.label}</p>
+        <div className="mt-1 max-h-36 space-y-1.5 overflow-y-auto rounded-lg border border-slate-200 bg-white p-2.5 focus-within:border-orange-500 focus-within:ring-1 focus-within:ring-orange-500">
           {columns.map((c) => (
-            <label key={c} className="flex items-center gap-2 text-sm">
-              <input type="checkbox" checked={yAxes.includes(c)} onChange={() => toggleYAxis(c)} />
-              <span className="truncate">{c}</span>
+            <label key={c} className="flex items-center gap-2 text-sm text-slate-700">
+              <input 
+                type="checkbox" 
+                checked={yAxes.includes(c)} 
+                onChange={() => toggleYAxis(c)} 
+                className="rounded border-slate-300 text-orange-600 focus:ring-orange-500"
+              />
+              <span className="truncate text-xs font-medium text-slate-800">{c}</span>
             </label>
           ))}
         </div>
@@ -522,12 +539,12 @@ function FieldControl({
             : yAxes[0] ?? "";
   if (field.key === "y_axis" && field.kind === "column") {
     return (
-      <label className="mb-3 block text-sm">
-        <span className="font-medium text-slate-700">{field.label}</span>
+      <label className="block text-xs">
+        <span className="font-medium text-slate-600">{field.label}</span>
         <select
           value={yAxes[0] ?? ""}
           onChange={(e) => setYAxes(e.target.value ? [e.target.value] : [])}
-          className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2"
+          className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-1.5 text-sm focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500"
         >
           {columns.map((c) => (
             <option key={c} value={c}>
@@ -539,8 +556,8 @@ function FieldControl({
     );
   }
   return (
-    <label className="mb-3 block text-sm">
-      <span className="font-medium text-slate-700">{field.label}</span>
+    <label className="block text-xs">
+      <span className="font-medium text-slate-600">{field.label}</span>
       <select
         value={value}
         onChange={(e) => {
@@ -549,7 +566,7 @@ function FieldControl({
           else if (field.key === "label_column") setLabelCol(e.target.value);
           else if (field.key === "sparkline_column") setSparklineCol(e.target.value);
         }}
-        className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2"
+        className="mt-1 w-full rounded-lg border border-slate-200 px-3 py-1.5 text-sm focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500"
       >
         {field.key === "sparkline_column" && <option value="">None</option>}
         {columns.map((c) => (

@@ -118,12 +118,12 @@ export function StudioEditorActions({
         type="button"
         onClick={onRun}
         disabled={runDisabled || runPending}
-        className="inline-flex items-center gap-1.5 rounded-lg bg-indigo-600 px-3.5 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700 disabled:opacity-50"
+        className="inline-flex items-center gap-1.5 rounded-lg bg-orange-600 px-3.5 py-2 text-sm font-medium text-white shadow-sm transition duration-150 ease-in-out hover:bg-orange-700 disabled:cursor-not-allowed disabled:opacity-50"
       >
         {runPending ? (
           <Loader2 size={15} className="animate-spin" />
         ) : (
-          <Play size={15} />
+          <Play size={15} className="fill-current" />
         )}
         Run
       </button>
@@ -134,9 +134,9 @@ export function StudioEditorActions({
           onClick={onSave}
           disabled={saveDisabled}
           title={saveDisabled ? saveTitle : undefined}
-          className="inline-flex items-center gap-1.5 rounded-lg border-2 border-slate-300 bg-white px-3.5 py-2 text-sm font-semibold text-slate-800 shadow-sm hover:border-slate-400 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+          className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-sm font-medium text-slate-700 shadow-sm transition duration-150 ease-in-out hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900 disabled:cursor-not-allowed disabled:opacity-50"
         >
-          <Save size={15} />
+          <Save size={15} className="text-slate-400" />
           Save
         </button>
       )}
@@ -146,35 +146,56 @@ export function StudioEditorActions({
           <button
             type="button"
             onClick={() => setMoreOpen((v) => !v)}
-            className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-2.5 py-2 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50"
+            className={`inline-flex items-center gap-1.5 rounded-lg border bg-white px-2.5 py-2 text-sm font-medium shadow-sm transition duration-150 ease-in-out hover:bg-slate-50 ${
+              moreOpen
+                ? "border-orange-200 bg-orange-50/30 text-orange-700"
+                : "border-slate-200 text-slate-700 hover:border-slate-300 hover:text-slate-900"
+            }`}
             aria-expanded={moreOpen}
             aria-haspopup="menu"
           >
-            <MoreHorizontal size={16} />
+            <MoreHorizontal size={16} className={moreOpen ? "text-orange-600" : "text-slate-400"} />
             <span className="hidden sm:inline">More</span>
           </button>
+          
           {moreOpen && (
             <div
               role="menu"
-              className="absolute right-0 z-50 mt-1 min-w-[11rem] overflow-hidden rounded-xl border border-slate-200 bg-white py-1 shadow-lg ring-1 ring-slate-900/5"
+              className="absolute right-0 z-50 mt-1 min-w-[12rem] origin-top-right overflow-hidden rounded-xl border border-slate-200 bg-white p-1 shadow-lg ring-1 ring-slate-900/5 animate-in fade-in slide-in-from-top-1 duration-100"
             >
-              {moreItems.map((item) => (
-                <button
-                  key={item.key}
-                  type="button"
-                  role="menuitem"
-                  onClick={item.onClick}
-                  disabled={item.pending}
-                  className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-slate-700 hover:bg-slate-50 disabled:opacity-50"
-                >
-                  {item.pending ? (
-                    <Loader2 size={14} className="animate-spin text-slate-400" />
-                  ) : (
-                    <item.icon size={14} className="text-slate-500" />
-                  )}
-                  {item.label}
-                </button>
-              ))}
+              {moreItems.map((item) => {
+                const isAiItem = item.key === "ai" && !aiSqlActive;
+                return (
+                  <button
+                    key={item.key}
+                    type="button"
+                    role="menuitem"
+                    onClick={item.onClick}
+                    disabled={item.pending}
+                    className={`flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-left text-sm transition duration-150 ${
+                      isAiItem
+                        ? "text-orange-600 hover:bg-orange-50/60"
+                        : "text-slate-700 hover:bg-slate-50 hover:text-slate-900"
+                    } disabled:opacity-50`}
+                  >
+                    {item.pending ? (
+                      <Loader2 size={14} className="animate-spin text-slate-400" />
+                    ) : (
+                      <item.icon 
+                        size={14} 
+                        className={`transition duration-150 ${
+                          isAiItem 
+                            ? "text-orange-500" 
+                            : item.key === "ai" && aiSqlActive
+                            ? "text-amber-500"
+                            : "text-slate-400 group-hover:text-slate-500"
+                        }`} 
+                      />
+                    )}
+                    {item.label}
+                  </button>
+                );
+              })}
             </div>
           )}
         </div>

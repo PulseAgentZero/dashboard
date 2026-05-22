@@ -86,19 +86,21 @@ export function StudioActivityFeed({ entries }: Props) {
             <li key={entry.id}>
               <Link
                 href={entry.href}
-                className="flex items-center gap-3 px-5 py-3 transition hover:bg-slate-50/80"
+                className="group flex items-center gap-3 px-5 py-3 transition duration-150 ease-in-out hover:bg-slate-50/80"
               >
                 <div
-                  className={`grid h-9 w-9 shrink-0 place-items-center rounded-lg ${
+                  className={`grid h-9 w-9 shrink-0 place-items-center rounded-lg transition duration-150 ${
                     entry.kind === "query"
-                      ? "bg-indigo-50 text-indigo-600"
-                      : "bg-violet-50 text-violet-600"
+                      ? "bg-orange-50 text-orange-600 group-hover:bg-orange-100/70"
+                      : "bg-slate-100 text-slate-600 group-hover:bg-slate-200/60"
                   }`}
                 >
                   <Icon size={16} />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-medium text-slate-900">{entry.name}</p>
+                  <p className="truncate text-sm font-medium text-slate-900 transition duration-150 group-hover:text-orange-600">
+                    {entry.name}
+                  </p>
                   <p className="text-xs text-slate-500">{entry.detail}</p>
                 </div>
               </Link>

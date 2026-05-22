@@ -45,7 +45,7 @@ export default function Nav() {
   const canConnectData = hasMinRole(user?.role, "manager");
 
   return (
-    <header className="fixed top-0 left-0 z-40 flex h-14 w-full shrink-0 items-center justify-between border-b border-neutral-200 bg-white px-4">
+    <header className="sticky top-0 z-40 flex h-14 w-full shrink-0 items-center justify-between border-b border-neutral-200 bg-white px-4">
       {/* Left: Platform root & Dynamic breadcrumbs */}
       <div className="flex items-center gap-3 min-w-0">
         <button
@@ -87,10 +87,10 @@ export default function Nav() {
           <Link
             href="/dashboard/connections"
             data-tour="connect-data"
-            className="flex h-8 items-center justify-center gap-1.5 rounded-md bg-neutral-900 px-3 text-xs font-semibold text-white transition-colors hover:bg-neutral-800 active:bg-neutral-950 shadow-sm"
+            className="flex h-8 w-8 sm:w-auto items-center justify-center gap-1.5 rounded-md bg-orange-600 px-0 sm:px-3 text-xs font-semibold text-white transition-colors hover:bg-orange-700 active:bg-orange-800 shadow-sm"
           >
             <Database size={13} />
-            <span>Connect Data</span>
+            <span className="hidden sm:inline">Connect Data</span>
           </Link>
         )}
       </div>

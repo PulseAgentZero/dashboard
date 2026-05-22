@@ -156,7 +156,6 @@ export function QueryEditorPage({ queryId }: Props) {
   const params = query?.params?.length ? query.params : sqlParamsToDefinitions(sql, query?.params);
   const sqlDirty = Boolean(queryId && query && sql.trim() !== query.sql_text.trim());
 
-  /** Always run the SQL currently in the editor (saved queries must not require Save first). */
   const handleRun = useCallback(async () => {
     if (!effectiveConnectionId) return;
     setActiveRunId(null);
@@ -242,7 +241,7 @@ export function QueryEditorPage({ queryId }: Props) {
   if (queryId && queryLoading) {
     return (
       <div className="flex justify-center py-20">
-        <Loader2 className="animate-spin text-indigo-500" size={32} />
+        <Loader2 className="animate-spin text-orange-500" size={32} />
       </div>
     );
   }
@@ -260,7 +259,7 @@ export function QueryEditorPage({ queryId }: Props) {
       <div className="space-y-3">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="min-w-0">
-            <Link href="/dashboard/studio" className="text-sm text-slate-500 hover:text-indigo-600">
+            <Link href="/dashboard/studio" className="text-sm text-slate-500 transition duration-150 hover:text-orange-600">
               ← Studio
             </Link>
             <h1 className="text-lg font-semibold text-slate-900">
@@ -272,7 +271,7 @@ export function QueryEditorPage({ queryId }: Props) {
                 : "Edit SQL and Run to preview — Save when you want dashboards and schedules to use the new SQL."}
             </p>
             {sqlDirty && (
-              <p className="mt-1 text-xs font-medium text-amber-700">
+              <p className="mt-1 text-xs font-medium text-orange-700">
                 Unsaved SQL changes — Run uses your editor text; Save to persist.
               </p>
             )}
@@ -318,19 +317,20 @@ export function QueryEditorPage({ queryId }: Props) {
           />
         </div>
       </div>
+      
       {showAi && (
-        <div className="flex gap-2 rounded-lg border border-indigo-100 bg-indigo-50/50 p-3">
+        <div className="flex gap-2 rounded-lg border border-orange-100 bg-orange-50/40 p-3 transition duration-200">
           <input
             value={aiGoal}
             onChange={(e) => setAiGoal(e.target.value)}
             placeholder="Describe what you want to query…"
-            className="flex-1 rounded-lg border bg-white px-3 py-2 text-sm"
+            className="flex-1 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-orange-500 focus:ring-1 focus:ring-orange-500 placeholder:text-slate-400"
           />
           <button
             type="button"
             onClick={() => void handleGenerate()}
             disabled={generateSQL.isPending}
-            className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white"
+            className="rounded-lg bg-orange-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-1 disabled:opacity-50"
           >
             Generate
           </button>
@@ -338,13 +338,13 @@ export function QueryEditorPage({ queryId }: Props) {
       )}
 
       {explainText && (
-        <div className="rounded-lg border border-slate-200 bg-white p-3 text-sm text-slate-600">
+        <div className="rounded-lg border border-slate-200 bg-white p-3 text-sm text-slate-600 shadow-sm leading-relaxed">
           {explainText}
         </div>
       )}
 
       {!isDesktop && (
-        <div className="flex gap-1 overflow-x-auto no-scrollbar rounded-lg border border-slate-200 bg-white p-1">
+        <div className="flex gap-1 overflow-x-auto no-scrollbar rounded-lg border border-slate-200 bg-white p-1 shadow-sm">
           {(
             [
               ["schema", "Schema"],
@@ -356,9 +356,9 @@ export function QueryEditorPage({ queryId }: Props) {
               key={id}
               type="button"
               onClick={() => setMobilePanel(id as "schema" | "editor" | "runs")}
-              className={`shrink-0 rounded-md px-3 py-1.5 text-xs font-semibold ${
+              className={`shrink-0 rounded-md px-3 py-1.5 text-xs font-medium transition duration-150 ${
                 mobilePanel === id
-                  ? "bg-indigo-600 text-white"
+                  ? "bg-orange-600 text-white"
                   : "text-slate-600 hover:bg-slate-50"
               }`}
             >
@@ -382,6 +382,7 @@ export function QueryEditorPage({ queryId }: Props) {
             onInsert={handleSchemaInsert}
           />
         </div>
+        
         <div
           className={`flex min-w-0 flex-1 flex-col gap-3 ${
             !isDesktop && mobilePanel !== "editor" ? "hidden lg:flex" : ""
@@ -402,13 +403,14 @@ export function QueryEditorPage({ queryId }: Props) {
           <RunStatusPoller run={polledRun} isPolling={isPolling} />
           <ResultsTable result={result} />
         </div>
+        
         {queryId && (
           <div
             className={`w-full shrink-0 overflow-y-auto rounded-lg border border-slate-200 bg-white p-2 lg:w-48 ${
               !isDesktop && mobilePanel !== "runs" ? "hidden" : ""
             } ${!isDesktop ? "min-h-[40dvh]" : ""}`}
           >
-            <p className="mb-2 flex items-center gap-1 text-xs font-semibold uppercase text-slate-500">
+            <p className="mb-2 flex items-center gap-1 px-1 text-xs font-semibold uppercase tracking-wider text-slate-400">
               <History size={12} />
               Runs
             </p>
@@ -417,20 +419,21 @@ export function QueryEditorPage({ queryId }: Props) {
                 key={r.id}
                 type="button"
                 onClick={() => setActiveRunId(r.id)}
-                className="mb-1 w-full rounded px-2 py-1 text-left text-xs hover:bg-slate-50"
+                className="mb-1 w-full rounded px-2 py-1 text-left text-xs transition hover:bg-slate-50"
               >
-                <span className="capitalize">{r.status}</span>
+                <span className="font-medium text-slate-700 capitalize">{r.status}</span>
                 <br />
-                <span className="text-slate-400">{new Date(r.created_at).toLocaleString()}</span>
+                <span className="text-slate-400 text-[11px]">{new Date(r.created_at).toLocaleString()}</span>
               </button>
             ))}
+            
             {vizData?.visualizations && vizData.visualizations.length > 0 && (
               <>
-                <p className="mb-2 mt-4 text-xs font-semibold uppercase text-slate-500">Charts</p>
+                <p className="mb-2 mt-4 px-1 text-xs font-semibold uppercase tracking-wider text-slate-400">Charts</p>
                 {vizData.visualizations.map((v) => (
                   <div
                     key={v.id}
-                    className="group mb-1 flex items-center justify-between gap-1 rounded px-1 py-0.5 hover:bg-slate-50"
+                    className="group mb-1 flex items-center justify-between gap-1 rounded px-1.5 py-1 transition hover:bg-slate-50"
                   >
                     <button
                       type="button"
@@ -438,18 +441,18 @@ export function QueryEditorPage({ queryId }: Props) {
                         setEditViz(v);
                         setVizOpen(true);
                       }}
-                      className="min-w-0 flex-1 truncate text-left text-xs text-slate-600 hover:text-indigo-700"
+                      className="min-w-0 flex-1 truncate text-left text-xs text-slate-600 transition hover:text-orange-600"
                     >
                       {v.name} ({v.chart_type})
                     </button>
-                    <div className="flex shrink-0 opacity-100 sm:opacity-0 sm:group-hover:opacity-100">
+                    <div className="flex shrink-0 opacity-100 transition duration-150 sm:opacity-0 sm:group-hover:opacity-100">
                       <button
                         type="button"
                         onClick={() => {
                           setEditViz(v);
                           setVizOpen(true);
                         }}
-                        className="rounded p-0.5 text-slate-400 hover:text-indigo-600"
+                        className="rounded p-0.5 text-slate-400 transition hover:text-orange-600"
                         aria-label="Edit chart"
                       >
                         <Pencil size={12} />
@@ -464,7 +467,7 @@ export function QueryEditorPage({ queryId }: Props) {
                             onConfirm: () => deleteViz.mutateAsync({ queryId: queryId!, vizId: v.id }),
                           })
                         }
-                        className="rounded p-0.5 text-slate-400 hover:text-rose-600"
+                        className="rounded p-0.5 text-slate-400 transition hover:text-rose-600"
                         aria-label="Delete chart"
                       >
                         <Trash2 size={12} />

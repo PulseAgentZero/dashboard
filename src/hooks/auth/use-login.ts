@@ -17,6 +17,7 @@ export function useLogin() {
   return useMutation({
     mutationFn: authApi.login,
     onSuccess(data) {
+      console.log("[login] onSuccess fired", data);
       if (isMfaRequired(data)) {
         sessionStorage.setItem("mfa_token", data.mfa_token);
         sessionStorage.setItem("mfa_user_email", data.user.email);
@@ -24,9 +25,12 @@ export function useLogin() {
         return;
       }
       tokens.set(data.access_token, data.refresh_token);
+      console.log("[login] tokens set, access token:", !!tokens.getAccess());
       void qc.invalidateQueries({ queryKey: ["me"] });
       toast.success("Welcome back!");
+      console.log("[login] calling postAuthRedirect, user.is_verified:", data.user?.is_verified);
       postAuthRedirect(data.org, router, data.user);
+      console.log("[login] postAuthRedirect called");
     },
     onError(err) {
       if (err instanceof ApiError && err.code === "TWO_FACTOR_SETUP_REQUIRED") {

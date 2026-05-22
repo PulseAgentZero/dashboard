@@ -24,7 +24,7 @@ function TagPills({ tags }: { tags?: string[] }) {
       {tags.slice(0, 3).map((t) => (
         <span
           key={t}
-          className="rounded-md bg-slate-100 px-2 py-0.5 text-[10px] font-medium text-slate-600"
+          className="rounded bg-slate-50 border border-slate-100 px-2 py-0.5 text-[10px] font-medium text-slate-500 transition duration-150 group-hover:border-orange-100"
         >
           {t}
         </span>
@@ -43,8 +43,8 @@ export function StudioDashboardCard({ dashboard, onStar }: Props) {
   const layout = resolveDashboardLayout(dashboard.items ?? [], dashboard.layout);
 
   return (
-    <article className="group flex flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition hover:border-violet-200 hover:shadow-md">
-      <Link href={`/dashboard/studio/dashboards/${dashboard.id}`} className="block p-3 pb-0">
+    <article className="group flex flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition duration-150 ease-in-out hover:border-slate-300 hover:shadow-md">
+      <Link href={`/dashboard/studio/dashboards/${dashboard.id}`} className="block p-3 pb-0 opacity-95 transition duration-150 group-hover:opacity-100">
         <DashboardLayoutPreview layout={layout} />
       </Link>
 
@@ -54,25 +54,25 @@ export function StudioDashboardCard({ dashboard, onStar }: Props) {
             <div className="flex flex-wrap items-center gap-2">
               <Link
                 href={`/dashboard/studio/dashboards/${dashboard.id}`}
-                className="line-clamp-1 text-sm font-semibold text-slate-900 hover:text-indigo-600"
+                className="line-clamp-1 text-sm font-medium text-slate-900 transition duration-150 hover:text-orange-600"
               >
                 {dashboard.name}
               </Link>
               {dashboard.is_public && (
-                <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-semibold text-emerald-700 ring-1 ring-emerald-100">
+                <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-medium text-emerald-700 ring-1 ring-emerald-600/10">
                   <Globe size={10} />
                   Public
                 </span>
               )}
             </div>
             {dashboard.description && (
-              <p className="mt-0.5 line-clamp-2 text-xs text-slate-500">{dashboard.description}</p>
+              <p className="mt-1 line-clamp-2 text-xs leading-relaxed text-slate-500">{dashboard.description}</p>
             )}
           </div>
           <StarButton starred={dashboard.starred} onToggle={onStar} />
         </div>
 
-        <div className="mt-3 flex flex-wrap items-center gap-3 text-[11px] text-slate-400">
+        <div className="mt-3.5 flex flex-wrap items-center gap-3 text-[11px] text-slate-400">
           <span className="inline-flex items-center gap-1">
             <Rows3 size={12} />
             {panelCount} panel{panelCount === 1 ? "" : "s"}
@@ -80,17 +80,17 @@ export function StudioDashboardCard({ dashboard, onStar }: Props) {
           <span>Updated {formatRelative(dashboard.updated_at)}</span>
         </div>
 
-        <div className="mt-2">
+        <div className="mt-2.5">
           <TagPills tags={dashboard.tags} />
         </div>
 
-        <div className="mt-3 flex justify-end border-t border-slate-100 pt-3">
+        <div className="mt-4 flex justify-end border-t border-slate-100 pt-3">
           <Link
             href={`/dashboard/studio/dashboards/${dashboard.id}`}
-            className="inline-flex items-center gap-1 text-xs font-semibold text-indigo-600 hover:text-indigo-700"
+            className="inline-flex items-center gap-0.5 text-xs font-medium text-orange-600 transition duration-150 hover:text-orange-700"
           >
             Open
-            <ChevronRight size={14} />
+            <ChevronRight size={14} className="transition-transform duration-150 group-hover:translate-x-0.5" />
           </Link>
         </div>
       </div>

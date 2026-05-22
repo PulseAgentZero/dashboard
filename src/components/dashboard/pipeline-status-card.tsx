@@ -39,13 +39,17 @@ function Item({
   status?: string;
 }) {
   return (
-    /* Changed padding to scale smoothly on mobile views */
-    <div className="flex items-center gap-3 rounded-lg bg-slate-50 p-3 sm:px-4 sm:py-3">
+    /* 
+      Optimized Item Layout: 
+      - Adjusts padding slightly for tight viewports.
+      - Uses flex-row layout throughout but relies on text truncation to handle text pressure gracefully.
+    */
+    <div className="flex items-center gap-3 rounded-lg bg-slate-50 p-3 sm:px-4">
       <div className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-white border border-slate-200 text-slate-500">
         <Icon size={15} />
       </div>
       <div className="min-w-0 flex-1">
-        <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-400">
+        <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-400 truncate">
           {label}
         </p>
         <p className="mt-0.5 truncate text-xs sm:text-sm font-semibold text-slate-800" title={value}>
@@ -125,8 +129,13 @@ export function PipelineStatusCard() {
         )}
       </div>
 
-      {/* Main Grid: Adapts cleanly from tight screen profiles to desktops */}
-      <div className="grid grid-cols-2 gap-2.5 md:grid-cols-4">
+      {/* 
+        Responsive Grid Strategy:
+        - grid-cols-1: Single column stack on narrow phones (stops squeezing content side-by-side prematurely).
+        - xs:grid-cols-2: Transitions cleanly to 2 columns on typical smartphones and small tablets.
+        - lg:grid-cols-4: Opens to full 4-column row layout on large laptop/desktop screens.
+      */}
+      <div className="grid grid-cols-1 gap-2.5 xs:grid-cols-2 lg:grid-cols-4">
         {steps.map((s) => (
           <Item key={s.label} {...s} />
         ))}

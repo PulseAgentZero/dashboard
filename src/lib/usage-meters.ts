@@ -92,7 +92,7 @@ export const USAGE_METERS: MeterDef[] = [
     period: "always",
     group: "studio",
     icon: LayoutDashboard,
-    color: "text-indigo-600",
+    color: "text-orange-600",
     barColor: "#4f46e5",
   },
   {

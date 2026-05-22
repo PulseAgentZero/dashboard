@@ -33,14 +33,16 @@ export default function DashboardLayout({
         <div className="flex min-h-[100dvh] h-[100dvh] overflow-hidden bg-[#f6f8fb] text-slate-900">
           <Sidebar />
           <div className="flex min-h-0 min-w-0 flex-1 flex-col">
-            <VerifyEmailBanner />
-            <SetupBanner />
-            <FirstRunOverlay />
-            <ProductTour />
             <Nav />
-            <main className="flex-1 overflow-y-auto overflow-x-hidden p-4 lg:p-6">
-              {children}
-            </main>
+            <div className="flex flex-col flex-1 min-h-0 overflow-y-auto">
+              <VerifyEmailBanner />
+              <SetupBanner />
+              <FirstRunOverlay />
+              <ProductTour />
+              <main className="flex-1 overflow-x-hidden p-4 lg:p-6">
+                {children}
+              </main>
+            </div>
           </div>
         </div>
       </SidebarProvider>
