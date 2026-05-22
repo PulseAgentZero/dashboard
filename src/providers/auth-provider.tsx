@@ -20,7 +20,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const { data, isPending, isFetching, isError, refetch } = useMe();
   const hasToken = typeof window !== "undefined" && !!tokens.getAccess();
 
-  console.log("[AuthProvider] render — hasToken:", hasToken, "isPending:", isPending, "isError:", isError, "data:", !!data);
+  //console.log("[AuthProvider] render — hasToken:", hasToken, "isPending:", isPending, "isError:", isError, "data:", !!data);
 
   // When the user just logged in, `enabled` flips from false to true and React
   // Query schedules the fetch in a useEffect. During that first render
