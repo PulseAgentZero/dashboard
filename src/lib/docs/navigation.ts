@@ -98,8 +98,33 @@ export function getDocNavItem(slug: string): DocNavItem | undefined {
   return undefined;
 }
 
-export function getDocHref(slug: string): string {
+export function getDocHref(
+  slug: string,
+  options?: { stripDocsPrefix?: boolean },
+): string {
+  if (options?.stripDocsPrefix) {
+    return slug ? `/${slug}` : "/";
+  }
   return slug ? `/docs/${slug}` : "/docs";
+}
+
+/** Match current pathname to a doc slug (works on apex and docs subdomain). */
+export function isDocPathActive(
+  slug: string,
+  pathname: string,
+  stripDocsPrefix: boolean,
+): boolean {
+  const href = getDocHref(slug, { stripDocsPrefix });
+  if (stripDocsPrefix) {
+    if (href === "/") {
+      return pathname === "/" || pathname === "/docs" || pathname === "/docs/";
+    }
+    return pathname === href || pathname.startsWith(`${href}/`);
+  }
+  if (href === "/docs") {
+    return pathname === "/docs" || pathname === "/docs/";
+  }
+  return pathname === href || pathname.startsWith(`${href}/`);
 }
 
 export function getPrevNext(slug: string): {

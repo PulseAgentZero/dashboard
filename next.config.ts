@@ -14,6 +14,7 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  // docs.entivia.online short paths → /docs/* : see src/proxy.ts (host rewrite).
   images: {
     remotePatterns: [
       {

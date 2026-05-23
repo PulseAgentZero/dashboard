@@ -3,10 +3,11 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { Loader2, ShieldAlert, ShieldCheck } from "lucide-react";
+import { Loader2, ShieldAlert } from "lucide-react";
 import { toast } from "sonner";
 import { useExchangePortalToken } from "@/hooks/billing/use-billing";
 import { ApiError } from "@/lib/api/client";
+import { BladeFan } from "../../../public/icon/bladeFan";
 
 export function LicensePortalCallbackContent() {
   const router = useRouter();
@@ -15,8 +16,6 @@ export function LicensePortalCallbackContent() {
 
   const [exchangeError, setExchangeError] = useState<string | null>(null);
   const { mutate: exchange } = useExchangePortalToken();
-  // Guard against React 18 StrictMode double-invocation in dev — the magic
-  // link is single-use, so we MUST only fire the exchange once.
   const firedRef = useRef(false);
 
   useEffect(() => {
@@ -97,6 +96,29 @@ export function LicensePortalCallbackContent() {
   );
 }
 
+function PortalBrandLockup({
+  light = false,
+  className = "",
+}: {
+  light?: boolean;
+  className?: string;
+}) {
+  const color = light ? "#ffffff" : "#0f172a";
+  return (
+    <Link
+      href="/"
+      className={`inline-flex items-center gap-2.5 transition-opacity hover:opacity-90 ${className}`}
+    >
+      <BladeFan strokeWidth={2.5} size={26} color={color} />
+      <span
+        className={`text-lg font-semibold tracking-tight ${light ? "text-white" : "text-slate-900"}`}
+      >
+        Entivia
+      </span>
+    </Link>
+  );
+}
+
 function PortalShell({
   tone,
   icon,
@@ -114,11 +136,8 @@ function PortalShell({
     <div className="min-h-screen bg-slate-50 text-slate-900 antialiased">
       <main className="grid min-h-screen place-items-center px-4">
         <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-sm">
-          <div className="mb-5 flex items-center justify-center gap-2 text-slate-400">
-            <ShieldCheck size={14} />
-            <span className="text-[10px] font-bold uppercase tracking-widest">
-              Entivia license portal
-            </span>
+          <div className="mb-6 flex justify-center">
+            <PortalBrandLockup />
           </div>
           <span
             className={`mx-auto grid h-14 w-14 place-items-center rounded-2xl ring-1 ${iconTone}`}

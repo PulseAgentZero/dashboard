@@ -88,13 +88,13 @@ export default function Hero() {
 
         <div className="relative z-10 max-w-5xl mx-auto text-center px-4 sm:px-6 my-auto flex flex-col items-center justify-center grow">
          <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-serif text-white tracking-tight leading-[1.05] mb-6 drop-shadow-sm">
-  Connect your schema.{" "}
+  Connect your data.{" "}
   <br className="hidden sm:block" />
   <span>Stream the actions.</span>
 </h1>
 
 <p className="text-white/90 text-base sm:text-lg md:text-xl font-medium max-w-md sm:max-w-lg leading-relaxed mb-8 px-2">
-  Entivia links to your database to turn complex relational tables into structured recommendation queues and instant pipelines.
+  Entivia links to your data sources to turn complex data into structured recommendation queues and instant pipelines.
 </p>
 
           <div className="flex flex-col sm:flex-row items-center gap-3">

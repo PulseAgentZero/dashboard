@@ -2,8 +2,10 @@
 
 import Link from "next/link";
 import { Menu, X } from "lucide-react";
+import { BladeFan } from "../../../public/icon/bladeFan";
 import { getPublicRedocUrl } from "@/lib/docs/api-url";
 import { appHref, marketingHref } from "@/lib/site-urls";
+import { useDocHref } from "@/hooks/docs/use-doc-href";
 import { DocsThemeToggle } from "./docs-theme-toggle";
 
 type Props = {
@@ -13,6 +15,7 @@ type Props = {
 
 export function DocsHeader({ mobileOpen, onToggleMobile }: Props) {
   const redocUrl = getPublicRedocUrl();
+  const docsHomeHref = useDocHref("");
 
   return (
     <header className="sticky top-0 z-40 border-b border-zinc-200 bg-white/95 backdrop-blur dark:border-zinc-800 dark:bg-zinc-900/95">
@@ -28,15 +31,21 @@ export function DocsHeader({ mobileOpen, onToggleMobile }: Props) {
           </button>
           <Link
             href={marketingHref("/")}
-            className="shrink-0 font-black tracking-tighter text-zinc-900 uppercase italic dark:text-white"
+            className="shrink-0 transition-opacity hover:opacity-80"
+            aria-label="Entivia home"
           >
-            Entivia
+            <span className="block dark:hidden">
+              <BladeFan strokeWidth={2.5} size={22} color="#18181b" />
+            </span>
+            <span className="hidden dark:block">
+              <BladeFan strokeWidth={2.5} size={22} color="#ffffff" />
+            </span>
           </Link>
           <span className="hidden shrink-0 text-zinc-300 sm:inline dark:text-zinc-600">
             /
           </span>
           <Link
-            href="/docs"
+            href={docsHomeHref}
             className="truncate text-sm font-medium text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white"
           >
             Docs

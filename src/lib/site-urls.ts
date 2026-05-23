@@ -34,6 +34,34 @@ export function getMarketingUrl(): string {
   return trimTrailingSlash(process.env.NEXT_PUBLIC_MARKETING_URL ?? "");
 }
 
+export function getDocsUrl(): string {
+  return trimTrailingSlash(process.env.NEXT_PUBLIC_DOCS_URL ?? "");
+}
+
+function parseHostnameFromUrl(url: string): string {
+  try {
+    const normalized = url.startsWith("http") ? url : `https://${url}`;
+    return new URL(normalized).hostname;
+  } catch {
+    return url.replace(/^https?:\/\//, "").split("/")[0] ?? "";
+  }
+}
+
+/** True when `host` is the configured docs subdomain (client or server). */
+export function isDocsHostname(host: string): boolean {
+  const configured = getDocsUrl();
+  if (configured) {
+    return host === parseHostnameFromUrl(configured);
+  }
+  return host === "docs.entivia.online";
+}
+
+export function docsHref(path: string): string {
+  const base = getDocsUrl();
+  const safePath = path.startsWith("/") ? path : `/${path}`;
+  return base ? joinPath(base, safePath) : safePath;
+}
+
 /**
  * URL for an app-surface route (auth, dashboard). Returns an absolute URL when
  * `NEXT_PUBLIC_APP_URL` is configured (production docs subdomain), otherwise a
