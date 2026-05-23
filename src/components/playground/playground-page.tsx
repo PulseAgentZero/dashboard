@@ -46,6 +46,9 @@ export function PlaygroundPage() {
   const [selectedKeyPrefix, setSelectedKeyPrefix] = useState<string>("");
   const [pathValues, setPathValues] = useState<Record<string, string>>({});
   const [queryValues, setQueryValues] = useState<Record<string, string>>({});
+  const [bodyValue, setBodyValue] = useState<string>(
+    PUBLIC_API_CATALOG[0]!.endpoints[0]!.sampleBody ?? "",
+  );
   const [response, setResponse] = useState<{ status: number; body: string; ms: number } | null>(null);
   const [loading, setLoading] = useState(false);
   const [rawKey, setRawKey] = useState("");
@@ -73,14 +76,24 @@ export function PlaygroundPage() {
     const t0 = Date.now();
     try {
       const headers: Record<string, string> = { "X-API-Key": key };
+      let body: string | undefined;
       if (selectedEndpoint.method === "POST") {
         headers["Content-Type"] = "application/json";
+        const raw = bodyValue.trim() || "{}";
+        try {
+          JSON.parse(raw);
+        } catch {
+          toast.error("Request body is not valid JSON.");
+          setLoading(false);
+          return;
+        }
+        body = raw;
       }
 
       const res = await fetch(url, {
         method: selectedEndpoint.method,
         headers,
-        body: selectedEndpoint.method === "POST" ? JSON.stringify({}) : undefined,
+        body,
       });
       const ms = Date.now() - t0;
       let body = "";
@@ -108,6 +121,7 @@ export function PlaygroundPage() {
     setSelectedEndpoint(ep);
     setPathValues({});
     setQueryValues({});
+    setBodyValue(ep.sampleBody ?? "");
     setResponse(null);
     setActiveTab("request");
   }
@@ -250,6 +264,28 @@ export function PlaygroundPage() {
                 </div>
               ))}
             </div>
+          </div>
+        )}
+
+        {/* JSON body (POST only) */}
+        {selectedEndpoint.method === "POST" && (
+          <div className="mb-4">
+            <label className="mb-2 block text-xs font-semibold text-slate-600">
+              Request Body{" "}
+              <span className="font-normal text-slate-400">(JSON)</span>
+            </label>
+            <textarea
+              value={bodyValue}
+              onChange={(e) => setBodyValue(e.target.value)}
+              rows={10}
+              spellCheck={false}
+              placeholder='{ }'
+              className="w-full rounded border border-slate-200 px-3 py-2 font-mono text-[12px] leading-relaxed outline-none focus:border-blue-500"
+            />
+            <p className="mt-1 text-[10px] text-slate-400">
+              Sent as the request body. Pre-filled from the endpoint example;
+              edit before sending.
+            </p>
           </div>
         )}
 

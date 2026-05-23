@@ -13,6 +13,8 @@ export type PublicApiEndpoint = {
   pathParams?: ApiParam[];
   queryParams?: ApiParam[];
   body?: Record<string, string>;
+  /** Pretty-printed JSON pre-filled into the Playground body editor for POST endpoints. */
+  sampleBody?: string;
   scope: "read" | "write";
 };
 
@@ -161,6 +163,62 @@ export const PUBLIC_API_CATALOG: PublicApiGroup[] = [
       },
     ],
   },
+  {
+    group: "Simulation",
+    slug: "simulation",
+    endpoints: [
+      {
+        id: "simulate-review",
+        label: "Simulate a review",
+        method: "POST",
+        path: "/simulation/review",
+        description:
+          "Predict an authentic star rating and 2-5 sentence review for a persona × product. Powered by the same agent that runs the hackathon task-a-api.",
+        scope: "read",
+        sampleBody: JSON.stringify(
+          {
+            persona: {
+              description:
+                "Generous reviewer who loves spicy Nigerian food and casual dining. Usually rates 4-5 stars.",
+              avg_stars: 4.2,
+              top_categories: ["Nigerian", "Restaurants", "Bars"],
+              sample_reviews: [
+                "The jollof was fire — portions generous and service quick.",
+              ],
+            },
+            product: {
+              name: "Tam Tam African Restaurant",
+              categories: "African, Restaurants",
+              city: "Philadelphia",
+              stars: 3.5,
+            },
+            voice: "default",
+          },
+          null,
+          2,
+        ),
+      },
+      {
+        id: "recommend-cold-start",
+        label: "Persona-driven recommendations",
+        method: "POST",
+        path: "/simulation/recommend",
+        description:
+          "Cold-start recommendations from a free-text persona. Supports multi-turn refinement and cross-domain (yelp | goodreads). Powered by the hackathon task-b-api agent.",
+        scope: "read",
+        sampleBody: JSON.stringify(
+          {
+            persona:
+              "loves spicy Nigerian jollof, suya, and late-night food spots",
+            k: 5,
+            dataset: "yelp",
+          },
+          null,
+          2,
+        ),
+      },
+    ],
+  },
 ];
 
 export const STUDIO_PUBLIC_ENDPOINTS: PublicApiEndpoint[] = [
@@ -220,7 +278,8 @@ export function buildExampleCurl(endpoint: PublicApiEndpoint): string {
     if (!isStudioPublic) lines[lines.length - 1] += " \\";
     else lines[0] += " \\";
     lines.push(`  -H 'Content-Type: application/json' \\`);
-    lines.push(`  -d '{}'`);
+    const body = endpoint.sampleBody ?? "{}";
+    lines.push(`  -d '${body.replace(/'/g, "'\\''")}'`);
   }
   return lines.join("\n");
 }
