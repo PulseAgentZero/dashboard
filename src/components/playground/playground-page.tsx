@@ -76,7 +76,7 @@ export function PlaygroundPage() {
     const t0 = Date.now();
     try {
       const headers: Record<string, string> = { "X-API-Key": key };
-      let body: string | undefined;
+      let requestBody: string | undefined;
       if (selectedEndpoint.method === "POST") {
         headers["Content-Type"] = "application/json";
         const raw = bodyValue.trim() || "{}";
@@ -87,13 +87,13 @@ export function PlaygroundPage() {
           setLoading(false);
           return;
         }
-        body = raw;
+        requestBody = raw;
       }
 
       const res = await fetch(url, {
         method: selectedEndpoint.method,
         headers,
-        body,
+        body: requestBody,
       });
       const ms = Date.now() - t0;
       let body = "";
