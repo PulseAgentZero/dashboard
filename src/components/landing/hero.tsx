@@ -88,7 +88,7 @@ export default function Hero() {
 
         <div className="relative z-10 max-w-5xl mx-auto text-center px-4 sm:px-6 my-auto flex flex-col items-center justify-center grow">
          <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-serif text-white tracking-tight leading-[1.05] mb-6 drop-shadow-sm">
-  Connect your data.{" "}
+  Connect your Data.{" "}
   <br className="hidden sm:block" />
   <span>Stream the actions.</span>
 </h1>
